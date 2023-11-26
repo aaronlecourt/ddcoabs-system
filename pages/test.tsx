@@ -35,15 +35,8 @@ export default function Test({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div className="container">
-      <Head>
-        <title>DentFix | Test</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <h1>Test</h1>
-      </main>
-    </div>
+    <main>
+      <h1>Test</h1>
+    </main>
   )
 }
