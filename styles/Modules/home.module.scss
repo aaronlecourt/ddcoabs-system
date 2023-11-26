@@ -1,0 +1,17 @@
+@import '../variables.scss';
+
+.title {
+  color: $green;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.subtitle {
+  color: $text;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}

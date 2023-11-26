@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import clientPromise from '../lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-import styles from '../styles/Modules/home.module.scss'
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -32,13 +31,19 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default function Home({
+export default function Test({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <main>
-      <h1 className={styles.title}>Hello Maria!</h1>
-      <p className={styles.subtitle}>You can edit your profile information, change your password, and update your patient record here.</p>
-    </main>
+    <div className="container">
+      <Head>
+        <title>DentFix | Test</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main>
+        <h1>Test</h1>
+      </main>
+    </div>
   )
 }

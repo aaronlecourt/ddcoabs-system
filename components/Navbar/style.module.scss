@@ -1,0 +1,54 @@
+@import '../../styles/variables.scss';
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 110px;
+  background: linear-gradient(90deg, #3AB286 13.96%, #3A66B2 86.55%);
+
+  &__logo {
+    margin-left: 2rem;
+  }
+
+  &__itemContainer {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 2rem;
+  }
+
+  &__item {
+    text-decoration: none;
+    padding: 0 1rem;
+    color: $white;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+
+    &--contained {
+      border-radius: 19px;
+      background-color: $white;
+      color: $blue;
+    }
+  }
+
+  &__profileContainer {
+    margin-left: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  &__profileIcon {
+    border-radius: 50%;
+    width: 72px;
+    height: 72px;
+    background-color: $grey;
+    margin-right: .5rem;
+  }
+}
