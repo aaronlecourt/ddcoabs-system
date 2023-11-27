@@ -1,5 +1,7 @@
 import Image from 'next/image'
 import styles from './style.module.scss'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 interface Item {
   text: string,
@@ -12,10 +14,10 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
     <nav className={styles.navbar}>
       <Image 
         className={styles.navbar__logo}
-        src='/logo1.svg'
-        alt='logo1'
-        width={56}
-        height={81}
+        src='/logo.png'
+        alt='logo'
+        width={700}
+        height={700}
       />
       <div className={styles.navbar__itemContainer}>
         {items.map(item => <a key={item.text} className={`${styles.navbar__item} ${item.className ? styles[item.className] : ''}`} href={item.link}>{item.text}</a>)}
@@ -28,6 +30,9 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
             height={20}
           />
         </div>
+      </div>
+      <div className={styles.navbar__itemContainerMobile}>
+        <FontAwesomeIcon icon={faBars} color={'#fff'} width={30} height={30} />
       </div>
     </nav>
   )

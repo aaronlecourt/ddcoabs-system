@@ -4,12 +4,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: auto;
   height: 110px;
+  padding: 0 1rem;
   background: linear-gradient(90deg, #3AB286 13.96%, #3A66B2 86.55%);
 
   &__logo {
-    margin-left: 2rem;
+    width: 250px;
+    height: auto;
+
+    @media screen and (max-width: 768px) {
+      width: 200px; 
+    }
   }
 
   &__itemContainer {
@@ -17,7 +23,18 @@
     flex: 1;
     justify-content: flex-end;
     align-items: center;
-    margin-right: 2rem;
+
+    @media screen and (max-width: 768px) {
+      display: none; 
+    }
+  }
+
+  &__itemContainerMobile {
+    display: none;
+
+    @media screen and (max-width: 768px) {
+      display: block; 
+    }
   }
 
   &__item {
