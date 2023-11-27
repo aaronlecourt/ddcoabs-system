@@ -1,8 +1,6 @@
 import Head from 'next/head'
-import connectMongo from '../utils/connectMongo';
+import clientPromise from '../lib/mongodb'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-import styles from '../styles/pages/home.module.scss'
-import { signIn, signOut, useSession } from "next-auth/react"
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -12,7 +10,7 @@ export const getServerSideProps: GetServerSideProps<
   ConnectionStatus
 > = async () => {
   try {
-    await connectMongo()
+    await clientPromise
     // `await clientPromise` will use the default database passed in the MONGODB_URI
     // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
     //
@@ -33,29 +31,12 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default function Home({
+export default function Login({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session } = useSession()
-
   return (
-    <>
-      {!session && (
-        <>
-          Not signed in <br />
-          <button onClick={() => signIn()}>Sign in</button>
-        </>
-      )}
-      {session && (
-        <main className={styles.main}>
-          <>
-            {/* Signed in as {session.user.email} <br /> */}
-            <button onClick={() => signOut()}>Sign out</button>
-          </>
-          <h1 className={styles.title}>Hello Maria!</h1>
-          <p className={styles.subtitle}>You can edit your profile information, change your password, and update your patient record here.</p>
-        </main>
-      )}
-    </>
+    <main>
+      <h1>Login Page</h1>
+    </main>
   )
 }

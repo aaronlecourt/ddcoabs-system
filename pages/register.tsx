@@ -31,12 +31,12 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default function Test({
+export default function Register({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <main>
-      <h1>Test</h1>
+      <h1>Register Page</h1>
     </main>
   )
 }
