@@ -40,12 +40,12 @@ use('dentfix');
 // ]);
 
 // db.getCollection('dentist_service_type').insertMany([
-//   {
-//     'name': 'Jacket Crowns'
-//   },
-//   {
-//     'name': 'Removable Partial Denture'
-//   },
+  // {
+  //   'name': 'Jacket Crowns'
+  // },
+  // {
+  //   'name': 'Removable Partial Denture'
+  // },
 // ]);
 
 

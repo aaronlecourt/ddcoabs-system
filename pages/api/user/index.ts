@@ -3,6 +3,7 @@ import User from '../../../models/User';
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { IUser } from '../../interfaces/IUser'
+import bcrypt from 'bcryptjs'
 
 export default async function userHandler (
   req: NextApiRequest,
@@ -20,8 +21,13 @@ export default async function userHandler (
         res.status(200).json(users);
         break;
       case 'POST':
-        const usersCreated = await User.insertMany(body);
-        res.status(200).json(usersCreated);
+        const user = new User(body);
+
+        user.password = await bcrypt.hash(user.password, 10);
+        
+        const userCreated = await User.create(user);
+        
+        res.status(200).json(userCreated);
         break
       case 'PUT':
         break

@@ -45,6 +45,8 @@ const schema = new Schema<IAppointment>({
     details: {
         type: Object,
     },
+}, {
+    timestamps: true
 })
 
 const Appointment = models.Appointment || model<IAppointment>('Appointment', schema);

@@ -10,6 +10,8 @@ const schema = new Schema<IDentistServiceType>({
         required: true,
         unique: true
     }
+}, {
+    timestamps: true
 })
 
 const DentistServiceType = models.DentistServiceType || model<IDentistServiceType>('DentistServiceType', schema);

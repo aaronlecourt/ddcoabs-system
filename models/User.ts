@@ -36,6 +36,7 @@ const schema = new Schema<IUser>({
     password: {
         type: String,
         required: true,
+        minLength: 8
     },
     guardianName: String,
     guardianMobile: String,
@@ -45,6 +46,8 @@ const schema = new Schema<IUser>({
         default: false,
         required: true,
     },
+}, {
+    timestamps: true
 })
 
 const User = models.User || model<IUser>('User', schema);

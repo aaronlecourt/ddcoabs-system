@@ -17,6 +17,8 @@ const schema = new Schema<IDentistService>({
         type: Number,
         required: true
     }
+}, {
+    timestamps: true
 })
 
 const DentistService = models.DentistService || model<IDentistService>('DentistService', schema);
