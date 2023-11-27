@@ -1,7 +1,7 @@
-import Head from 'next/head'
-// import clientPromise from '../lib/mongodb'
 import connectMongo from '../utils/connectMongo';
+import Image from 'next/image'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import styles from '../styles/pages/register.module.scss'
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -36,8 +36,38 @@ export default function Register({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <main>
-      <h1>Register Page</h1>
-    </main>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <Image 
+          className={styles.headerLogo}
+          src='/logo.png'
+          alt='logo'
+          width={700}
+          height={700}
+        />
+      </div>
+      <div className={styles.form}>
+        <div className={styles.formField}>
+          <label>Full Name</label>
+          <input type='text' />
+        </div>
+        <div className={styles.formField}>
+          <label>Email Address</label>
+          <input type='text' />
+        </div>
+        <div className={styles.formField}>
+          <label>Address</label>
+          <input type='text' />
+        </div>
+        <div className={styles.formField}>
+          <label>Mobile Number</label>
+          <input type='text' />
+        </div>
+        <div className={styles.formField}>
+          <label>Date of Birth</label>
+          <input type='text' />
+        </div>
+      </div>
+    </div>
   )
 }
