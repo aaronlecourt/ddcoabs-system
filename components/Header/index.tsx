@@ -1,7 +1,7 @@
 import Head from "next/head"
 
 export default function Header({ title }: { title?: string }) {
-  const appTitle = title ? `DentFix | ${title}` : 'DentFix';
+  const appTitle = title ? `DentalFix | ${title}` : 'DentalFix';
 
   return (
     <Head>

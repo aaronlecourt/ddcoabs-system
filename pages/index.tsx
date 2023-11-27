@@ -1,4 +1,5 @@
-import Head from 'next/head'
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import connectMongo from '../utils/connectMongo';
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import styles from '../styles/pages/home.module.scss'
@@ -37,6 +38,13 @@ export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { data: session } = useSession()
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session) {
+      router.push('/login');
+    }
+  }, []); 
 
   return (
     <>

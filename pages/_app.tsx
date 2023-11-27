@@ -6,10 +6,11 @@ import Header from '../components/Header'
 import PAGES from '../constants/pages'
 import '../styles/globals.scss'
 import '../styles/fonts.scss'
+import AuthLayout from '../layouts/AuthLayout'
  
 type AppOwnProps = { role: 'patient' | 'dentist' | null, pathname: string }
  
-export default function DentFix({
+export default function DentalFix({
   Component,
   pageProps: { session, ...pageProps },
   pathname,
@@ -31,17 +32,19 @@ export default function DentFix({
           <Component {...pageProps} />
         </DentistLayout> :
 
-      <Component {...pageProps} />
+        <AuthLayout>
+          <Component {...pageProps} />
+        </AuthLayout>
       }
     </SessionProvider>
   )
 }
  
-DentFix.getInitialProps = async (
+DentalFix.getInitialProps = async (
   context: AppContext
 ): Promise<AppOwnProps & AppInitialProps> => {
   const ctx = await App.getInitialProps(context)
 
   // TODO: modify here to check role after login
-  return { ...ctx, role: 'patient', pathname: context.ctx.pathname }
+  return { ...ctx, role: null, pathname: context.ctx.pathname }
 }

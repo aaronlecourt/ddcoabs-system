@@ -1,7 +1,75 @@
+@import '../../styles/variables.scss';
+
 .main {
+  position: relative;
   display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, #3C6CAF 0%, #55BD97 100%);
 
   section {
+    z-index: 2;
     flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background-image: url(/authbg.png);
+  background-repeat: no-repeat;
+  filter: blur(5px);
+  background-position: center;
+  opacity: 0.5;
+  transform: scaleX(-1);
+}
+
+.operatingHours {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: $white;
+
+  &Header {
+    padding: 1rem 3rem;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.50);
+  }
+
+  &Schedule {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.50);
+    padding: 1rem 0.5rem;
+  }
+
+  &Day {
+    text-transform: uppercase;
+    font-weight: bold;
+    width: 50px;
+    padding: .2rem;
+    border-radius: 58px;
+    background-color: $green;
+    text-align: center;
+
+    &Closed {
+      background-color: $blue;
+    }
+  }
+
+  &Time {
+    font-weight: bold;
+    font-size: 20px;
   }
 }
