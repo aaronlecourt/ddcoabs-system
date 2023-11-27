@@ -1,4 +1,5 @@
 import App, { AppContext, AppInitialProps, AppProps } from 'next/app'
+import { SessionProvider } from "next-auth/react"
 import PatientLayout from '../layouts/PatientLayout'
 import DentistLayout from '../layouts/DentistLayout'
 import Header from '../components/Header'
@@ -10,14 +11,14 @@ type AppOwnProps = { role: 'patient' | 'dentist' | null, pathname: string }
  
 export default function DentFix({
   Component,
-  pageProps,
+  pageProps: { session, ...pageProps },
   pathname,
   role
 }: AppProps & AppOwnProps) {
   const currentPage = PAGES.find(page => page.pathname === pathname);
 
   return (
-    <>
+    <SessionProvider session={session}>
       <Header title={currentPage?.name} />
 
       {role === 'patient' ? 
@@ -32,7 +33,7 @@ export default function DentFix({
 
       <Component {...pageProps} />
       }
-    </>
+    </SessionProvider>
   )
 }
  
