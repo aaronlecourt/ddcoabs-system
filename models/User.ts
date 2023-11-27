@@ -52,4 +52,9 @@ const schema = new Schema<IUser>({
 
 const User = models.User || model<IUser>('User', schema);
 
+// Create collection of Model 
+User.createCollection().then(function (collection) { 
+    console.log('User Collection is created!'); 
+});
+
 export default User;
