@@ -2,6 +2,7 @@ import connectMongo from '../utils/connectMongo';
 import Image from 'next/image'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import styles from '../styles/pages/register.module.scss'
+import Button from '../components/Button';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -38,7 +39,7 @@ export default function Register({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Image 
+        <Image
           className={styles.headerLogo}
           src='/logo.png'
           alt='logo'
@@ -49,24 +50,63 @@ export default function Register({
       <div className={styles.form}>
         <div className={styles.formField}>
           <label>Full Name</label>
-          <input type='text' />
+          <div className={styles.formInput}>
+            <input type='text' />
+          </div>
         </div>
         <div className={styles.formField}>
           <label>Email Address</label>
-          <input type='text' />
+          <div className={styles.formInput}>
+            <input type='text' />
+          </div>
         </div>
         <div className={styles.formField}>
           <label>Address</label>
-          <input type='text' />
+          <div className={styles.formInput}>
+            <input type='text' />
+          </div>
         </div>
         <div className={styles.formField}>
           <label>Mobile Number</label>
-          <input type='text' />
+          <div className={styles.formInput}>
+            <input type='text' />
+          </div>
         </div>
         <div className={styles.formField}>
           <label>Date of Birth</label>
-          <input type='text' />
+          <div className={styles.formInput}>
+            <input type='text' />
+          </div>
         </div>
+        <div className={styles.formFieldRow}>
+          <div className={styles.formFieldRowChild}><label style={{ fontWeight: 700 }}>Sex:</label></div>
+          <div className={styles.formFieldRowChild}>
+            <input type='radio' name='sex' id='male-sex' />
+            <label htmlFor='male-sex'>Male</label>
+          </div>
+          <div className={styles.formFieldRowChild}>
+            <input type='radio' name='sex' id='female-sex' />
+            <label htmlFor='female-sex'>Female</label>
+          </div>
+        </div>
+        <div className={styles.formFieldRow}>
+          <div className={styles.formFieldChild}>
+            <label>Password</label>
+            <div className={styles.formInput}>
+              <input type='text' />
+            </div>
+          </div>
+          <div className={styles.formFieldChild}>
+            <label>Confirm Password</label>
+            <div className={styles.formInput}>
+              <input type='text' />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className={styles.loginText}>Already have an existing account? <a href='/login'>Log in here!</a></p>
+      <div className={styles.action}>
+        <Button>Proceed</Button>
       </div>
     </div>
   )
