@@ -1,0 +1,36 @@
+@import '../../styles/variables.scss';
+
+.modalContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.5);
+  z-index: 999;
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  &Open {
+    display: flex;
+  }
+}
+
+.modal {
+  display: block;
+  position: relative;
+  background-color: $white;
+  padding: 2rem;
+  width: 80%;
+  height: auto;
+  overflow: auto;
+  color: $text;
+  font-size: 18px;
+  font-weight: 400;
+
+  h1 {
+    font-weight: 700;
+    font-size: 35px;
+  }
+}

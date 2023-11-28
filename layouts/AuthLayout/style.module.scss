@@ -73,3 +73,19 @@
     font-size: 20px;
   }
 }
+
+.termsAgree {
+  margin-top: 2rem;
+  text-align: right;
+
+  &Action {
+    margin-top: 2rem;
+    display: flex; 
+    justify-content: flex-end;
+  }
+}
+
+.termsConditionText {
+  color: $green;
+  font-weight: 700;
+}

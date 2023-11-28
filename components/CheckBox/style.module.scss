@@ -1,0 +1,66 @@
+@import '../../styles/variables.scss';
+
+.checkbox {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+
+    // Adjust to cover the label
+    &:checked + label::before {
+      background-color: $green; // Change background color when checked
+    }
+
+    &:checked + label::after {
+      display: block;
+    }
+  }
+
+  label {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 0;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 2px;
+      width: 18px;
+      height: 18px;
+      border: 2px solid $grey;
+      border-radius: 3px;
+      background-color: transparent;
+    }
+
+    input:checked + &::before {
+      background-color: $green; 
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 8px;
+      top: 5px; 
+      width: 5px; 
+      height: 10px; 
+      border: solid $white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    input:checked + &::before:after {
+      display: block;
+    }
+  }
+}

@@ -7,8 +7,11 @@ import PAGES from '../constants/pages'
 import '../styles/globals.scss'
 import '../styles/fonts.scss'
 import AuthLayout from '../layouts/AuthLayout'
+import { createContext, useState } from 'react'
  
 type AppOwnProps = { role: 'patient' | 'dentist' | null, pathname: string }
+
+export const DentalFixContext = createContext({})
  
 export default function DentalFix({
   Component,
@@ -17,26 +20,29 @@ export default function DentalFix({
   role
 }: AppProps & AppOwnProps) {
   const currentPage = PAGES.find(page => page.pathname === pathname);
+  const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
 
   return (
-    <SessionProvider session={session}>
-      <Header title={currentPage?.name} />
+    <DentalFixContext.Provider value={{ isTermsModalVisible, setIsTermsModalVisible }}>
+      <SessionProvider session={session}>
+        <Header title={currentPage?.name} />
 
-      {role === 'patient' ? 
-        <PatientLayout>
-          <Component {...pageProps} />
-        </PatientLayout> :
+        {role === 'patient' ? 
+          <PatientLayout>
+            <Component {...pageProps} />
+          </PatientLayout> :
 
-      role === 'dentist' ?
-        <DentistLayout>
-          <Component {...pageProps} />
-        </DentistLayout> :
+        role === 'dentist' ?
+          <DentistLayout>
+            <Component {...pageProps} />
+          </DentistLayout> :
 
-        <AuthLayout>
-          <Component {...pageProps} />
-        </AuthLayout>
-      }
-    </SessionProvider>
+          <AuthLayout>
+            <Component {...pageProps} />
+          </AuthLayout>
+        }
+      </SessionProvider>
+    </DentalFixContext.Provider>
   )
 }
  

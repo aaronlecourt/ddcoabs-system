@@ -8,4 +8,8 @@
   font-weight: 700;
   padding: 1rem 2rem;
   cursor: pointer;
+
+  &Secondary {
+    background: $text;
+  }  
 }

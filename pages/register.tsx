@@ -4,6 +4,9 @@ import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import styles from '../styles/pages/auth.module.scss'
 import pageStyles from '../styles/pages/register.module.scss'
 import Button from '../components/Button';
+import Modal from '../components/Modal';
+import { useContext } from 'react';
+import { DentalFixContext } from './_app';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -37,6 +40,8 @@ export const getServerSideProps: GetServerSideProps<
 export default function Register({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { isTermsModalVisible, setIsTermsModalVisible }: any = useContext(DentalFixContext);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -127,7 +132,7 @@ export default function Register({
       </div>
       <p className={pageStyles.loginText}>Already have an existing account? <a href='/login'>Log in here!</a></p>
       <div className={pageStyles.action}>
-        <Button>Proceed</Button>
+        <Button onClick={() => setIsTermsModalVisible(true)}>Proceed</Button>
       </div>
     </div>
   )
