@@ -46,6 +46,19 @@ export default NextAuth({
     // }),
     // ...add more providers here
   ],
+  callbacks: {
+    session: async ({ session, token }) => {
+      const user = await User.findOne({ _id: token.sub });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.sub,
+          role: user.role
+        },
+      }
+    },
+  },
   session: {
     strategy: "jwt"
   },

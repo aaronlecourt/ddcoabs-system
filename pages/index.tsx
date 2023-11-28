@@ -46,6 +46,7 @@ export default function Home({
     }
   }, []); 
 
+  console.log('session ', session)
   return (
     <>
       {!session && (

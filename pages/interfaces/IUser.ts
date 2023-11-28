@@ -13,5 +13,5 @@ export interface IUser {
     guardianName?: string,
     guardianMobile?: string,
     validID?: string,
-    isAdmin: boolean
+    role: string
 }

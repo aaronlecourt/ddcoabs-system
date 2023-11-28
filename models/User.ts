@@ -41,10 +41,10 @@ const schema = new Schema<IUser>({
     guardianName: String,
     guardianMobile: String,
     validID: String,
-    isAdmin: {
-        type: Boolean,
-        default: false,
+    role: {
+        type: String,
         required: true,
+        enum: ['dentist', 'patient']
     },
 }, {
     timestamps: true
