@@ -76,7 +76,7 @@ export default function Login({
     //   </form>
     // </main>
     <div className={styles.container}>
-      <div className={styles.header}>
+      <div className={styles.header} style={{ marginBottom: '5rem' }}>
         <Image
           className={styles.headerLogo}
           src='/logo.png'
@@ -87,14 +87,20 @@ export default function Login({
       </div>
       <div className={styles.form}>
         <div className={styles.formField}>
-          <label>Email Address</label>
-          <div className='formInput'>
+          <div className='formLabel'>
+            <label>Email Address</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className='formInput formInput--error'>
             <input type='text' onChange={e => setEmail(e.target.value)} />
           </div>
         </div>
         <div className={styles.formField}>
-          <label>Password</label>
-          <div className='formInput'>
+          <div className='formLabel'>
+            <label>Password</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className='formInput formInput--error'>
             <input type='password' onChange={e => setPassword(e.target.value)} />
           </div>
         </div>

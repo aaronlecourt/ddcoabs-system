@@ -50,58 +50,78 @@ export default function Register({
       </div>
       <div className={styles.form}>
         <div className={styles.formField}>
-          <label>Full Name</label>
-          <div className='formInput'>
+          <div className='formLabel'>
+            <label>Full Name</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className='formInput formInput--error'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
-          <label>Email Address</label>
-          <div className='formInput'>
+          <div className='formLabel'>
+            <label>Email Address</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className='formInput formInput--error'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
-          <label>Address</label>
-          <div className='formInput'>
+          <div className='formLabel'>
+            <label>Address</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className='formInput formInput--error'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
-          <label>Mobile Number</label>
-          <div className='formInput'>
+          <div className='formLabel'>
+            <label>Mobile Number</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className='formInput formInput--error'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
-          <label>Date of Birth</label>
-          <div className='formInput'>
+          <div className='formLabel'>
+            <label>Date of Birth</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className='formInput formInput--error'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formFieldRow}>
-          <div className={styles.formFieldRowChild}><label style={{ fontWeight: 700 }}>Sex:</label></div>
+          <div className='formLabelColumn'>
+            <label style={{ fontWeight: 700 }}>Sex:</label>
+            <span className='formLabel__errorMessage'>error message</span>
+          </div>
           <div className={styles.formFieldRowChild}>
-            <input type='radio' name='sex' id='male-sex' />
+            <input type='radio' name='sex' id='male-sex' className='error' />
             <label htmlFor='male-sex'>Male</label>
           </div>
           <div className={styles.formFieldRowChild}>
-            <input type='radio' name='sex' id='female-sex' />
+            <input type='radio' name='sex' id='female-sex' className='error' />
             <label htmlFor='female-sex'>Female</label>
           </div>
         </div>
         <div className={styles.formFieldRow}>
           <div className={styles.formFieldChild}>
             <label>Password</label>
-            <div className='formInput'>
+            <div className='formInput formInput--error'>
               <input type='password' />
             </div>
+            <span className='formLabel__errorMessage'>error message</span>
           </div>
           <div className={styles.formFieldChild}>
             <label>Confirm Password</label>
-            <div className='formInput'>
+            <div className='formInput formInput--error'>
               <input type='password' />
             </div>
+            <span className='formLabel__errorMessage'>error message</span>
           </div>
         </div>
       </div>
