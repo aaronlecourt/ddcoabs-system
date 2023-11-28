@@ -4,6 +4,8 @@ import connectMongo from '../utils/connectMongo';
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import styles from '../styles/pages/home.module.scss'
 import { signIn, signOut, useSession } from "next-auth/react"
+import PatientLayout from '../layouts/PatientLayout';
+import DentistLayout from '../layouts/DentistLayout';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -34,6 +36,8 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
+
+
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -44,27 +48,36 @@ export default function Home({
     if (!session) {
       router.push('/login');
     }
-  }, []); 
+  }, [session]); 
 
-  console.log('session ', session)
+  const renderContent = () => {
+    console.log(session)
+    return (
+      <>
+        {session && (
+          <main className={styles.main}>
+            <>
+              {/* Signed in as {session.user.email} <br /> */}
+              <button onClick={() => signOut()}>Sign out</button>
+            </>
+            <h1 className={styles.title}>Hello {session.user?.email}!</h1>
+            <p className={styles.subtitle}>You can edit your profile information, change your password, and update your patient record here.</p>
+          </main>
+        )}
+      </>
+    )
+  }
+
   return (
     <>
-      {!session && (
-        <>
-          Not signed in <br />
-          <button onClick={() => signIn()}>Sign in</button>
-        </>
-      )}
-      {session && (
-        <main className={styles.main}>
-          <>
-            {/* Signed in as {session.user.email} <br /> */}
-            <button onClick={() => signOut()}>Sign out</button>
-          </>
-          <h1 className={styles.title}>Hello Maria!</h1>
-          <p className={styles.subtitle}>You can edit your profile information, change your password, and update your patient record here.</p>
-        </main>
-      )}
+      {session && session?.user?.role === 'patient' ? 
+        <PatientLayout>
+          {renderContent()} 
+        </PatientLayout> :
+        <DentistLayout>
+          {renderContent()}
+        </DentistLayout>
+      }
     </>
   )
 }

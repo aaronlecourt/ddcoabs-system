@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { useContext } from 'react';
 import { DentalFixContext } from './_app';
+import AuthLayout from '../layouts/AuthLayout';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -42,98 +43,117 @@ export default function Register({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { isTermsModalVisible, setIsTermsModalVisible }: any = useContext(DentalFixContext);
 
+  const isValid = () => {
+    // TODO: Validation
+    return true;
+  }
+
+  const proceed = (e: any) => {
+    e.preventDefault();
+
+    if (isValid()) setIsTermsModalVisible(true);
+  }
+
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      proceed(e);
+    }
+  }
+
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <Image
-          className={styles.headerLogo}
-          src='/logo.png'
-          alt='logo'
-          width={700}
-          height={700}
-        />
-      </div>
-      <div className={styles.form}>
-        <div className={styles.formField}>
-          <div className='formLabel'>
-            <label>Full Name</label>
-            <span className='formLabel__errorMessage'>error message</span>
-          </div>
-          <div className='formInput formInput--error'>
-            <input type='text' />
-          </div>
+    <AuthLayout>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <Image
+            className={styles.headerLogo}
+            src='/logo.png'
+            alt='logo'
+            width={700}
+            height={700}
+          />
         </div>
-        <div className={styles.formField}>
-          <div className='formLabel'>
-            <label>Email Address</label>
-            <span className='formLabel__errorMessage'>error message</span>
-          </div>
-          <div className='formInput formInput--error'>
-            <input type='text' />
-          </div>
-        </div>
-        <div className={styles.formField}>
-          <div className='formLabel'>
-            <label>Address</label>
-            <span className='formLabel__errorMessage'>error message</span>
-          </div>
-          <div className='formInput formInput--error'>
-            <input type='text' />
-          </div>
-        </div>
-        <div className={styles.formField}>
-          <div className='formLabel'>
-            <label>Mobile Number</label>
-            <span className='formLabel__errorMessage'>error message</span>
-          </div>
-          <div className='formInput formInput--error'>
-            <input type='text' />
-          </div>
-        </div>
-        <div className={styles.formField}>
-          <div className='formLabel'>
-            <label>Date of Birth</label>
-            <span className='formLabel__errorMessage'>error message</span>
-          </div>
-          <div className='formInput formInput--error'>
-            <input type='text' />
-          </div>
-        </div>
-        <div className={styles.formFieldRow}>
-          <div className='formLabelColumn'>
-            <label style={{ fontWeight: 700 }}>Sex:</label>
-            <span className='formLabel__errorMessage'>error message</span>
-          </div>
-          <div className={styles.formFieldRowChild}>
-            <input type='radio' name='sex' id='male-sex' className='error' />
-            <label htmlFor='male-sex'>Male</label>
-          </div>
-          <div className={styles.formFieldRowChild}>
-            <input type='radio' name='sex' id='female-sex' className='error' />
-            <label htmlFor='female-sex'>Female</label>
-          </div>
-        </div>
-        <div className={styles.formFieldRow}>
-          <div className={styles.formFieldChild}>
-            <label>Password</label>
-            <div className='formInput formInput--error'>
-              <input type='password' />
+        <div className={styles.form}>
+          <div className={styles.formField}>
+            <div className='formLabel'>
+              <label>Full Name</label>
+              <span className='formLabel__errorMessage'>error message</span>
             </div>
-            <span className='formLabel__errorMessage'>error message</span>
-          </div>
-          <div className={styles.formFieldChild}>
-            <label>Confirm Password</label>
             <div className='formInput formInput--error'>
-              <input type='password' />
+              <input type='text' onKeyDown={handleKeyDown} />
             </div>
-            <span className='formLabel__errorMessage'>error message</span>
+          </div>
+          <div className={styles.formField}>
+            <div className='formLabel'>
+              <label>Email Address</label>
+              <span className='formLabel__errorMessage'>error message</span>
+            </div>
+            <div className='formInput formInput--error'>
+              <input type='text' onKeyDown={handleKeyDown} />
+            </div>
+          </div>
+          <div className={styles.formField}>
+            <div className='formLabel'>
+              <label>Address</label>
+              <span className='formLabel__errorMessage'>error message</span>
+            </div>
+            <div className='formInput formInput--error'>
+              <input type='text' onKeyDown={handleKeyDown} />
+            </div>
+          </div>
+          <div className={styles.formField}>
+            <div className='formLabel'>
+              <label>Mobile Number</label>
+              <span className='formLabel__errorMessage'>error message</span>
+            </div>
+            <div className='formInput formInput--error'>
+              <input type='text' onKeyDown={handleKeyDown} />
+            </div>
+          </div>
+          <div className={styles.formField}>
+            <div className='formLabel'>
+              <label>Date of Birth</label>
+              <span className='formLabel__errorMessage'>error message</span>
+            </div>
+            <div className='formInput formInput--error'>
+              <input type='text' onKeyDown={handleKeyDown} />
+            </div>
+          </div>
+          <div className={styles.formFieldRow}>
+            <div className='formLabelColumn'>
+              <label style={{ fontWeight: 700 }}>Sex:</label>
+              <span className='formLabel__errorMessage'>error message</span>
+            </div>
+            <div className={styles.formFieldRowChild}>
+              <input type='radio' name='sex' id='male-sex' className='error' />
+              <label htmlFor='male-sex'>Male</label>
+            </div>
+            <div className={styles.formFieldRowChild}>
+              <input type='radio' name='sex' id='female-sex' className='error' />
+              <label htmlFor='female-sex'>Female</label>
+            </div>
+          </div>
+          <div className={styles.formFieldRow}>
+            <div className={styles.formFieldChild}>
+              <label>Password</label>
+              <div className='formInput formInput--error'>
+                <input type='password' onKeyDown={handleKeyDown} />
+              </div>
+              <span className='formLabel__errorMessage'>error message</span>
+            </div>
+            <div className={styles.formFieldChild}>
+              <label>Confirm Password</label>
+              <div className='formInput formInput--error'>
+                <input type='password' onKeyDown={handleKeyDown} />
+              </div>
+              <span className='formLabel__errorMessage'>error message</span>
+            </div>
           </div>
         </div>
+        <p className={pageStyles.loginText}>Already have an existing account? <a href='/login'>Log in here!</a></p>
+        <div className={pageStyles.action}>
+          <Button onClick={proceed}>Proceed</Button>
+        </div>
       </div>
-      <p className={pageStyles.loginText}>Already have an existing account? <a href='/login'>Log in here!</a></p>
-      <div className={pageStyles.action}>
-        <Button onClick={() => setIsTermsModalVisible(true)}>Proceed</Button>
-      </div>
-    </div>
+    </AuthLayout>
   )
 }
