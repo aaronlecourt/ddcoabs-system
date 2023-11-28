@@ -111,6 +111,7 @@ export default function Login({
       </div>
       <div className={pageStyles.signupText}>
         <span>Do not have an existing account?</span>
+        <br/>
         <a href='/register'>Sign up here!</a>
       </div>
     </div>
