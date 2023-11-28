@@ -37,14 +37,12 @@ export const getServerSideProps: GetServerSideProps<
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter();
 
-  useEffect(() => {
-    if (!session) {
-      router.push('/login');
-    }
-  }, []); 
+  if (status === "unauthenticated") {
+    return <p>Access Denied</p>
+  }
 
   console.log('session ', session)
   return (
