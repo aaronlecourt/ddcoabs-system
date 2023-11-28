@@ -1,9 +1,8 @@
 import styles from './style.module.scss'
-import { ReactNode } from 'react';
 
-export default function Button({ children }: { children: ReactNode }) {
+export default function Button({ children, ...props }: any) {
   return (
-    <div className={styles.button}>
+    <div className={styles.button} {...props}>
       {children}
     </div>
   )

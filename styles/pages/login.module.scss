@@ -1,0 +1,36 @@
+@import '../variables.scss';
+
+.action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 2rem 0;
+  font-size: 18px;
+
+  a {
+    color: $blue;
+    font-family: Poppins;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+}
+
+.signupText {
+  display: flex; 
+  flex-direction: column;
+  width: 100%;
+  color: $text;
+  font-weight: 400;
+  font-size: 18px;
+
+  a {
+    color: $green;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+}

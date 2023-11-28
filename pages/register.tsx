@@ -1,7 +1,8 @@
 import connectMongo from '../utils/connectMongo';
 import Image from 'next/image'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-import styles from '../styles/pages/register.module.scss'
+import styles from '../styles/pages/auth.module.scss'
+import pageStyles from '../styles/pages/register.module.scss'
 import Button from '../components/Button';
 
 type ConnectionStatus = {
@@ -50,31 +51,31 @@ export default function Register({
       <div className={styles.form}>
         <div className={styles.formField}>
           <label>Full Name</label>
-          <div className={styles.formInput}>
+          <div className='formInput'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
           <label>Email Address</label>
-          <div className={styles.formInput}>
+          <div className='formInput'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
           <label>Address</label>
-          <div className={styles.formInput}>
+          <div className='formInput'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
           <label>Mobile Number</label>
-          <div className={styles.formInput}>
+          <div className='formInput'>
             <input type='text' />
           </div>
         </div>
         <div className={styles.formField}>
           <label>Date of Birth</label>
-          <div className={styles.formInput}>
+          <div className='formInput'>
             <input type='text' />
           </div>
         </div>
@@ -92,20 +93,20 @@ export default function Register({
         <div className={styles.formFieldRow}>
           <div className={styles.formFieldChild}>
             <label>Password</label>
-            <div className={styles.formInput}>
-              <input type='text' />
+            <div className='formInput'>
+              <input type='password' />
             </div>
           </div>
           <div className={styles.formFieldChild}>
             <label>Confirm Password</label>
-            <div className={styles.formInput}>
-              <input type='text' />
+            <div className='formInput'>
+              <input type='password' />
             </div>
           </div>
         </div>
       </div>
-      <p className={styles.loginText}>Already have an existing account? <a href='/login'>Log in here!</a></p>
-      <div className={styles.action}>
+      <p className={pageStyles.loginText}>Already have an existing account? <a href='/login'>Log in here!</a></p>
+      <div className={pageStyles.action}>
         <Button>Proceed</Button>
       </div>
     </div>
