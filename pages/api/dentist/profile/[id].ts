@@ -16,7 +16,7 @@ export default async function userHandler (
     
     const { query, method, body } = req;
     const id = new ObjectId(query.id as string);
-    const user: IUser = await User.findOne({ _id: id, role: ROLES.patient }).exec();
+    const user: IUser = await User.findOne({ _id: id, role: ROLES.dentist }).exec();
 
     if (!user) {
       res.status(HTTP_CODES.expectationFailed).json('User not found');
@@ -31,25 +31,12 @@ export default async function userHandler (
       // Update user profile
       case 'PUT':
         let errorMessages: string[] = [];
-        const requiredRegistrationFields: string[] = ['fullName', 'email', 'address', 'mobile', 'sex'];
-        const requiredProfileFields: string[] = ['age', 'religion', 'nationality', 'bloodType'];
+        const requiredRegistrationFields: string[] = ['fullName', 'email', 'address', 'mobile', 'birthday', 'sex', 'credentials'];
 
         // validation of required registration fields
         requiredRegistrationFields.map(v => {
           if (!body[v]) errorMessages.push(`${v} is required.`);
         });
-
-        // validation of required profile update fields
-        requiredProfileFields.map(v => {
-          if (!body[v]) errorMessages.push(`${v} is required.`);
-        });
-
-        // validation of required fields for minors
-        if (body.age && body.age < 18) {
-          if (!body.guardianName) errorMessages.push('guardianName is required.');
-          if (!body.guardianMobile) errorMessages.push('guardianMobile is required.');
-          if (!body.validID) errorMessages.push('validID is required.');
-        }
 
         // validation of duplicate email
         const emailDuplicate = await User.findOne({ '_id': {$ne: id}, email: body.email });
@@ -63,13 +50,13 @@ export default async function userHandler (
 
         // update user profile
         const updatedUser = await User
-        .findOneAndUpdate({ _id: id, role: ROLES.patient }, body, {
-          new: true,
-          upsert: true, 
-          setDefaultsOnInsert: true, 
-          runValidators: true,
-          context: 'query'
-        }).exec()
+            .findOneAndUpdate({ _id: id, role: ROLES.dentist }, body, {
+            new: true,
+            upsert: true, 
+            setDefaultsOnInsert: true, 
+            runValidators: true,
+            context: 'query'
+            }).exec()
         
         res.status(HTTP_CODES.success).json(updatedUser);
         break;

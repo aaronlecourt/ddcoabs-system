@@ -14,6 +14,7 @@ export interface IUser {
     confirmPassword: string,
     guardianName?: string,
     guardianMobile?: string,
-    validID?: string,
+    validID?: string,     // for patient
+    credentials?: string, // for dentist
     role: string
 }

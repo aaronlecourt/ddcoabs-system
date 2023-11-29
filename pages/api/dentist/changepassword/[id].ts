@@ -17,7 +17,7 @@ export default async function userHandler (
     
     const { query, method, body } = req;
     const id = new ObjectId(query.id as string);
-    const user: IUser = await User.findOne({ _id: id, role: ROLES.patient }).exec();
+    const user: IUser = await User.findOne({ _id: id, role: ROLES.dentist }).exec();
 
     if (!user) {
       res.status(HTTP_CODES.expectationFailed).json('User not found');
@@ -54,7 +54,7 @@ export default async function userHandler (
       
         // update user password
         const updatedUser = await User
-        .findOneAndUpdate({ _id: id, role: ROLES.patient }, { password: hashedConfirmPassword}, {
+        .findOneAndUpdate({ _id: id, role: ROLES.dentist }, { password: hashedConfirmPassword}, {
           new: true,
           upsert: true, 
           setDefaultsOnInsert: true, 

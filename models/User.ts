@@ -39,9 +39,18 @@ const schema = new Schema<IUser>({
         required: true,
         minLength: 8
     },
-    guardianName: String,
-    guardianMobile: String,
-    validID: String,
+    guardianName: {
+        type: String,
+    },
+    guardianMobile: {
+        type: String,
+    },
+    validID: {
+        type: String,
+    },
+    credentials: {
+        type: String,
+    },
     role: {
         type: String,
         required: true,

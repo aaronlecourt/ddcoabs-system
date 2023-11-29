@@ -44,7 +44,7 @@ export default async function userHandler (
         }
 
         // assign user role
-        body.role = ROLES.patient;
+        body.role = ROLES.dentist;
         body.password = hashedConfirmPassword;
 
         // create user
