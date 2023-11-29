@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps<
 export default function Home({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter();
 
   useEffect(() => {
