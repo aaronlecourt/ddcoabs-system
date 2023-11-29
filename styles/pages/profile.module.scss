@@ -23,7 +23,7 @@
 .information {
   position: relative;
   padding: 1rem;
-  margin: 2rem 0;
+  margin: 3rem 0;
   border: 1px solid $grey;
   border-radius: 10px;
   background-color: $white;
@@ -37,4 +37,49 @@
     padding: 0 .5rem;
     background-color: $white;
   }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+
+    &__field {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      margin: 1rem .5rem;
+
+      &__center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      &__label {
+        flex: 0;
+        white-space: nowrap;
+        margin-right: 1rem;
+      }
+    }
+  }
+}
+
+.divider {
+  margin: 2rem 0;
+  border-color: $divider;
+  border-width: 1px;
+  width: 100%;
+}
+
+.minorsTitle {
+  color: $text;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 700;
+  margin-left: .5rem;
 }

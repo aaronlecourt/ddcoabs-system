@@ -83,9 +83,7 @@ export default function Register({
   const proceed = (e: any) => {
     e.preventDefault();
 
-    console.log(formData)
-
-    if (isRegistrationFormValid(formData, setErrorFormData)) setIsTermsModalVisible(true);
+    if (isRegistrationFormValid(formData, errorFormData, setErrorFormData)) setIsTermsModalVisible(true);
   }
 
   return (
