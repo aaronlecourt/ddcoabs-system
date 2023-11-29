@@ -10,6 +10,8 @@ export interface IUser {
     bloodType?: string,
     sex: string,
     password: string,
+    newPassword: string,
+    confirmPassword: string,
     guardianName?: string,
     guardianMobile?: string,
     validID?: string,

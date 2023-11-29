@@ -6,7 +6,7 @@ import NextAuth from "next-auth/next"
 import CredentialsProviders from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
-export default NextAuth({
+export const authOptions = {
   // Configure one or more authentication providers
   providers: [
     CredentialsProviders({
@@ -47,18 +47,31 @@ export default NextAuth({
     // ...add more providers here
   ],
   callbacks: {
+    // jwt: async ({ token, user }) => {
+    //   // the user object is what returned from the Credentials login, it has `accessToken` from the server `/login` endpoint
+    //   // assign the accessToken to the `token` object, so it will be available on the `session` callback
+    //   if (user) {
+    //     token.accessToken = user.accessToken
+    //   }
+    //   return token
+    // },
     session: async ({ session, token }) => {
       const user = await User.findOne({ _id: token.sub });
+      // Object.assign(session, {
+      //   accessToken: token.accessToken
+      // })
       return {
         ...session,
         user: {
           ...session.user,
           id: token.sub,
-          role: user.role
+          role: user.role,
+          // jwt: true
         },
       }
     },
   },
+
   session: {
     strategy: "jwt"
   },
@@ -69,4 +82,6 @@ export default NextAuth({
 
   // A database is optional, but required to persist accounts in a database
   // database: process.env.DATABASE_URL,
-})
+};
+
+export default NextAuth(authOptions)

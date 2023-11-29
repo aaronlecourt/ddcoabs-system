@@ -1,8 +1,6 @@
 import connectMongo from '../../../utils/connectMongo';
 import DentistService from '../../../models/DentistService';
-
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IDentistService } from '../../interfaces/IDentistService'
 
 export default async function userHandler (
   req: NextApiRequest,

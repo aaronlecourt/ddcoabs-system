@@ -1,5 +1,6 @@
 import { IUser } from '../pages/interfaces/IUser';
 import { Schema, model, models } from 'mongoose';
+import ROLES from '../constants/roles'
 
 const schema = new Schema<IUser>({
     // id: ObjectId,
@@ -44,7 +45,7 @@ const schema = new Schema<IUser>({
     role: {
         type: String,
         required: true,
-        enum: ['dentist', 'patient']
+        enum: [ROLES.dentist, ROLES.patient]
     },
 }, {
     timestamps: true

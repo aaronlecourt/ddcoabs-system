@@ -1,8 +1,8 @@
-import connectMongo from '../../../utils/connectMongo';
-import User from '../../../models/User';
+import connectMongo from '../../../../utils/connectMongo';
+import User from '../../../../models/User';
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IUser } from '../../interfaces/IUser'
+import type { IUser } from '../../../interfaces/IUser'
 import bcrypt from 'bcryptjs'
 
 export default async function userHandler (
