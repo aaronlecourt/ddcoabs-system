@@ -56,6 +56,7 @@ export default async function userHandler (
           
         if (errorMessages.length) {
             res.status(HTTP_CODES.expectationFailed).json(errorMessages);
+            return;
         }
 
         // set default values
