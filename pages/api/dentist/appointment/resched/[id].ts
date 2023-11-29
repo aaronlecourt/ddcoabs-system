@@ -158,10 +158,6 @@ export default async function userHandler (
           body.timeSlots[i] = true;
         }
 
-        // Object.assign(appointment, body, {
-        //   timeSlots: body.timeSlots
-        // });
-
         const appointmentResched = await Appointment
           .findOneAndUpdate({ _id: id }, body, {
             new: true,

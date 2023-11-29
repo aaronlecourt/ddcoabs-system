@@ -24,7 +24,7 @@ export default async function userHandler (
     const { query, method, body } = req  
   
     switch (method) {
-      // dentist confirmation of appointment
+      // patient reschedule of appointment, status to pending
       case 'PUT':
         const id = new ObjectId(query.id as string);
 
@@ -39,25 +39,23 @@ export default async function userHandler (
 
         let errorMessages: string[] = [];
 
-        const requiredBookingConfirmationFields = [
-          'dentistId',
-          'patientId',
+        const requiredBookingReschedFields = [
+          'date',
           'startTime',
           'endTime',
         ];
         const requiredAppointmentFields = [
           'dentistServiceId',
-          'date',
           'timeUnit',
           'price',
           'paymentMethod'
         ];
 
         // validation for required appointment confirmation fields
-        requiredBookingConfirmationFields.map(v => {
+        requiredBookingReschedFields.map(v => {
           if (!body[v]) errorMessages.push(`${v} is required.`);
 
-          if (!['dentistId', 'patientId'].includes(v)) {
+          if (!['date'].includes(v)) {
             if (body[v] && !Number.isInteger(body[v]))
             errorMessages.push(`${v} should be a valid integer.`);
 
@@ -71,24 +69,6 @@ export default async function userHandler (
           if (!appointment[v]) errorMessages.push(`${v} is required.`);
         })
       
-        // validate patient id
-        const patient = await User
-          .findOne({ _id: body.patientId, role: ROLES.patient })
-          .exec();
-
-        if (!patient) {
-          errorMessages.push('patientId is invalid or not found.');
-        }
-
-        // validate dentist id
-        const dentist = await User
-          .findOne({ _id: body.dentistId, role: ROLES.dentist })
-          .exec();
-
-        if (!dentist) {
-          errorMessages.push('dentistId is invalid or not found.');
-        }
-
         // validate time unit
         if (!TIME_UNIT.includes(appointment.timeUnit)) {
           errorMessages.push(`Time should be in ${TIME_UNIT}`);
@@ -122,43 +102,26 @@ export default async function userHandler (
             errorMessages.push(`Payment Method should in ${PAYMENT_METHOD}`);
         }
           
-        // check schedule conflicts for dentist
-        const dentistScheduleConflict = await Appointment
-          .find({
-            dentistId: body.dentistId,
-            date: appointment.date,
-            timeSlots: { $ne: null }
-          })
-          .exec();
-
-        if (dentistScheduleConflict && dentistScheduleConflict.length) {
-          dentistScheduleConflict.map(sched => {
-            for (let i=body.startTime; i<body.endTime; i++) {
-              if (sched.timeSlots[i]) {
-                errorMessages.push(`Dentist time slot conflict with appointment id ${appointment._id} at ${i} ${appointment.timeUnit}`);
-              }
-            }
-          });
-        }
-
         // check schedule conflicts for patient
-        const patientScheduleConflict = await Appointment
-          .find({
-            patientId: body.patientId,
-            date: appointment.date,
-            timeSlots: { $ne: null }
-          })
-          .exec();
-
-        if (patientScheduleConflict && patientScheduleConflict.length) {
-          patientScheduleConflict.map(sched => {
-            for (let i=body.startTime; i<body.endTime; i++) {
-              if (sched.timeSlots[i]) {
-                // TO DO: notify patient about schedule conflict
-                // errorMessages.push(`Patient time slot conflict with appointment id ${appointment._id} at ${i} ${appointment.timeUnit}`);
+        if (appointment.patientId) {
+            const patientScheduleConflict = await Appointment
+            .find({
+              patientId: appointment.patientId,
+              date: appointment.date,
+              timeSlots: { $ne: null }
+            })
+            .exec();
+  
+          if (patientScheduleConflict && patientScheduleConflict.length) {
+            patientScheduleConflict.map(sched => {
+              for (let i=body.startTime; i<body.endTime; i++) {
+                if (sched.timeSlots[i]) {
+                  // TO DO: notify patient about schedule conflict
+                  errorMessages.push(`Patient time slot conflict with appointment id ${appointment._id} at ${i} ${appointment.timeUnit}`);
+                }
               }
-            }
-          });
+            });
+          }  
         }
 
         if (errorMessages.length) {
@@ -167,14 +130,15 @@ export default async function userHandler (
         }
 
         // set default values
-        body.status = APPOINTMENT_STATUS.confirmed;
+        body.status = APPOINTMENT_STATUS.pending;
+        body.date = new Date(new Date(body.date).toUTCString()).toISOString();
         body.timeSlots = {};
 
         for (let i=body.startTime; i<body.endTime; i++) {
           body.timeSlots[i] = true;
         }
 
-        const appointmentConfirmed = await Appointment
+        const appointmentResched = await Appointment
           .findOneAndUpdate({ _id: id }, body, {
             new: true,
             upsert: true, 
@@ -182,7 +146,8 @@ export default async function userHandler (
             runValidators: true,
             context: 'query'
           }).exec()
-        res.status(HTTP_CODES.success).json(appointmentConfirmed);
+        res.status(HTTP_CODES.success).json(appointmentResched);
+
         break
       default:
           res.setHeader('Allow', ['PUT'])
