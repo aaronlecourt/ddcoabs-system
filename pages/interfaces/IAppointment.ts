@@ -1,13 +1,16 @@
 import { ObjectId } from 'mongodb';
 
 export interface IAppointment {
-    dentist?: ObjectId,
-    patient?: ObjectId,
-    dentistService: ObjectId,
+    dentistId?: ObjectId,
+    patientId?: ObjectId,
+    dentistServiceId: ObjectId,
     concern: string,
     status: string,
     date: Date,
-    time: string,
+    timeUnit: string,
+    startTime?: number,
+    endTime?: number,
+    timeSlots: object,
     price: number,
     paymentMethod: string,
     details?: object // patient form

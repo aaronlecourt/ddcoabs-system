@@ -20,14 +20,19 @@ export default async function userHandler (
     const user: IUser = await User.findOne({ _id: id, role: ROLES.dentist }).exec();
 
     if (!user) {
-      res.status(HTTP_CODES.expectationFailed).json('User not found');
+      res.status(HTTP_CODES.notFound).json('User not found');
+      return;
     }
 
     switch (method) {
       // Update user password
       case 'PUT':
         let errorMessages: string[] = [];
-        const requiredFields: string[] = ['password', 'newPassword', 'confirmPassword'];
+        const requiredFields: string[] = [
+          'password',
+          'newPassword',
+          'confirmPassword'
+        ];
         const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'g');
 
         // validation of required change password fields

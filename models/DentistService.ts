@@ -9,7 +9,10 @@ const schema = new Schema<IDentistService>({
         required: true,
         unique: true
     },
-    dentistServiceType: {
+    description: {
+        type: String,
+    },
+    dentistServiceTypeId: {
         type: Types.ObjectId,
         required: true,
     },

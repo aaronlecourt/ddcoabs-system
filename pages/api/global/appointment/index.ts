@@ -1,8 +1,8 @@
-import connectMongo from '../../../utils/connectMongo';
-import Appointment from '../../../models/Appointment';
+import connectMongo from '../../../../utils/connectMongo';
+import Appointment from '../../../../models/Appointment';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IAppointment } from '../../interfaces/IAppointment'
-import APPOINTMENT_STATUS from "../../../constants/appointmentStatus";
+import type { IAppointment } from '../../../interfaces/IAppointment'
+import APPOINTMENT_STATUS from "../../../../constants/appointmentStatus";
 import { getToken } from "next-auth/jwt"
 
 const secret = process.env.NEXTAUTH_SECRET
@@ -15,14 +15,14 @@ export default async function userHandler (
   try {
     await connectMongo();
 
-    const token = await getToken({ req, secret })
+    // const token = await getToken({ req, secret })
     
-    if (!token) {
-      res.status(401).json({ unauthorized: true })
-    } else {
-      console.log('sessionappt ', token)
-      return
-    }
+    // if (!token) {
+    //   res.status(401).json({ unauthorized: true })
+    // } else {
+    //   console.log('sessionappt ', token)
+    //   return
+    // }
 
     const { query, method, body } = req  
   
@@ -33,8 +33,8 @@ export default async function userHandler (
 
         if (query) {
           if (query.status) {
-            if (!APPOINTMENT_STATUS.find(a => a == query.status)) {
-              res.status(417).json(`status should be in ${APPOINTMENT_STATUS}`);
+            if (!Object.values(APPOINTMENT_STATUS).find(a => a == query.status)) {
+              res.status(417).json(`status should be in ${Object.values(APPOINTMENT_STATUS)}`);
             }
 
             Object.assign(mongoDbQuery, { status: query.status });

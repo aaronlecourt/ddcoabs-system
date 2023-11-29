@@ -19,7 +19,16 @@ export default async function userHandler (
     switch (method) {
       case 'POST':
         let errorMessages: string[] = [];
-        const requiredRegistrationFields: string[] = ['fullName', 'email', 'address', 'mobile', 'birthday', 'sex', 'password', 'confirmPassword'];
+        const requiredRegistrationFields: string[] = [
+          'fullName',
+          'email',
+          'address',
+          'mobile',
+          'birthday',
+          'sex',
+          'password',
+          'confirmPassword'
+        ];
         const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'g');
 
         // validation of required registration fields
@@ -53,12 +62,12 @@ export default async function userHandler (
             return;
         }
 
-        // assign user role
+        // assign default values
         body.role = ROLES.patient;
         body.password = hashedConfirmPassword;
 
         // create user
-        const userCreated = await User.create(body);
+        const userCreated: IUser = await User.create(body);
         
         res.status(HTTP_CODES.success).json(userCreated);
         break;

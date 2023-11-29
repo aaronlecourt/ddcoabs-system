@@ -1,6 +1,6 @@
-export default [
-    'Confirmed',
-    'Pending',
-    'Cancelled',
-    'Done'    
-];
+export default {
+    confirmed: 'Confirmed',
+    pending: 'Pending',
+    canceled: 'Canceled',
+    done: 'Done'
+};

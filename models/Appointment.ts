@@ -2,16 +2,17 @@ import { Types } from "mongoose"
 import { IAppointment } from '../pages/interfaces/IAppointment';
 import { Schema, model, models } from 'mongoose';
 import APPOINTMENT_STATUS from "../constants/appointmentStatus";
+import PAYMENT_METHOD from "../constants/paymentMethod";
 
 const schema = new Schema<IAppointment>({
     // id: ObjectId,
-    dentist: {
+    dentistId: {
         type: Types.ObjectId,
     },
-    patient: {
+    patientId: {
         type: Types.ObjectId,
     },
-    dentistService: {
+    dentistServiceId: {
         type: Types.ObjectId,
         required: true
     },
@@ -20,7 +21,7 @@ const schema = new Schema<IAppointment>({
     },
     status: {
         type: String,
-        enum: APPOINTMENT_STATUS,
+        enum: Object.values(APPOINTMENT_STATUS),
         required: true,
         default: 'Pending'
     },
@@ -28,9 +29,18 @@ const schema = new Schema<IAppointment>({
         type: Date,
         required: true
     },
-    time: {
+    timeUnit: {
         type: String,
         required: true
+    },
+    startTime: {
+        type: Number,
+    },
+    endTime: {
+        type: Number,
+    },
+    timeSlots: {
+        type: Object,
     },
     // derived from dentistservices by id
     price: {
@@ -40,7 +50,7 @@ const schema = new Schema<IAppointment>({
     paymentMethod: {
         type: String,
         required: true,
-        enum: ['GCash', 'Pay in Cash']
+        enum: PAYMENT_METHOD
     },
     // patient form
     details: {

@@ -19,7 +19,7 @@ export default async function userHandler (
     const user: IUser = await User.findOne({ _id: id, role: ROLES.dentist }).exec();
 
     if (!user) {
-      res.status(HTTP_CODES.expectationFailed).json('User not found');
+      res.status(HTTP_CODES.notFound).json('User not found');
     }
 
     switch (method) {
@@ -31,7 +31,15 @@ export default async function userHandler (
       // Update user profile
       case 'PUT':
         let errorMessages: string[] = [];
-        const requiredRegistrationFields: string[] = ['fullName', 'email', 'address', 'mobile', 'birthday', 'sex', 'credentials'];
+        const requiredRegistrationFields: string[] = [
+          'fullName',
+          'email',
+          'address',
+          'mobile',
+          'birthday',
+          'sex',
+          'credentials'
+        ];
 
         // validation of required registration fields
         requiredRegistrationFields.map(v => {
