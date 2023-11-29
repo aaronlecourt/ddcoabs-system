@@ -36,18 +36,5 @@ export const isLoginFormValid = (formData: FormData, setErrorFormData: Dispatch<
     result = false;
   }
 
-  // Password Validation
-  if (formData.password && !isPasswordValid(formData.password)) {
-    setErrorFormData(prevErrorFormData => ({
-      ...prevErrorFormData,
-      ['password']: {
-        error: true,
-        message: 'Password is invalid'
-      }
-    }))
-
-    result = false;
-  }
-
   return result;
 }

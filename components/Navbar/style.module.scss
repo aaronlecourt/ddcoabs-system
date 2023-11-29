@@ -1,6 +1,7 @@
 @import '../../styles/variables.scss';
 
 .navbar {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -46,10 +47,18 @@
     font-weight: 700;
     line-height: normal;
 
+    &:hover {
+      color: $green;
+    }
+
     &--contained {
       border-radius: 19px;
       background-color: $white;
       color: $blue;
+
+      &:hover {
+        color: $green;
+      }
     }
   }
 
@@ -63,9 +72,41 @@
 
   &__profileIcon {
     border-radius: 50%;
-    width: 72px;
-    height: 72px;
+    width: 43px;
+    height: 43px;
     background-color: $grey;
     margin-right: .5rem;
+  }
+
+  &__profileDropdown {
+    display: block;
+    position: absolute;
+    right: 2rem;
+    bottom: -190px;
+    background-color: $white;
+    border-radius: 10px;
+    box-shadow: 0 4px 4px rgba(0,0,0,.25);
+    padding: 1rem;
+    color: $black;
+    transition: all 0.4s ease;
+
+    a {
+      color: $black;
+      text-decoration: none;
+      display: block;
+      padding: 12px 1rem;
+      font-size: 20px;
+      font-weight: 300;
+      cursor: pointer;
+
+      &:nth-child(2) {
+        border-bottom: 1px solid $black;
+        border-top: 1px solid $black;
+      }
+
+      &:hover {
+        color: $blue;
+      }
+    }
   }
 }

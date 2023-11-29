@@ -45,7 +45,17 @@ export const getServerSideProps: GetServerSideProps<
 export default function Login({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (session && session.user) {
+      router.push('/');
+    }
+  }, [session, status, router]);
+
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
@@ -55,17 +65,7 @@ export default function Login({
     email: { error: false, message: null },
     password: { error: false, message: null },
   })
-  const router = useRouter();
 
-  useEffect(() => {
-    if (session && session.user) router.replace('/');
-  }, [session])
-
-  const handleKeyDown = (e: any) => {
-    if (e.key === 'Enter') {
-      handleSubmit(e)
-    }
-  }
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -92,57 +92,59 @@ export default function Login({
   }
 
   return (
-    <AuthLayout>
-      <div className={styles.container}>
-        <div className={styles.header} style={{ marginBottom: '5rem' }}>
-          <Image
-            className={styles.headerLogo}
-            src='/logo.png'
-            alt='logo'
-            width={700}
-            height={700}
-          />
-        </div>
-        <div className={styles.form}>
-          <div className={styles.formField}>
-            <div className='formLabel'>
-              <label>Email Address</label>
-              {errorFormData.email.error && <span className='formLabel__errorMessage'>{errorFormData.email.message}</span>}
+    <>
+      {(status !== 'loading' && !session) && <AuthLayout>
+        <div className={styles.container}>
+          <div className={styles.header} style={{ marginBottom: '5rem' }}>
+            <Image
+              className={styles.headerLogo}
+              src='/logo.png'
+              alt='logo'
+              width={350}
+              height={90}
+            />
+          </div>
+          <div className={styles.form}>
+            <div className={styles.formField}>
+              <div className='formLabel'>
+                <label>Email Address</label>
+                {errorFormData.email.error && <span className='formLabel__errorMessage'>{errorFormData.email.message}</span>}
+              </div>
+              <div className={`formInput ${errorFormData.email.error ? 'formInput--error' : ''}`}>
+                <input type='text'
+                  onKeyDown={e => handleFormEnter(e, proceed)}
+                  name='email'
+                  value={formData.email}
+                  onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                />
+              </div>
             </div>
-            <div className={`formInput ${errorFormData.email.error ? 'formInput--error' : ''}`}>
-              <input type='text'
-                onKeyDown={e => handleFormEnter(e, proceed)}
-                name='email'
-                value={formData.email}
-                onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
-              />
+            <div className={styles.formField}>
+              <div className='formLabel'>
+                <label>Password</label>
+                {errorFormData.password.error && <span className='formLabel__errorMessage'>{errorFormData.password.message}</span>}
+              </div>
+              <div className={`formInput ${errorFormData.password.error ? 'formInput--error' : ''}`}>
+                <input type='password'
+                  onKeyDown={e => handleFormEnter(e, proceed)}
+                  name='password'
+                  value={formData.password}
+                  onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                />
+              </div>
             </div>
           </div>
-          <div className={styles.formField}>
-            <div className='formLabel'>
-              <label>Password</label>
-              {errorFormData.password.error && <span className='formLabel__errorMessage'>{errorFormData.password.message}</span>}
-            </div>
-            <div className={`formInput ${errorFormData.password.error ? 'formInput--error' : ''}`}>
-              <input type='password'
-                onKeyDown={e => handleFormEnter(e, proceed)}
-                name='password'
-                value={formData.password}
-                onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
-              />
-            </div>
+          <div className={pageStyles.action}>
+            <a href='/reset-password'>Reset Password?</a>
+            <Button onClick={proceed}>Proceed</Button>
+          </div>
+          <div className={pageStyles.signupText}>
+            <span>Do not have an existing account?</span>
+            <br />
+            <a href='/register'>Sign up here!</a>
           </div>
         </div>
-        <div className={pageStyles.action}>
-          <a href='/reset-password'>Reset Password?</a>
-          <Button onClick={proceed}>Proceed</Button>
-        </div>
-        <div className={pageStyles.signupText}>
-          <span>Do not have an existing account?</span>
-          <br />
-          <a href='/register'>Sign up here!</a>
-        </div>
-      </div>
-    </AuthLayout>
+      </AuthLayout>}
+    </>
   )
 }

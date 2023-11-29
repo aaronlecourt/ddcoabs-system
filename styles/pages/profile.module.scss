@@ -1,0 +1,40 @@
+@import '../variables.scss';
+
+.main {
+  padding: 2rem;
+}
+
+.title {
+  color: $green;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.subtitle {
+  color: $text;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.information {
+  position: relative;
+  padding: 1rem;
+  margin: 2rem 0;
+  border: 1px solid $grey;
+  border-radius: 10px;
+  background-color: $white;
+
+  &__title {
+    position: absolute;
+    top: -15px;
+    color: $text;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 0 .5rem;
+    background-color: $white;
+  }
+}

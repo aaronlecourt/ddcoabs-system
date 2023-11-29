@@ -6,7 +6,7 @@ import '../styles/globals.scss'
 import '../styles/fonts.scss'
 import { createContext, useState } from 'react'
  
-type AppOwnProps = { role: 'patient' | 'dentist' | null, pathname: string }
+type AppOwnProps = { pathname: string }
 
 export const DentalFixContext = createContext({})
  
@@ -14,7 +14,6 @@ export default function DentalFix({
   Component,
   pageProps: { session, ...pageProps },
   pathname,
-  role
 }: AppProps & AppOwnProps) {
   const currentPage = PAGES.find(page => page.pathname === pathname);
   const [isTermsModalVisible, setIsTermsModalVisible] = useState(false);
@@ -34,6 +33,5 @@ DentalFix.getInitialProps = async (
 ): Promise<AppOwnProps & AppInitialProps> => {
   const ctx = await App.getInitialProps(context)
 
-  // TODO: modify here to check role after login
-  return { ...ctx, role: null, pathname: context.ctx.pathname }
+  return { ...ctx, pathname: context.ctx.pathname }
 }
