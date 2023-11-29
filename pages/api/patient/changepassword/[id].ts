@@ -28,6 +28,7 @@ export default async function userHandler (
       case 'PUT':
         let errorMessages: string[] = [];
         const requiredFields: string[] = ['password', 'newPassword', 'confirmPassword'];
+        const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'g');
 
         // validation of required change password fields
         requiredFields.map(v => {
@@ -37,13 +38,21 @@ export default async function userHandler (
         // password validations
         const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
 
+        if (body.confirmPassword.length < 8 || body.newPassword.length < 8) {
+          errorMessages.push('newPassword and confirmPassword should be at least 8 characters.');
+        }
+
+        if (!passwordRegex.test(body.confirmPassword)) {
+          errorMessages.push('password should contain at least a capital letter, small letter, special characters and numbers.');
+        }
+
         const oldPasswordMatch = await bcrypt.compare(body.password, user.password);
         if (!oldPasswordMatch) {
-            errorMessages.push('password should match old password');
+            errorMessages.push('password should match old password.');
         }
 
         if (body.newPassword !== body.confirmPassword) {
-          errorMessages.push('newPassword should match confirmPassword');
+          errorMessages.push('newPassword should match confirmPassword.');
         }
 
         // return error if any of the validations failed
