@@ -14,32 +14,28 @@ export default async function userHandler (
   try {    
     await connectMongo();
     
-    const { query, method, body } = req  
+    const { query, method, body } = req
   
     switch (method) {
       case 'POST':
-        const user: IUser = new User(body);
         let errorMessages: string[] = [];
+        const requiredRegistrationFields: string[] = ['fullName', 'email', 'address', 'mobile', 'sex', 'password', 'confirmPassword'];
 
         // validation of required registration fields
-        if (!user.fullName) errorMessages.push('Full Name is required.');
-        if (!user.email) errorMessages.push('Email Address is required.');
-        if (!user.address) errorMessages.push('Address is required.');
-        if (!user.mobile) errorMessages.push('Mobile Number is required.');
-        if (!user.sex) errorMessages.push('Sex is required.');
-        if (!user.password) errorMessages.push('Password is required.');
-        if (!user.confirmPassword) errorMessages.push('Confirm Password is required.');
-
+        requiredRegistrationFields.map(v => {
+            if (!body[v]) errorMessages.push(`${v} is required.`);
+        });
+  
         // validation of duplicate email
-        const emailDuplicate = await User.findOne({ email: user.email });
+        const emailDuplicate = await User.findOne({ email: body.email });
         if (emailDuplicate) errorMessages.push('Email address already exists');
 
+        const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
+
         // validation of matching password and confirmPassword
-        user.password = await bcrypt.hash(user.password, 10);
-        user.confirmPassword = await bcrypt.hash(user.confirmPassword, 10);
-        if (user.password !== user.confirmPassword) {
-            errorMessages.push('Password and Confirm Password does not match');
-        }
+        if (body.password !== body.confirmPassword) {
+            errorMessages.push('password and confirmPassword does not match');
+        }  
         
         // return error if any of the validations failed
         if (errorMessages.length) {
@@ -48,10 +44,11 @@ export default async function userHandler (
         }
 
         // assign user role
-        user.role = ROLES.patient;
+        body.role = ROLES.patient;
+        body.password = hashedConfirmPassword;
 
         // create user
-        const userCreated = await User.create(user);
+        const userCreated = await User.create(body);
         
         res.status(HTTP_CODES.success).json(userCreated);
         break;
