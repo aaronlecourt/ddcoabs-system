@@ -32,19 +32,18 @@ export default async function userHandler (
 
         // validation of required change password fields
         requiredFields.map(v => {
-          if (!body[v]) errorMessages.push(`${v} is required.`);
+          if (!body[v])
+            errorMessages.push(`${v} is required.`);
+
+          if (body[v] && body[v].length < 8)
+            errorMessages.push(`${v} should be at least 8 characters.`);
+      
+          if (body[v] && !passwordRegex.test(body[v]))
+            errorMessages.push(`${v} should contain at least a capital letter, small letter, special characters and numbers.`);
         })
         
         // password validations
         const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
-
-        if (body.confirmPassword.length < 8 || body.newPassword.length < 8) {
-          errorMessages.push('newPassword and confirmPassword should be at least 8 characters.');
-        }
-
-        if (!passwordRegex.test(body.confirmPassword)) {
-          errorMessages.push('password should contain at least a capital letter, small letter, special characters and numbers.');
-        }
 
         const oldPasswordMatch = await bcrypt.compare(body.password, user.password);
         if (!oldPasswordMatch) {
