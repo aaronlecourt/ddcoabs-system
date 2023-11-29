@@ -88,7 +88,7 @@ export default function Login({
   const proceed = (e: any) => {
     e.preventDefault();
 
-    if (isLoginFormValid(formData, setErrorFormData)) handleSubmit(e);
+    if (isLoginFormValid(formData, errorFormData, setErrorFormData)) handleSubmit(e);
   }
 
   return (

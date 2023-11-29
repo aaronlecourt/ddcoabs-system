@@ -15,7 +15,10 @@ export default function Home() {
 
     if (!session) {
       router.push('/login');
+    } else {
+      // TODO: Check User if profile is completed, if not, redirect to /profile
     }
+
   }, [session, status, router]);
 
   const renderContent = () => {

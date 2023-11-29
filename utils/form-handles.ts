@@ -8,6 +8,7 @@ export const handleFormDataChange = (e: any, setFormData: any, setErrorFormData:
   setErrorFormData((prevErrorFormData: any) => ({
     ...prevErrorFormData,
     [name]: {
+      optional: prevErrorFormData[name]?.optional || false,
       error: false,
       message: null
     }
