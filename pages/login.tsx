@@ -8,8 +8,10 @@ import styles from '../styles/pages/auth.module.scss';
 import pageStyles from '../styles/pages/login.module.scss';
 import Image from 'next/image'
 import Button from '../components/Button';
-import pages from '../constants/pages';
 import AuthLayout from '../layouts/AuthLayout';
+import { FormData, ErrorFormData } from '../types/login';
+import { isLoginFormValid } from '../validations/login';
+import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -43,10 +45,16 @@ export const getServerSideProps: GetServerSideProps<
 export default function Login({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const { data: session } = useSession()
+  const [formData, setFormData] = useState<FormData>({
+    email: '',
+    password: '',
+  })
 
+  const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
+    email: { error: false, message: null },
+    password: { error: false, message: null },
+  })
   const router = useRouter();
 
   useEffect(() => {
@@ -58,13 +66,12 @@ export default function Login({
       handleSubmit(e)
     }
   }
-
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
-      const res = await signIn('credentials', { email, password, redirect: false })
+      const { email, password } = formData;
+      const res: any = await signIn('credentials', { email, password, redirect: false })
 
       if (res.error) {
         console.log(res.error);
@@ -76,8 +83,14 @@ export default function Login({
     } catch (error) {
       console.log(error)
     }
-
   }
+
+  const proceed = (e: any) => {
+    e.preventDefault();
+
+    if (isLoginFormValid(formData, setErrorFormData)) handleSubmit(e);
+  }
+
   return (
     <AuthLayout>
       <div className={styles.container}>
@@ -94,25 +107,35 @@ export default function Login({
           <div className={styles.formField}>
             <div className='formLabel'>
               <label>Email Address</label>
-              <span className='formLabel__errorMessage'>error message</span>
+              {errorFormData.email.error && <span className='formLabel__errorMessage'>{errorFormData.email.message}</span>}
             </div>
-            <div className='formInput formInput--error'>
-              <input type='text' onChange={e => setEmail(e.target.value)} onKeyDown={handleKeyDown} />
+            <div className={`formInput ${errorFormData.email.error ? 'formInput--error' : ''}`}>
+              <input type='text'
+                onKeyDown={e => handleFormEnter(e, proceed)}
+                name='email'
+                value={formData.email}
+                onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+              />
             </div>
           </div>
           <div className={styles.formField}>
             <div className='formLabel'>
               <label>Password</label>
-              <span className='formLabel__errorMessage'>error message</span>
+              {errorFormData.password.error && <span className='formLabel__errorMessage'>{errorFormData.password.message}</span>}
             </div>
-            <div className='formInput formInput--error'>
-              <input type='password' onChange={e => setPassword(e.target.value)} onKeyDown={handleKeyDown} />
+            <div className={`formInput ${errorFormData.password.error ? 'formInput--error' : ''}`}>
+              <input type='password'
+                onKeyDown={e => handleFormEnter(e, proceed)}
+                name='password'
+                value={formData.password}
+                onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+              />
             </div>
           </div>
         </div>
         <div className={pageStyles.action}>
           <a href='/reset-password'>Reset Password?</a>
-          <Button onClick={handleSubmit}>Proceed</Button>
+          <Button onClick={proceed}>Proceed</Button>
         </div>
         <div className={pageStyles.signupText}>
           <span>Do not have an existing account?</span>
