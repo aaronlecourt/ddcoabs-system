@@ -29,7 +29,7 @@ export default async function userHandler (
         const id = new ObjectId(query.id as string);
 
         const appointment = await Appointment
-          .findOne({ _id: id, status: APPOINTMENT_STATUS.pending })
+          .findOne({ _id: id })
           .exec();
 
         if (!appointment) {
@@ -41,8 +41,7 @@ export default async function userHandler (
 
         const requiredBookingReschedFields = [
           'date',
-          'startTime',
-          'endTime',
+          'timeUnit'
         ];
         const requiredAppointmentFields = [
           'dentistServiceId',
@@ -54,14 +53,6 @@ export default async function userHandler (
         // validation for required appointment confirmation fields
         requiredBookingReschedFields.map(v => {
           if (!body[v]) errorMessages.push(`${v} is required.`);
-
-          if (!['date'].includes(v)) {
-            if (body[v] && !Number.isInteger(body[v]))
-            errorMessages.push(`${v} should be a valid integer.`);
-
-          if (body[v] && Number.isInteger(body[v] && (body[v] < 0 || body[v] > 23)))
-            errorMessages.push(`${v} should be between 0 and 23.`);
-          }
         })
 
         // validation for required existing appointment fields
@@ -70,22 +61,8 @@ export default async function userHandler (
         })
       
         // validate time unit
-        if (!TIME_UNIT.includes(appointment.timeUnit)) {
+        if (!TIME_UNIT.includes(body.timeUnit)) {
           errorMessages.push(`Time should be in ${TIME_UNIT}`);
-        }
-
-        // validate start time
-        if (body.startTime >= body.endTime) {
-          errorMessages.push('startTime should be less endTime.');
-        }
-
-        if (appointment.timeUnit === 'AM' && body.startTime > 11) {
-          errorMessages.push('startTime should be less than 11.');
-        }
-
-        // validate end time
-        if (appointment.timeUnit === 'PM' && body.endTime < 12 ) {
-          errorMessages.push('startTime should be more than 12.');
         }
 
         // validate dentistService
@@ -102,28 +79,6 @@ export default async function userHandler (
             errorMessages.push(`Payment Method should in ${PAYMENT_METHOD}`);
         }
           
-        // check schedule conflicts for patient
-        if (appointment.patientId) {
-            const patientScheduleConflict = await Appointment
-            .find({
-              patientId: appointment.patientId,
-              date: appointment.date,
-              timeSlots: { $ne: null }
-            })
-            .exec();
-  
-          if (patientScheduleConflict && patientScheduleConflict.length) {
-            patientScheduleConflict.map(sched => {
-              for (let i=body.startTime; i<body.endTime; i++) {
-                if (sched.timeSlots[i]) {
-                  // TO DO: notify patient about schedule conflict
-                  errorMessages.push(`Patient time slot conflict with appointment id ${appointment._id} at ${i} ${appointment.timeUnit}`);
-                }
-              }
-            });
-          }  
-        }
-
         if (errorMessages.length) {
             res.status(HTTP_CODES.expectationFailed).json(errorMessages);
             return;
@@ -133,10 +88,8 @@ export default async function userHandler (
         body.status = APPOINTMENT_STATUS.pending;
         body.date = new Date(new Date(body.date).toUTCString()).toISOString();
         body.timeSlots = {};
-
-        for (let i=body.startTime; i<body.endTime; i++) {
-          body.timeSlots[i] = true;
-        }
+        body.startTime = null;
+        body.endTime = null;
 
         const appointmentResched = await Appointment
           .findOneAndUpdate({ _id: id }, body, {

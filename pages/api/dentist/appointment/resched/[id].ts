@@ -29,7 +29,7 @@ export default async function userHandler (
         const id = new ObjectId(query.id as string);
 
         const appointment = await Appointment
-          .findOne({ _id: id, status: APPOINTMENT_STATUS.pending })
+          .findOne({ _id: id })
           .exec();
 
         if (!appointment) {
