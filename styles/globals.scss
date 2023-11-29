@@ -52,7 +52,8 @@ label {
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+input[type="date"] {
   width: 92%;
   height: 100%;
   background: $white;
