@@ -1,9 +1,9 @@
-import connectMongo from '../../../../utils/connectMongo';
-import User from '../../../../models/User';
-import ROLES from '../../../../constants/roles'
-import HTTP_CODES from '../../../../constants/httpCodes'
+import connectMongo from '../../../../../utils/connectMongo';
+import User from '../../../../../models/User';
+import ROLES from '../../../../../constants/roles'
+import HTTP_CODES from '../../../../../constants/httpCodes'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IUser } from '../../../interfaces/IUser'
+import type { IUser } from '../../../../interfaces/IUser'
 import { ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
 
@@ -29,11 +29,10 @@ export default async function userHandler (
       case 'PUT':
         let errorMessages: string[] = [];
         const requiredFields: string[] = [
-          'password',
           'newPassword',
           'confirmPassword'
         ];
-        const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'g');
+        const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
 
         // validation of required change password fields
         requiredFields.map(v => {
@@ -49,11 +48,6 @@ export default async function userHandler (
         
         // password validations
         const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
-
-        const oldPasswordMatch = await bcrypt.compare(body.password, user.password);
-        if (!oldPasswordMatch) {
-            errorMessages.push('password should match old password.');
-        }
 
         if (body.newPassword !== body.confirmPassword) {
           errorMessages.push('newPassword should match confirmPassword.');
