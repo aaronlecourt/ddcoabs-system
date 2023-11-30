@@ -20,14 +20,11 @@ export default function useAuthGuard() {
       }
     } else {
       // TODO: Check User if profile is completed, if not, redirect to /profile
-      let profileCompleted = false;
-      if (profileCompleted) {
-        router.push('/');
-      } else {
+      let profileCompleted = true;
+      if (!profileCompleted) {
         router.push('/profile');
       }
     }
-    console.log('test')
 
   }, [status]);
 

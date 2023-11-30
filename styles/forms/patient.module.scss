@@ -1,0 +1,95 @@
+@import '../variables.scss';
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  &__container {
+    display: flex;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &__row__field,
+  &__column__field {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex: 1;
+    margin: 1rem .5rem;
+
+    &Others {
+      margin-left: 3rem;
+    }
+
+    &__selection,
+    &__center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 1rem;
+
+      label {
+        padding-left: .2rem;
+      }
+
+    }
+
+    &__selection {
+      margin-left: auto;
+    }
+
+    &__label {
+      flex: 0;
+      white-space: nowrap;
+      margin-right: 1rem;
+    }
+
+    &__number {
+      width: 26px;
+      height: 26px;
+      background-color: $green;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: $white;
+      font-size: 18px;
+      font-weight: 700;
+      margin-right: .5rem;
+    }
+  }
+}
+
+.checkboxList {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2rem;
+  
+  &__row {
+    display: flex;
+
+    & > div {
+      flex: 1;
+      margin: .5rem;
+    }
+  } 
+}
+
+.col {
+  flex-direction: column;
+}
+
+.next {
+  display: flex;
+  margin: 0.5rem;
+}
