@@ -4,15 +4,13 @@ import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import styles from '../styles/pages/auth.module.scss'
 import pageStyles from '../styles/pages/register.module.scss'
 import Button from '../components/Button';
-import Modal from '../components/Modal';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { DentalFixContext } from './_app';
 import AuthLayout from '../layouts/AuthLayout';
 import { isRegistrationFormValid } from '../validations/register';
 import { FormData, ErrorFormData } from '../types/register';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import useAuthGuard from '../guards/auth.guard';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -47,16 +45,7 @@ export default function Register({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { isTermsModalVisible, setIsTermsModalVisible }: any = useContext(DentalFixContext);
-  const { data: session, status } = useSession()
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === 'loading') return;
-
-    if (session && session.user) {
-      router.push('/');
-    }
-  }, [session, status, router]);
+  const { session, status } = useAuthGuard();
 
   const [formData, setFormData] = useState<FormData>({
     fullName: '',

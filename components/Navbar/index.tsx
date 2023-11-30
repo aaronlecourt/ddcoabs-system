@@ -87,6 +87,13 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
     }
   }
 
+  const openChangePasswordModal = (e: any) => {
+    e.preventDefault();
+
+    setShowChangePasswordModal(true);
+    setShowDropdown(false);
+  }
+
   const renderOldPassword = () => {
     return (
       <>
@@ -182,7 +189,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
         {showDropdown && 
           <div className={styles.navbar__profileDropdown}>
             <a href='/profile'>Profile</a>
-            <a href='#' onClick={() => setShowChangePasswordModal(true)}>Change Password</a>
+            <a href='#' onClick={openChangePasswordModal}>Change Password</a>
             <a href='#' onClick={() => signOut()}>Sign Out</a>
           </div>
         }

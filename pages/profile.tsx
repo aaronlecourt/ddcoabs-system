@@ -8,18 +8,10 @@ import { FormData, ErrorFormData } from '../types/profile';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import Button from '../components/Button';
 import { isProfileFormValid } from '../validations/profile';
+import useAuthGuard from '../guards/auth.guard';
 
 export default function Profile() {
-  const { data: session, status }: any = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session) {
-      router.push('/login');
-    }
-  }, [session, status, router]);
+  const { session, status } = useAuthGuard();
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
