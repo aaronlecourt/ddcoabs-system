@@ -3,7 +3,8 @@ import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 
-export default function Home() {
+
+export default function Book() {
   const { session, status } = useAuthGuard();
 
   const renderContent = () => {
@@ -11,7 +12,7 @@ export default function Home() {
       <>
         {session && (
           <main className={styles.main}>
-            <h1>DENTALFIX DENTAL CLINIC!</h1>
+            <h1>DENTALFIX DENTAL CLINIC BOOKING PAGE!</h1>
           </main>
         )}
       </>

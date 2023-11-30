@@ -1,17 +1,17 @@
-// import clientPromise from '../lib/mongodb'
 import connectMongo from '../utils/connectMongo';
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-import { signIn, useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { signIn } from 'next-auth/react'
 import { useRouter } from "next/router";
+import { useState } from 'react'
+import Image from 'next/image'
 import styles from '../styles/pages/auth.module.scss';
 import pageStyles from '../styles/pages/login.module.scss';
-import Image from 'next/image'
 import Button from '../components/Button';
 import AuthLayout from '../layouts/AuthLayout';
 import { FormData, ErrorFormData } from '../types/login';
 import { isLoginFormValid } from '../validations/login';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
+import useAuthGuard from '../guards/auth.guard';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -45,16 +45,8 @@ export const getServerSideProps: GetServerSideProps<
 export default function Login({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session, status } = useSession()
+  const { session, status } = useAuthGuard();
   const router = useRouter();
-
-  useEffect(() => {
-    if (status === 'loading') return;
-
-    if (session && session.user) {
-      router.push('/');
-    }
-  }, [session, status, router]);
 
   const [formData, setFormData] = useState<FormData>({
     email: '',
