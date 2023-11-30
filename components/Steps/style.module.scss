@@ -1,0 +1,60 @@
+@import '../../styles/variables.scss';
+
+.steps {
+  display: flex;
+  width: 70%;
+  margin: 0 auto;
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+
+  &__line {
+    flex: 1;
+    height: 5px;
+    background-color: $grey;
+
+    &Active {
+      background-color: $green;
+    }
+  }
+
+  &__number {
+    cursor: pointer;
+    padding: .2rem 0;
+    flex: 1;
+    font-size: 30px;
+    font-weight: 700;
+    border-radius: 100%;
+    text-align: center;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $grey;
+    position: relative;
+
+    &Active {
+      background: linear-gradient(90deg, #3AB286 22.53%, #3A66B2 91.21%);
+    }
+  }
+
+  &__label {
+    cursor: pointer;
+    margin-top: .2rem;
+    color: $green;
+    font-size: 15px;
+    font-weight: 700;
+  }
+}
