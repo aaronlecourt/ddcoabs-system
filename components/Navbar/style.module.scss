@@ -110,3 +110,20 @@
     }
   }
 }
+
+.formField {
+  margin: 1rem 0;
+
+  &Inline {
+    display: inline-block;
+  }
+
+  &Flex {
+    display: flex;
+    justify-content: flex-end;
+
+    div {
+      margin-left: 1rem;
+    }
+  }
+}

@@ -64,6 +64,11 @@ input {
     left: 0;
     color: $red;
     white-space: nowrap;
+
+    &--right {
+      right: 0;
+      left: auto;
+    }
   }
 
 }
