@@ -10,11 +10,12 @@ interface Step {
 interface StepsProps {
   steps: Step[];
   setSteps: Dispatch<SetStateAction<Step[]>>;
+  currentStep: Step;
   setCurrentStep: Dispatch<SetStateAction<Step>>;
   width?: number;
 }
 
-export default function Steps({ steps, setSteps, setCurrentStep, width }: StepsProps) {
+export default function Steps({ steps, setSteps, currentStep, setCurrentStep, width }: StepsProps) {
 
   const setActiveStep = (e: any, index: number) => {
     e.preventDefault();

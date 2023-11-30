@@ -46,6 +46,7 @@ export default function Book() {
             <Steps 
               steps={steps}
               setSteps={setSteps}
+              currentStep={currentStep}
               setCurrentStep={setCurrentStep}
             />
             <section className={styles.component}>

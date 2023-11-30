@@ -169,7 +169,13 @@ export default function BookPatientForm() {
     }
   ])
 
-  const [checkboxList, setCheckboxList] = useState([
+  const [checkboxList, setCheckboxList] = useState<Array<{
+    id: string;
+    text: string;
+    value: boolean;
+    textbox?: boolean;
+    textValue?: string;
+  }[]>>([
     [
       {
         id: '1',
@@ -200,18 +206,20 @@ export default function BookPatientForm() {
       },
       {
         id: '6',
-        text: 'Angina',
-        value: false,
+        text: 'Others',
+        value: true,
+        textbox: true,
+        textValue: ''
       }
     ]
   ])
 
-  const handleCheckboxChange = (rowIndex: number, index: number) => {
+  const handleCheckboxChange = (rowIndex: number, index: number, textValue?: string) => {
     setCheckboxList((prevState) => {
       const updatedCheckboxes = prevState.map((row, i) =>
         i === rowIndex
           ? row.map((checkbox, j) =>
-            j === index ? { ...checkbox, value: !checkbox.value } : checkbox
+            j === index ? { ...checkbox, value: !checkbox.value, textValue: textValue || '' } : checkbox
           )
           : row
       );
@@ -222,11 +230,14 @@ export default function BookPatientForm() {
   const next = (e: any) => {
     e.preventDefault();
 
-    const checkedCheckboxes = checkboxList.flatMap(row =>
+    // for question 10
+    const symptoms = checkboxList.flatMap(row =>
       row.filter(checkbox => checkbox.value)
-    );
+    ).map(i => i.textValue || i.text);
 
-    if (isPatientFormValid(formData, errorFormData, setErrorFormData)) alert('Test')
+    if (isPatientFormValid(formData, errorFormData, setErrorFormData)) {
+      // TODO: Go to Next Step
+    }
   }
 
   return (
@@ -318,13 +329,27 @@ export default function BookPatientForm() {
                 <div className={styles.checkboxList}>
                   {checkboxList.map((list, rowIndex) =>
                     <div key={`checkboxList-${rowIndex}`} className={styles.checkboxList__row}>
-                      {list.map((item, index) =>
-                        <CheckBox key={item.id} id={item.id} value={item.value} setValue={() => handleCheckboxChange(rowIndex, index)}>
+                      {list.map((item, index) => 
+                        !item.textbox ? <CheckBox key={item.id} id={item.id} value={item.value} setValue={() => handleCheckboxChange(rowIndex, index)}>
                           {item.text}
-                        </CheckBox>
+                        </CheckBox> :
+                        <div key={item.id} className={`${styles.form__column__field} ${styles.col}`}>
+                          <div className={`formLabel ${styles.form__column__field__label}`}>
+                            <label>{item.text}</label>
+                          </div>
+                          <div className='formInput'>
+                            <input type='text'
+                              onKeyDown={e => handleFormEnter(e, next)}
+                              name={item.id}
+                              value={item.textValue}
+                              onChange={(e) => handleCheckboxChange(rowIndex, index, e.target.value)}
+                            />
+                          </div>
+                        </div>
                       )}
                     </div>
                   )}
+
                 </div>
               )}
             </div>
