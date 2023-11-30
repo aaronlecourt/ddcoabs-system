@@ -4,18 +4,22 @@ import { Dispatch, SetStateAction } from 'react';
 interface Step {
   label: string;
   active: boolean;
+  component: any;
 }
 
 interface StepsProps {
   steps: Step[];
   setSteps: Dispatch<SetStateAction<Step[]>>;
+  setCurrentStep: Dispatch<SetStateAction<Step>>;
   width?: number;
 }
 
-export default function Steps({ steps, setSteps, width }: StepsProps) {
+export default function Steps({ steps, setSteps, setCurrentStep, width }: StepsProps) {
 
   const setActiveStep = (e: any, index: number) => {
     e.preventDefault();
+
+    setCurrentStep(steps[index])
 
     setSteps((prevSteps) => {
       const updatedSteps = prevSteps.map((step: Step, i: number) => {
@@ -32,7 +36,7 @@ export default function Steps({ steps, setSteps, width }: StepsProps) {
   return (
     <>
       {steps && steps.length > 0 &&
-        <div className={styles.steps}>
+        <div className={styles.steps} style={{ width: width || '70%' }}>
           {steps.map((step: { label: string, active: boolean }, index) =>
             <div key={step.label} className={styles.steps__step}>
               <div className={styles.step}>

@@ -1,9 +1,10 @@
-import styles from '../styles/pages/home.module.scss'
+import styles from '../styles/pages/book.module.scss'
 import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Steps from '../components/Steps';
 import { useState } from 'react';
+import { BookPatientForm } from '../forms';
 
 
 export default function Book() {
@@ -11,25 +12,31 @@ export default function Book() {
   const [steps, setSteps] = useState([
     {
       label: 'Patient Form',
-      active: true
+      active: true,
+      component: BookPatientForm
     },
     {
       label: 'Services',
-      active: false
+      active: false,
+      component: () => <></>
     },
     {
       label: 'Date & Time',
-      active: false
+      active: false,
+      component: () => <></>
     },
     {
       label: 'Payment',
-      active: false
+      active: false,
+      component: () => <></>
     },
     {
       label: 'Confirmation',
-      active: false
+      active: false,
+      component: () => <></>
     }
   ])
+  const [currentStep, setCurrentStep] = useState(steps[0])
 
   const renderContent = () => {
     return (
@@ -39,8 +46,11 @@ export default function Book() {
             <Steps 
               steps={steps}
               setSteps={setSteps}
-              width={500}
+              setCurrentStep={setCurrentStep}
             />
+            <section className={styles.component}>
+              {currentStep.component && <currentStep.component />}
+            </section>
           </main>
         )}
       </>
