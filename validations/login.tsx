@@ -1,6 +1,5 @@
 import {
   isEmailValid,
-  isPasswordValid
 } from '../utils/validation-rules';
 import { FormData, ErrorFormData } from '../types/login';
 import { Dispatch, SetStateAction } from 'react';
