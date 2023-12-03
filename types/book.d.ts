@@ -55,7 +55,7 @@ export interface PatientFormData {
   pregnant: string;
   nursing: string;
   birthControl: string;
-  others: string;
+  others: string[];
   previousDentist: string;
   previousTreatment: string;
   lastDentalVisit: string;
@@ -85,4 +85,12 @@ export interface PatientErrorFormData {
   previousDentist: ErrorFormDataField;
   previousTreatment: ErrorFormDataField;
   lastDentalVisit: ErrorFormDataField;
+}
+
+export interface PatientFormCheckbox {
+  id: string;
+  text: string;
+  value: boolean;
+  textbox?: boolean;
+  textValue?: string;
 }

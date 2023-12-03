@@ -1,64 +1,118 @@
-import { useState } from 'react'
-import { PatientFormData, PatientErrorFormData, Question } from '../types/book'
+import { Dispatch, SetStateAction, forwardRef, useContext, useEffect, useImperativeHandle, useState } from 'react'
+import { PatientFormData, PatientErrorFormData, Question, PatientFormCheckbox } from '../types/book'
 import { handleFormEnter, handleFormDataChange } from '../utils/form-handles'
 import styles from '../styles/forms/patient.module.scss'
 import { isPatientFormValid } from '../validations/patientform'
 import CheckBox from '../components/CheckBox'
 import Button from '../components/Button'
+import { BookingFormContext } from '../pages/book'
 
-export default function BookPatientForm() {
-  const [formData, setFormData] = useState<PatientFormData>({
-    physicianName: '',
-    officeAddress: '',
-    specialty: '',
-    goodHealth: '',
-    medicalTreatment: '',
-    medicalTreatmentValue: '',
-    illness: '',
-    illnessValue: '',
-    hospitalized: '',
-    hospitalizedValue: '',
-    medication: '',
-    medicationValue: '',
-    tobacco: '',
-    alchohol: '',
-    allergy: '',
-    allergyValue: '',
-    pregnant: '',
-    nursing: '',
-    birthControl: '',
-    others: '',
-    previousDentist: '',
-    previousTreatment: '',
-    lastDentalVisit: ''
-  })
+export const PatientFormObject = {
+  physicianName: '',
+  officeAddress: '',
+  specialty: '',
+  goodHealth: '',
+  medicalTreatment: '',
+  medicalTreatmentValue: '',
+  illness: '',
+  illnessValue: '',
+  hospitalized: '',
+  hospitalizedValue: '',
+  medication: '',
+  medicationValue: '',
+  tobacco: '',
+  alchohol: '',
+  allergy: '',
+  allergyValue: '',
+  pregnant: '',
+  nursing: '',
+  birthControl: '',
+  others: [],
+  previousDentist: '',
+  previousTreatment: '',
+  lastDentalVisit: ''
+}
 
-  const [errorFormData, setErrorFormData] = useState<PatientErrorFormData>({
-    physicianName: { error: false, message: null },
-    officeAddress: { optional: true, error: false, message: null },
-    specialty: { optional: true, error: false, message: null },
-    goodHealth: { error: false, message: null },
-    medicalTreatment: { error: false, message: null },
-    medicalTreatmentValue: { optional: true, error: false, message: null },
-    illness: { error: false, message: null },
-    illnessValue: { optional: true, error: false, message: null },
-    hospitalized: { error: false, message: null },
-    hospitalizedValue: { optional: true, error: false, message: null },
-    medication: { error: false, message: null },
-    medicationValue: { optional: true, error: false, message: null },
-    tobacco: { error: false, message: null },
-    alchohol: { error: false, message: null },
-    allergy: { error: false, message: null },
-    allergyValue: { optional: true, error: false, message: null },
-    pregnant: { optional: true, error: false, message: null },
-    nursing: { optional: true, error: false, message: null },
-    birthControl: { optional: true, error: false, message: null },
-    others: { optional: true, error: false, message: null },
-    previousDentist: { optional: true, error: false, message: null },
-    previousTreatment: { optional: true, error: false, message: null },
-    lastDentalVisit: { optional: true, error: false, message: null }
-  })
+export const ErrorPatientFormObject = {
+  physicianName: { error: false, message: null },
+  officeAddress: { optional: true, error: false, message: null },
+  specialty: { optional: true, error: false, message: null },
+  goodHealth: { error: false, message: null },
+  medicalTreatment: { error: false, message: null },
+  medicalTreatmentValue: { optional: true, error: false, message: null },
+  illness: { error: false, message: null },
+  illnessValue: { optional: true, error: false, message: null },
+  hospitalized: { error: false, message: null },
+  hospitalizedValue: { optional: true, error: false, message: null },
+  medication: { error: false, message: null },
+  medicationValue: { optional: true, error: false, message: null },
+  tobacco: { error: false, message: null },
+  alchohol: { error: false, message: null },
+  allergy: { error: false, message: null },
+  allergyValue: { optional: true, error: false, message: null },
+  pregnant: { optional: true, error: false, message: null },
+  nursing: { optional: true, error: false, message: null },
+  birthControl: { optional: true, error: false, message: null },
+  others: { optional: true, error: false, message: null },
+  previousDentist: { optional: true, error: false, message: null },
+  previousTreatment: { optional: true, error: false, message: null },
+  lastDentalVisit: { optional: true, error: false, message: null }
+}
 
+export const PatientFormCheckboxList = [
+  [
+    {
+      id: '1',
+      text: 'High Blood Pressure',
+      value: false,
+    },
+    {
+      id: '2',
+      text: 'Heart Disease',
+      value: false,
+    },
+    {
+      id: '3',
+      text: 'Anemia',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '4',
+      text: 'Low Blood Pressure',
+      value: false,
+    },
+    {
+      id: '5',
+      text: 'Heart Murmur',
+      value: false,
+    },
+    {
+      id: '6',
+      text: 'Others',
+      value: true,
+      textbox: true,
+      textValue: ''
+    }
+  ]
+]
+
+const BookPatientForm = forwardRef(({ nextStep }: any, ref) => {
+  const { 
+    patientForm, 
+    setPatientForm, 
+    patientErrorForm, 
+    setPatientErrorForm,
+    patientFormCheckbox,
+    setPatientFormCheckbox
+  }: any = useContext(BookingFormContext);
+  const formData = patientForm;
+  const setFormData = setPatientForm;
+  const errorFormData = patientErrorForm;
+  const setErrorFormData = setPatientErrorForm;
+  const checkboxList: Array<PatientFormCheckbox[]> = patientFormCheckbox;
+  const setCheckboxList: Dispatch<SetStateAction<Array<PatientFormCheckbox[]>>> = setPatientFormCheckbox;
   const [initialQuestions] = useState<Array<Question[]>>([
     [
       {
@@ -169,52 +223,56 @@ export default function BookPatientForm() {
     }
   ])
 
-  const [checkboxList, setCheckboxList] = useState([
-    [
-      {
-        id: '1',
-        text: 'High Blood Pressure',
-        value: false,
-      },
-      {
-        id: '2',
-        text: 'Heart Disease',
-        value: false,
-      },
-      {
-        id: '3',
-        text: 'Anemia',
-        value: false,
-      },
-    ],
-    [
-      {
-        id: '4',
-        text: 'Low Blood Pressure',
-        value: false,
-      },
-      {
-        id: '5',
-        text: 'Heart Murmur',
-        value: false,
-      },
-      {
-        id: '6',
-        text: 'Angina',
-        value: false,
-      }
-    ]
-  ])
+  // useEffect(() => {
+  //   if (formData['others'].length > 0) {
+  //     const symptoms = checkboxList.flatMap(row => row).map(i => i.textValue || i.text);
 
-  const handleCheckboxChange = (rowIndex: number, index: number) => {
+  //     setCheckboxList(prevValue => {
+  //       const updatedValues = prevValue.map(row => {
+  //         const updatedRow = row.map(cell => {
+  //           if (formData['others'].includes(cell.text)) {
+  //             return { ...cell, value: true }
+  //           } else {
+  //             if (!cell.textbox) return { ...cell }
+  //             else {
+  //               const text = formData['others'][formData['others'].length - 1];
+  //               if (!symptoms.includes(text)) {
+  //                 return { ...cell, textValue: formData['others'][formData['others'].length - 1] }
+  //               } else {
+  //                 return { ...cell }
+  //               }
+  //             }
+  //           }
+  //         })
+  //         return updatedRow;
+  //       })
+  //       return updatedValues;
+  //     })
+  //   }
+  // }, [])
+
+  useEffect(() => {
+    // for question 10
+    const symptoms = checkboxList.flatMap(row =>
+      row.filter(checkbox => checkbox.value)
+    ).map(i => i.textValue || i.text);
+
+    setFormData((prevFormData: any) => ({
+      ...prevFormData,
+      ['others']: symptoms
+    }))
+  }, [checkboxList])
+
+  const handleCheckboxChange = (rowIndex: number, index: number, textValue?: string) => {
     setCheckboxList((prevState) => {
       const updatedCheckboxes = prevState.map((row, i) =>
         i === rowIndex
           ? row.map((checkbox, j) =>
-            j === index ? { ...checkbox, value: !checkbox.value } : checkbox
+            j === index ? { ...checkbox, value: !checkbox.value, textValue: textValue || '' } : checkbox
           )
           : row
       );
+
       return updatedCheckboxes;
     });
   };
@@ -222,12 +280,22 @@ export default function BookPatientForm() {
   const next = (e: any) => {
     e.preventDefault();
 
-    const checkedCheckboxes = checkboxList.flatMap(row =>
+    // for question 10
+    const symptoms = checkboxList.flatMap(row =>
       row.filter(checkbox => checkbox.value)
-    );
+    ).map(i => i.textValue || i.text);
 
-    if (isPatientFormValid(formData, errorFormData, setErrorFormData)) alert('Test')
+    nextStep(e)
+    // if (isPatientFormValid(formData, errorFormData, setErrorFormData)) {
+    //   // TODO: Go to Next Step
+    // }
   }
+
+  useImperativeHandle(ref, () => ({
+    checkValidForm: () => {
+      return isPatientFormValid(formData, errorFormData, setErrorFormData)
+    }
+  }))
 
   return (
     <div className={styles.form}>
@@ -267,11 +335,11 @@ export default function BookPatientForm() {
                 {(!question.type || (question.type && question.type !== 'checkbox')) &&
                   <div className={styles.form__column__field__selection}>
                     <div className={styles.form__column__field__center}>
-                      <input type='radio' name={question.key} id={`yes-${question.key}`} className={errorFormData[question.key].error ? 'error' : ''} value='yes' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                      <input type='radio' checked={formData[question.key] === 'yes'} name={question.key} id={`yes-${question.key}`} className={errorFormData[question.key].error ? 'error' : ''} value='yes' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                       <label htmlFor={`yes-${question.key}`}>Yes</label>
                     </div>
                     <div className={styles.form__column__field__center}>
-                      <input type='radio' name={question.key} id={`no-${question.key}`} className={errorFormData[question.key].error ? 'error' : ''} value='no' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                      <input type='radio' checked={formData[question.key] === 'no'} name={question.key} id={`no-${question.key}`} className={errorFormData[question.key].error ? 'error' : ''} value='no' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                       <label htmlFor={`no-${question.key}`}>No</label>
                     </div>
                   </div>
@@ -304,11 +372,11 @@ export default function BookPatientForm() {
                   </div>
                   <div className={styles.form__column__field__selection}>
                     <div className={styles.form__column__field__center}>
-                      <input type='radio' name={sub.key} id={`yes-${sub.key}`} className={errorFormData[sub.key].error ? 'error' : ''} value='yes' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                      <input type='radio' checked={formData[sub.key] === 'yes'} name={sub.key} id={`yes-${sub.key}`} className={errorFormData[sub.key].error ? 'error' : ''} value='yes' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                       <label htmlFor={`yes-${sub.key}`}>Yes</label>
                     </div>
                     <div className={styles.form__column__field__center}>
-                      <input type='radio' name={sub.key} id={`no-${sub.key}`} className={errorFormData[sub.key].error ? 'error' : ''} value='no' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                      <input type='radio' checked={formData[sub.key] === 'no'} name={sub.key} id={`no-${sub.key}`} className={errorFormData[sub.key].error ? 'error' : ''} value='no' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                       <label htmlFor={`no-${sub.key}`}>No</label>
                     </div>
                   </div>
@@ -319,12 +387,26 @@ export default function BookPatientForm() {
                   {checkboxList.map((list, rowIndex) =>
                     <div key={`checkboxList-${rowIndex}`} className={styles.checkboxList__row}>
                       {list.map((item, index) =>
-                        <CheckBox key={item.id} id={item.id} value={item.value} setValue={() => handleCheckboxChange(rowIndex, index)}>
+                        !item.textbox ? <CheckBox key={item.id} id={item.id} value={item.value} setValue={() => handleCheckboxChange(rowIndex, index)}>
                           {item.text}
-                        </CheckBox>
+                        </CheckBox> :
+                          <div key={item.id} className={`${styles.form__column__field} ${styles.col}`}>
+                            <div className={`formLabel ${styles.form__column__field__label}`}>
+                              <label>{item.text}</label>
+                            </div>
+                            <div className='formInput'>
+                              <input type='text'
+                                onKeyDown={e => handleFormEnter(e, next)}
+                                name={item.id}
+                                value={item.textValue}
+                                onChange={(e) => handleCheckboxChange(rowIndex, index, e.target.value)}
+                              />
+                            </div>
+                          </div>
                       )}
                     </div>
                   )}
+
                 </div>
               )}
             </div>
@@ -357,4 +439,5 @@ export default function BookPatientForm() {
       </div>
     </div>
   )
-}
+})
+export default BookPatientForm;
