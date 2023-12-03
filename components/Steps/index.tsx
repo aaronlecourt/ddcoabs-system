@@ -1,5 +1,5 @@
 import styles from './style.module.scss'
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, forwardRef, useImperativeHandle, useRef } from 'react';
 
 interface Step {
   label: string;
@@ -12,15 +12,28 @@ interface StepsProps {
   setSteps: Dispatch<SetStateAction<Step[]>>;
   currentStep: Step;
   setCurrentStep: Dispatch<SetStateAction<Step>>;
+  currentStepIndex: number;
+  setCurrentStepIndex: Dispatch<SetStateAction<number>>;
   width?: number;
+  onStepNext: (e: any, index: number) => void;
 }
 
-export default function Steps({ steps, setSteps, currentStep, setCurrentStep, width }: StepsProps) {
+const Steps = forwardRef(({ 
+  steps, 
+  setSteps, 
+  currentStep, 
+  setCurrentStep, 
+  currentStepIndex, 
+  setCurrentStepIndex, 
+  width,
+  onStepNext
+}: StepsProps, ref) => {
 
   const setActiveStep = (e: any, index: number) => {
     e.preventDefault();
 
     setCurrentStep(steps[index])
+    setCurrentStepIndex(index)
 
     setSteps((prevSteps) => {
       const updatedSteps = prevSteps.map((step: Step, i: number) => {
@@ -34,6 +47,14 @@ export default function Steps({ steps, setSteps, currentStep, setCurrentStep, wi
     })
   }
 
+  const setStep = (e: any, index: number) => {
+    onStepNext(e, index)
+  }
+
+  useImperativeHandle(ref, () => ({
+    setActiveStep
+  }))
+
   return (
     <>
       {steps && steps.length > 0 &&
@@ -42,11 +63,11 @@ export default function Steps({ steps, setSteps, currentStep, setCurrentStep, wi
             <div key={step.label} className={styles.steps__step}>
               <div className={styles.step}>
                 <div className={`${styles.step__line} ${step.active ? styles.step__lineActive : ''}`}></div>
-                <div onClick={e => setActiveStep(e, index)}
+                <div onClick={e => setStep(e, index)}
                   className={`${styles.step__number} ${step.active ? styles.step__numberActive : ''}`}>0{index + 1}</div>
                 <div className={`${styles.step__line} ${steps[index + 1]?.active ? styles.step__lineActive : ''}`}></div>
               </div>
-              <div onClick={e => setActiveStep(e, index)}
+              <div onClick={e => setStep(e, index)}
                 className={styles.step__label}>{step.label}</div>
             </div>
           )}
@@ -55,4 +76,6 @@ export default function Steps({ steps, setSteps, currentStep, setCurrentStep, wi
     </>
 
   )
-}
+});
+
+export default Steps;
