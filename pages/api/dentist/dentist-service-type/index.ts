@@ -1,8 +1,8 @@
-import connectMongo from '../../../utils/connectMongo';
-import DentistServiceType from '../../../models/DentistServiceType';
+import connectMongo from '../../../../utils/connectMongo';
+import DentistServiceType from '../../../../models/DentistServiceType';
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IDentistServiceType } from '../../interfaces/IDentistServiceType'
+import type { IDentistServiceType } from '../../../interfaces/IDentistServiceType'
 
 export default async function userHandler (
   req: NextApiRequest,

@@ -4,6 +4,7 @@ import ROLES from '../../../constants/roles'
 import HTTP_CODES from '../../../constants/httpCodes'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { IUser } from '../../interfaces/IUser'
+import { validateRegistrationRequest } from '../../../lib/backendvalidations/registration'
 import bcrypt from 'bcryptjs'
 
 export default async function userHandler (
@@ -18,42 +19,18 @@ export default async function userHandler (
   
     switch (method) {
       case 'POST':
-        let errorMessages: string[] = [];
-        const requiredRegistrationFields: string[] = [
-          'fullName',
-          'email',
-          'address',
-          'mobile',
-          'birthday',
-          'sex',
-          'password',
-          'confirmPassword'
-        ];
-
-        // validation of required registration fields
-        requiredRegistrationFields.map(v => {
-            if (!body[v]) errorMessages.push(`${v} is required.`);
-        });
-  
-        // validation of duplicate email
-        const emailDuplicate = await User.findOne({ email: body.email });
-        if (emailDuplicate) errorMessages.push('Email address already exists');
-
-        const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
-
-        // validation of matching password and confirmPassword
-        if (body.password !== body.confirmPassword) {
-            errorMessages.push('password and confirmPassword does not match');
-        }  
-        
-        // return error if any of the validations failed
-        if (errorMessages.length) {
-            res.status(HTTP_CODES.expectationFailed).json(errorMessages);
+        // validate registration request
+        const isRequestValid = await validateRegistrationRequest(body);
+        if (!isRequestValid.isValid) {
+            res.status(HTTP_CODES.expectationFailed).json(isRequestValid.errorMessages);
             return;
         }
 
-        // assign default values
+        // assign default role
         body.role = ROLES.dentist;
+
+        // assign hashed password
+        const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
         body.password = hashedConfirmPassword;
 
         // create user
