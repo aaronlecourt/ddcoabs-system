@@ -98,14 +98,15 @@ export const PatientFormCheckboxList = [
   ]
 ]
 
-const BookPatientForm = forwardRef(({ nextStep }: any, ref) => {
+const BookPatientForm = forwardRef(({ }: any, ref) => {
   const { 
     patientForm, 
     setPatientForm, 
     patientErrorForm, 
     setPatientErrorForm,
     patientFormCheckbox,
-    setPatientFormCheckbox
+    setPatientFormCheckbox,
+    onStepNext
   }: any = useContext(BookingFormContext);
   const formData = patientForm;
   const setFormData = setPatientForm;
@@ -285,10 +286,7 @@ const BookPatientForm = forwardRef(({ nextStep }: any, ref) => {
       row.filter(checkbox => checkbox.value)
     ).map(i => i.textValue || i.text);
 
-    nextStep(e)
-    // if (isPatientFormValid(formData, errorFormData, setErrorFormData)) {
-    //   // TODO: Go to Next Step
-    // }
+    onStepNext(e);
   }
 
   useImperativeHandle(ref, () => ({

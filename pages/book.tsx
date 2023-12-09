@@ -3,9 +3,8 @@ import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Steps from '../components/Steps';
-import { useRef, useState, forwardRef, createContext } from 'react';
-import { BookPatientForm } from '../forms';
-import ServicesForm from '../forms/services';
+import { useRef, useState, forwardRef, createContext, useEffect } from 'react';
+import { BookPatientForm, BookServicesForm } from '../forms';
 import { PatientErrorFormData, PatientFormCheckbox, PatientFormData } from '../types/book';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
 
@@ -13,12 +12,13 @@ export const BookingFormContext = createContext({})
 
 export default function Book() {
   const { session, status } = useAuthGuard();
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
 
   const stepsRef = useRef(null)
   const formRef = useRef(null)
 
   const onStepNext = (e: any, index?: number) => {
-    e.preventDefault();
+    e.preventDefault()
 
     let stepValid = false;
 
@@ -29,40 +29,57 @@ export default function Book() {
 
     if ((stepValid || (index !== undefined && index < currentStepIndex)) && stepsRef.current) {
       const { setActiveStep }: { setActiveStep: (e: any, index: number) => void } = stepsRef.current;
-      setActiveStep(e, index !== undefined ? index : currentStepIndex + 1)
+
+      if (index === undefined || 
+        (index !== undefined && index == currentStepIndex + 1) ||
+        (index !== undefined && index < currentStepIndex )
+      ){
+        setActiveStep(e, index !== undefined ? index : currentStepIndex + 1)
+      }
     }
   }
 
-  const [steps, setSteps] = useState([
+  const onStepBack = (e: any) => {
+    e.preventDefault()
+
+    if (stepsRef.current) {
+      const { setActiveStep }: { setActiveStep: (e: any, index: number) => void } = stepsRef.current;
+      setActiveStep(e, currentStepIndex - 1)
+    }
+  }
+
+  const [steps, setSteps] = useState<any>([
     {
       label: 'Patient Form',
       active: true,
-      component: () => <BookPatientForm ref={formRef} nextStep={onStepNext} />,
+      component: () => <BookPatientForm ref={formRef} />,
       current: true
     },
     {
       label: 'Services',
       active: false,
-      component: () => <ServicesForm ref={formRef} nextStep={onStepNext} />,
+      component: () => <BookServicesForm ref={formRef} />,
       current: false
     },
     {
       label: 'Date & Time',
       active: false,
-      component: (nextStep: any) => <></>
+      component: () => <BookPatientForm ref={formRef} />,
+      current: false
     },
     {
       label: 'Payment',
       active: false,
-      component: (nextStep: any) => <></>
+      component: () => <BookServicesForm ref={formRef} />,
+      current: false
     },
     {
       label: 'Confirmation',
       active: false,
-      component: (nextStep: any) => <></>
+      component: () => <BookServicesForm ref={formRef} />,
+      current: false
     }
   ])
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [currentStep, setCurrentStep] = useState(steps[currentStepIndex])
   const [patientForm, setPatientForm] = useState<PatientFormData>(PatientFormObject)
   const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
@@ -71,7 +88,8 @@ export default function Book() {
   const bookingFormContextValues = {
     patientForm, setPatientForm,
     patientErrorForm, setPatientErrorForm,
-    patientFormCheckbox, setPatientFormCheckbox
+    patientFormCheckbox, setPatientFormCheckbox,
+    onStepNext, onStepBack
   }
 
   const renderContent = () => {
