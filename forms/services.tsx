@@ -5,41 +5,41 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import { BookingFormContext } from "../pages/book";
 
-const BookServicesForm = forwardRef(({ }: any, ref) => {
-  const { onStepNext, onStepBack }: any = useContext(BookingFormContext);
+export const servicesCollection = [
+  {
+    name: 'Plastic (heat cure/lab fabricated)',
+    price: 'P 3,500.00',
+    selected: true
+  },
+  {
+    name: 'PMMA (Polymethy Methacrylate)',
+    price: 'P 5,000.00',
+    selected: false
+  },
+  {
+    name: 'PFM',
+    price: 'P 5,000.00',
+    selected: false
+  },
+  {
+    name: 'PFT (Tilite)',
+    price: 'P 10,000.00',
+    selected: false
+  },
+  {
+    name: 'EMAX',
+    price: 'P 20,000.00',
+    selected: false
+  },
+  {
+    name: 'Zirconia',
+    price: 'P 25,000.00',
+    selected: false
+  },
+]
 
-  const [services, setServices] = useState([
-    {
-      name: 'Plastic (heat cure/lab fabricated)',
-      price: 'P 3,500.00',
-      selected: true
-    },
-    {
-      name: 'PMMA (Polymethy Methacrylate)',
-      price: 'P 5,000.00',
-      selected: false
-    },
-    {
-      name: 'PFM',
-      price: 'P 5,000.00',
-      selected: false
-    },
-    {
-      name: 'PFT (Tilite)',
-      price: 'P 10,000.00',
-      selected: false
-    },
-    {
-      name: 'EMAX',
-      price: 'P 20,000.00',
-      selected: false
-    },
-    {
-      name: 'Zirconia',
-      price: 'P 25,000.00',
-      selected: false
-    },
-  ]);
+const BookServicesForm = forwardRef(({ }: any, ref) => {
+  const { onStepNext, onStepBack, services, setServices }: any = useContext(BookingFormContext);
 
   const next = (e: any) => {
     e.preventDefault();
@@ -57,6 +57,20 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
     }
   }))
 
+  const selectService = (service: any) => {
+    setServices((prevValue: any) => {
+      return prevValue.map((s: any) => {
+        s.selected = false;
+
+        if (s.name == service.name) {
+          s.selected = true;
+        }
+
+        return s
+      })
+    })
+  }
+
   return (
     <div className={styles.servicesForm}>
       <div className={styles.noteContainer}>
@@ -67,8 +81,10 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
         <div className={styles.servicesContainer}>
           <strong>Jacket Crowns</strong>
           <ul className={styles.services}>
-            {services.map(service =>
-              <li key={service.name} className={service.selected ? styles.selected : ''}>
+            {services.map((service: any) =>
+              <li key={service.name} className={service.selected ? styles.selected : ''}
+                onClick={() => selectService(service)}
+              >
                 <span>{service.name}</span>
                 <span>{service.price}</span>
               </li>

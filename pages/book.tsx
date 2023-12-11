@@ -4,9 +4,10 @@ import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Steps from '../components/Steps';
 import { useRef, useState, forwardRef, createContext, useEffect } from 'react';
-import { BookPatientForm, BookServicesForm } from '../forms';
+import { BookPatientForm, BookServicesForm, BookScheduleForm } from '../forms';
 import { PatientErrorFormData, PatientFormCheckbox, PatientFormData } from '../types/book';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
+import { servicesCollection } from '../forms/services';
 
 export const BookingFormContext = createContext({})
 
@@ -64,7 +65,7 @@ export default function Book() {
     {
       label: 'Date & Time',
       active: false,
-      component: () => <BookPatientForm ref={formRef} />,
+      component: () => <BookScheduleForm ref={formRef} />,
       current: false
     },
     {
@@ -84,11 +85,13 @@ export default function Book() {
   const [patientForm, setPatientForm] = useState<PatientFormData>(PatientFormObject)
   const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
   const [patientFormCheckbox, setPatientFormCheckbox] = useState<Array<PatientFormCheckbox[]>>(PatientFormCheckboxList)
+  const [services, setServices] = useState(servicesCollection);
 
   const bookingFormContextValues = {
     patientForm, setPatientForm,
     patientErrorForm, setPatientErrorForm,
     patientFormCheckbox, setPatientFormCheckbox,
+    services, setServices,
     onStepNext, onStepBack
   }
 
