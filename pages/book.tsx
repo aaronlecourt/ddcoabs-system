@@ -4,7 +4,12 @@ import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Steps from '../components/Steps';
 import { useRef, useState, forwardRef, createContext, useEffect } from 'react';
-import { BookPatientForm, BookServicesForm, BookScheduleForm } from '../forms';
+import {
+  BookPatientForm,
+  BookServicesForm,
+  BookScheduleForm,
+  BookPaymentForm
+} from '../forms';
 import { PatientErrorFormData, PatientFormCheckbox, PatientFormData } from '../types/book';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
 import { servicesCollection } from '../forms/services';
@@ -31,10 +36,10 @@ export default function Book() {
     if ((stepValid || (index !== undefined && index < currentStepIndex)) && stepsRef.current) {
       const { setActiveStep }: { setActiveStep: (e: any, index: number) => void } = stepsRef.current;
 
-      if (index === undefined || 
+      if (index === undefined ||
         (index !== undefined && index == currentStepIndex + 1) ||
-        (index !== undefined && index < currentStepIndex )
-      ){
+        (index !== undefined && index < currentStepIndex)
+      ) {
         setActiveStep(e, index !== undefined ? index : currentStepIndex + 1)
       }
     }
@@ -71,7 +76,7 @@ export default function Book() {
     {
       label: 'Payment',
       active: false,
-      component: () => <BookServicesForm ref={formRef} />,
+      component: () => <BookPaymentForm ref={formRef} />,
       current: false
     },
     {
@@ -86,12 +91,18 @@ export default function Book() {
   const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
   const [patientFormCheckbox, setPatientFormCheckbox] = useState<Array<PatientFormCheckbox[]>>(PatientFormCheckboxList)
   const [services, setServices] = useState(servicesCollection);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
 
   const bookingFormContextValues = {
     patientForm, setPatientForm,
     patientErrorForm, setPatientErrorForm,
     patientFormCheckbox, setPatientFormCheckbox,
     services, setServices,
+    selectedDate, setSelectedDate,
+    selectedTimeUnit, setSelectedTimeUnit,
+    selectedPaymentMethod, setSelectedPaymentMethod,
     onStepNext, onStepBack
   }
 
@@ -100,7 +111,7 @@ export default function Book() {
       <>
         {session && (
           <main className={styles.main}>
-            <Steps 
+            <Steps
               ref={stepsRef}
               steps={steps}
               setSteps={setSteps}
@@ -124,16 +135,16 @@ export default function Book() {
   return (
     <>
       {(status !== 'loading' && session) && (
-          session.user?.role === 'patient' ? (
-            <PatientLayout>
-              {renderContent()}
-            </PatientLayout>
-          ) : (
-            <DentistLayout>
-              {renderContent()}
-            </DentistLayout>
-          )
+        session.user?.role === 'patient' ? (
+          <PatientLayout>
+            {renderContent()}
+          </PatientLayout>
+        ) : (
+          <DentistLayout>
+            {renderContent()}
+          </DentistLayout>
         )
+      )
       }
     </>
   )
