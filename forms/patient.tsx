@@ -291,7 +291,8 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
 
   useImperativeHandle(ref, () => ({
     checkValidForm: () => {
-      return isPatientFormValid(formData, errorFormData, setErrorFormData)
+      // return isPatientFormValid(formData, errorFormData, setErrorFormData)
+      return true;
     }
   }))
 

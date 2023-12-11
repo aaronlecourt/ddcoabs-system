@@ -1,14 +1,15 @@
 import { forwardRef, useContext, useImperativeHandle, useState } from "react";
 import styles from '../styles/forms/schedule.module.scss';
-import { faInfo, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import { BookingFormContext } from "../pages/book";
 
 const BookScheduleForm = forwardRef(({ }: any, ref) => {
-  const { onStepNext, onStepBack }: any = useContext(BookingFormContext);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
+  const { onStepNext, onStepBack,
+    selectedDate, setSelectedDate,
+    selectedTimeUnit, setSelectedTimeUnit
+  }: any = useContext(BookingFormContext);
 
   const next = (e: any) => {
     e.preventDefault();
@@ -28,12 +29,12 @@ const BookScheduleForm = forwardRef(({ }: any, ref) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.scheduleForm}>
-        <div className={styles.scheduleForm__container}>
+      <div className={styles.form}>
+        <div className={styles.form__container}>
           <strong>Select Date</strong>
           <div className={styles.calendar}></div>
         </div>
-        <div className={styles.scheduleForm__container}>
+        <div className={styles.form__container}>
           <strong>Select Time</strong>
           <div className={styles.timeUnit}>
             <div onClick={() => setSelectedTimeUnit('AM')}
@@ -46,7 +47,7 @@ const BookScheduleForm = forwardRef(({ }: any, ref) => {
             <p className={styles.note}><span className={styles.noteText}>Note:</span> The dentist will update the specifics of the time field.</p>
           </div>
         </div>
-        <div className={`${styles.scheduleForm__container} ${styles.actions}`}>
+        <div className={`${styles.form__container} ${styles.actions}`}>
           <div>
             <Button type='secondary' onClick={back}>Back</Button>
           </div>
