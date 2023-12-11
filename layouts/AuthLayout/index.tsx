@@ -64,7 +64,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       </Modal>
       <main className={styles.main}>
         <div className={styles.background}></div>
-        <section style={{ alignSelf: 'baseline' }}>
+        <section>
           {children}
         </section>
         <section>
