@@ -9,6 +9,7 @@ import { FormData, ErrorFormData } from '../../types/changepassword';
 import { handleFormEnter, handleFormDataChange } from '../../utils/form-handles';
 import { isChangePasswordFormValid } from '../../validations/changepassword';
 import Button from '../Button';
+import useAuthGuard from '../../guards/auth.guard';
 
 interface Item {
   text: string,
@@ -17,6 +18,9 @@ interface Item {
 }
 
 export default function Navbar({ items = [] }: { items: Item[] }) {
+  const { session, status } = useAuthGuard();
+  const user = session.user;
+
   const [showDropdown, setShowDropdown] = useState(false)
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
   const [showChangePasswordField, setShowChangePasswordField] = useState(false)
@@ -48,24 +52,46 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
   const proceed = (e: any) => {
     e.preventDefault();
 
+    if (!session) return
+
     if (isChangePasswordFormValid(formData, errorFormData, setErrorFormData)) {
-      // TODO: Confirm Old Password API call here
+      // Confirm Old Password API call here
       let correctOldPassword = true;
-      if (!correctOldPassword) return;
-
-      setErrorFormData(prevErrorFormData => ({
-        ...prevErrorFormData,
-        ['newPassword']: {
-          ...prevErrorFormData['newPassword'],
-          optional: false,
+      fetch(`/api/${user.role}/password/compare/${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        ['confirmNewPassword']: {
-          ...prevErrorFormData['confirmNewPassword'],
-          optional: false,
+        body: JSON.stringify({ password: formData.oldPassword }),
+      })
+      .then(async (response) => { 
+        if (!response.ok) {
+          correctOldPassword = false
+          alert(await response.json())
         }
-      }));
+        return response.json()
+      })  
+      .then(data => {
+        console.log('data ', data); // Handle the response from the API
+        if (!correctOldPassword) return;
 
-      setShowChangePasswordField(true);
+        setErrorFormData(prevErrorFormData => ({
+          ...prevErrorFormData,
+          ['newPassword']: {
+            ...prevErrorFormData['newPassword'],
+            optional: false,
+          },
+          ['confirmNewPassword']: {
+            ...prevErrorFormData['confirmNewPassword'],
+            optional: false,
+          }
+        }));
+  
+        setShowChangePasswordField(true);
+      })
+      .catch(error => {
+        console.error('Error comparison of old password to existing password:', error);
+      });
     }
   }
 
@@ -82,8 +108,33 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
     e.preventDefault();
 
     if (isChangePasswordFormValid(formData, errorFormData, setErrorFormData)) {
-      // TODO: Change Password API Call here
-      alert('Change Password Logic here')
+      // Change Password API Call here
+      fetch(`/api/${user.role}/password/update/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      .then(async (response) => { 
+        if (!response.ok) {
+          alert('password update failed! ' + await response.json())
+        }
+        return response.json()
+      })  
+      .then(data => {
+        alert('password successfully updated!')
+        console.log('data ', data); // Handle the response from the API
+      })
+      .catch(error => {
+        console.error('Error updating password:', error);
+      })
+      .then(() => {
+        resetForm();
+
+        setShowChangePasswordField(false);
+        setShowChangePasswordModal(false);
+      });
     }
   }
 

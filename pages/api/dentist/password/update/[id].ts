@@ -30,7 +30,7 @@ export default async function userHandler (
         let errorMessages: string[] = [];
         const requiredFields: string[] = [
           'newPassword',
-          'confirmPassword'
+          'confirmNewPassword'
         ];
         const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
 
@@ -47,10 +47,10 @@ export default async function userHandler (
         })
         
         // password validations
-        const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
+        const hashedConfirmNewPassword = await bcrypt.hash(body.confirmNewPassword, 10);
 
-        if (body.newPassword !== body.confirmPassword) {
-          errorMessages.push('newPassword should match confirmPassword.');
+        if (body.newPassword !== body.confirmNewPassword) {
+          errorMessages.push('newPassword should match confirmNewPassword.');
         }
 
         // return error if any of the validations failed
@@ -61,7 +61,7 @@ export default async function userHandler (
       
         // update user password
         const updatedUser = await User
-        .findOneAndUpdate({ _id: id, role: ROLES.dentist }, { password: hashedConfirmPassword}, {
+        .findOneAndUpdate({ _id: id, role: ROLES.dentist }, { password: hashedConfirmNewPassword}, {
           new: true,
           upsert: true, 
           setDefaultsOnInsert: true, 

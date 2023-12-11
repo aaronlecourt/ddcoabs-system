@@ -122,15 +122,15 @@ export default function Profile({
           },
           body: JSON.stringify(formData),
         })
-          .then(response => response.json())
-          .then(data => {
-            alert('user successfully updated');
-            console.log('updated user ', data); // Handle the response from the API
-          })
-          .catch(error => {
-            alert('user update failed');
-            console.error('Error updating data:', error);
-          });
+        .then(response => response.json())
+        .then(data => {
+          alert('user successfully updated');
+          console.log('updated user ', data); // Handle the response from the API
+        })
+        .catch(error => {
+          alert('user update failed');
+          console.error('Error updating data:', error);
+        });
       }
     };
   }

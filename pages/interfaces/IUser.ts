@@ -11,7 +11,7 @@ export interface IUser {
     sex: string,
     password: string,
     newPassword: string,
-    confirmPassword: string,
+    confirmNewPassword: string,
     guardianName?: string,
     guardianContactNumber?: string,
     guardianIdFile?: string,     // for patient
