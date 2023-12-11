@@ -13,6 +13,8 @@ const BookPaymentForm = forwardRef(({ }: any, ref) => {
     selectedTimeUnit
   }: any = useContext(BookingFormContext);
 
+  const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
   const getSelectedService = () => {
     return services.find((service: any) => service.selected);
   }
@@ -45,7 +47,7 @@ const BookPaymentForm = forwardRef(({ }: any, ref) => {
             </div>
             <div className={styles.details__row}>
               <label>Date:</label>
-              <span>March 20, 2023</span>
+              <span>{formattedDate}</span>
             </div>
             <div className={styles.details__row}>
               <label>Time:</label>

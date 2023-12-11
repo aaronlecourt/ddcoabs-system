@@ -13,6 +13,8 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
     selectedTimeUnit
   }: any = useContext(BookingFormContext);
 
+  const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
   const getSelectedService = () => {
     return services.find((service: any) => service.selected);
   }
@@ -29,8 +31,18 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
   }))
 
   const confirmBooking = () => {
-    // Confirm Booking Here
-    alert('Confirm Booking Here')
+    const payload = {
+      service: getSelectedService().name,
+      date: formattedDate,
+      time: selectedTimeUnit,
+      amount: getSelectedService().price,
+      paymentMethod: selectedPaymentMethod
+    }
+
+    console.log(payload);
+
+    // Confirm Booking API Call Here
+    alert('Confirm Booking API Call Here')
   }
 
   return (
@@ -49,7 +61,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
             </div>
             <div className={styles.details__row}>
               <label>Date:</label>
-              <span>March 20, 2023</span>
+              <span>{formattedDate}</span>
             </div>
             <div className={styles.details__row}>
               <label>Time:</label>
