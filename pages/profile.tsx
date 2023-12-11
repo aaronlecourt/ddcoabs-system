@@ -1,6 +1,8 @@
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import connectMongo from '../utils/connectMongo';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSession } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import styles from '../styles/pages/profile.module.scss'
 import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
@@ -10,7 +12,67 @@ import Button from '../components/Button';
 import { isProfileFormValid } from '../validations/profile';
 import useAuthGuard from '../guards/auth.guard';
 
-export default function Profile() {
+export const getServerSideProps: GetServerSideProps<any> = async (context) => {
+  const session = await getSession(context);
+
+  try {
+    await connectMongo();
+
+    if (!session) {
+      return {
+        props: { isConnected: false },
+      }
+    }
+
+    try {
+      const user = session.user;
+      let initialFormData = {}
+
+      if (user) {
+        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/global/user/${user?.id}`);
+        const data = await response.json();
+        console.log('data ', user)
+  
+        initialFormData = {
+          name: data.name || '',
+          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().substring(0, 10) : '',
+          age: data.age || '',
+          email: data.email || '',
+          religion: data.religion || '',
+          nationality: data.nationality || '',
+          sex: data.sex || '',
+          bloodType: data.bloodType || '',
+          address: data.address || '',
+          contactNumber: data.contactNumber || '',
+          guardianName: data.guardianName || '',
+          guardianContactNumber: data.guardianContactNumber || '',
+          guardianIdFile: data.validID || ''
+        }
+      }
+
+      return {
+        props: { isConnected: true, initialFormData: initialFormData },
+      }
+
+    } catch {
+      console.error('Profile: Something went wrong while fetching initial user data')
+      return {
+        props: { isConnected: false },
+      }
+    }
+
+  } catch (e) {
+    console.error(e)
+    return {
+      props: { isConnected: false },
+    }
+  }
+}
+
+export default function Profile({
+  isConnected,
+  initialFormData
+}: InferGetServerSidePropsType<typeof getServerSideProps>)  {
   const { session, status } = useAuthGuard();
 
   const [formData, setFormData] = useState<FormData>({
@@ -48,9 +110,34 @@ export default function Profile() {
   const updateProfile = (e: any) => {
     e.preventDefault();
 
-    if (isProfileFormValid(formData, errorFormData, setErrorFormData)) alert('true');
+    if (isProfileFormValid(formData, errorFormData, setErrorFormData)) {
+      
+      // update user logic
+      const data = session.user || {};
+      if (data) {
+        fetch(`/api/${session.user.role}/profile/${session.user.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert('user successfully updated');
+            console.log('updated user ', data); // Handle the response from the API
+          })
+          .catch(error => {
+            alert('user update failed');
+            console.error('Error updating data:', error);
+          });
+      }
+    };
   }
 
+  useEffect(() => {
+    setFormData(initialFormData)
+  }, [ initialFormData ])
 
   const renderContent = () => {
     return (
@@ -155,11 +242,11 @@ export default function Profile() {
                       {errorFormData.sex.error && <span className='formLabel__errorMessage'>{errorFormData.sex.message}</span>}
                     </div>
                     <div className={styles.form__row__field__center}>
-                      <input type='radio' name='sex' id='male-sex' className={errorFormData.sex.error ? 'error' : ''} value='male' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                      <input type='radio' name='sex' id='male-sex' className={errorFormData.sex.error ? 'error' : ''} value='M' checked={formData.sex === "M"} onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                       <label htmlFor='male-sex'>Male</label>
                     </div>
                     <div className={styles.form__row__field__center}>
-                      <input type='radio' name='sex' id='female-sex' className={errorFormData.sex.error ? 'error' : ''} value='female' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                      <input type='radio' name='sex' id='female-sex' className={errorFormData.sex.error ? 'error' : ''} value='F' checked={formData.sex === "F"} onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                       <label htmlFor='female-sex'>Female</label>
                     </div>
                   </div>

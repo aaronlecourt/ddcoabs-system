@@ -32,11 +32,11 @@ export default async function userHandler (
       case 'PUT':
         let errorMessages: string[] = [];
         const requiredRegistrationFields: string[] = [
-          'fullName',
+          'name',
           'email',
           'address',
-          'mobile',
-          'birthday',
+          'contactNumber',
+          'dateOfBirth',
           'sex',
           'credentials'
         ];

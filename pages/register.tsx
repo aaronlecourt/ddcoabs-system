@@ -21,14 +21,6 @@ export const getServerSideProps: GetServerSideProps<
 > = async () => {
   try {
     await connectMongo();
-    // `await clientPromise` will use the default database passed in the MONGODB_URI
-    // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-    //
-    // `const client = await clientPromise`
-    // `const db = client.db("myDatabase")`
-    //
-    // Then you can execute queries against your database like so:
-    // db.find({}) or any of the MongoDB Node Driver commands
 
     return {
       props: { isConnected: true },
@@ -48,10 +40,10 @@ export default function Register({
   const { session, status } = useAuthGuard();
 
   const [formData, setFormData] = useState<FormData>({
-    fullName: '',
+    name: '',
     email: '',
     address: '',
-    mobileNumber: '',
+    contactNumber: '',
     dateOfBirth: '',
     sex: '',
     password: '',
@@ -59,10 +51,10 @@ export default function Register({
   })
 
   const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
-    fullName: { error: false, message: null },
+    name: { error: false, message: null },
     email: { error: false, message: null },
     address: { error: false, message: null },
-    mobileNumber: { error: false, message: null },
+    contactNumber: { error: false, message: null },
     dateOfBirth: { error: false, message: null },
     sex: { error: false, message: null },
     password: { error: false, message: null },
@@ -92,13 +84,13 @@ export default function Register({
             <div className={styles.formField}>
               <div className='formLabel'>
                 <label>Full Name</label>
-                {errorFormData.fullName.error && <span className='formLabel__errorMessage'>{errorFormData.fullName.message}</span>}
+                {errorFormData.name.error && <span className='formLabel__errorMessage'>{errorFormData.name.message}</span>}
               </div>
-              <div className={`formInput ${errorFormData.fullName.error ? 'formInput--error' : ''}`}>
+              <div className={`formInput ${errorFormData.name.error ? 'formInput--error' : ''}`}>
                 <input type='text'
                   onKeyDown={e => handleFormEnter(e, proceed)}
-                  name='fullName'
-                  value={formData.fullName}
+                  name='name'
+                  value={formData.name}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                 />
               </div>
@@ -134,13 +126,13 @@ export default function Register({
             <div className={styles.formField}>
               <div className='formLabel'>
                 <label>Mobile Number</label>
-                {errorFormData.mobileNumber.error && <span className='formLabel__errorMessage'>{errorFormData.mobileNumber.message}</span>}
+                {errorFormData.contactNumber.error && <span className='formLabel__errorMessage'>{errorFormData.contactNumber.message}</span>}
               </div>
-              <div className={`formInput ${errorFormData.mobileNumber.error ? 'formInput--error' : ''}`}>
+              <div className={`formInput ${errorFormData.contactNumber.error ? 'formInput--error' : ''}`}>
                 <input type='text'
                   onKeyDown={e => handleFormEnter(e, proceed)}
-                  name='mobileNumber'
-                  value={formData.mobileNumber}
+                  name='contactNumber'
+                  value={formData.contactNumber}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                 />
               </div>
@@ -165,11 +157,11 @@ export default function Register({
                 {errorFormData.sex.error && <span className='formLabel__errorMessage'>{errorFormData.sex.message}</span>}
               </div>
               <div className={styles.formFieldRowChild}>
-                <input type='radio' name='sex' id='male-sex' className={errorFormData.sex.error ? 'error' : ''} value='male' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                <input type='radio' name='sex' id='male-sex' className={errorFormData.sex.error ? 'error' : ''} value='M' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                 <label htmlFor='male-sex'>Male</label>
               </div>
               <div className={styles.formFieldRowChild}>
-                <input type='radio' name='sex' id='female-sex' className={errorFormData.sex.error ? 'error' : ''} value='female' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                <input type='radio' name='sex' id='female-sex' className={errorFormData.sex.error ? 'error' : ''} value='F' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                 <label htmlFor='female-sex'>Female</label>
               </div>
             </div>

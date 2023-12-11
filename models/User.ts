@@ -4,7 +4,7 @@ import ROLES from '../constants/roles'
 
 const schema = new Schema<IUser>({
     // id: ObjectId,
-    fullName: {
+    name: {
         type: String,
         required: true,
     },
@@ -17,11 +17,11 @@ const schema = new Schema<IUser>({
         type: String,
         required: true,
     },
-    mobile: {
+    contactNumber: {
         type: String,
         required: true
     },
-    birthday: {
+    dateOfBirth: {
         type: Date,
         required: true,
     },
@@ -42,10 +42,10 @@ const schema = new Schema<IUser>({
     guardianName: {
         type: String,
     },
-    guardianMobile: {
+    guardianContactNumber: {
         type: String,
     },
-    validID: {
+    guardianIdFile: {
         type: String,
     },
     credentials: {

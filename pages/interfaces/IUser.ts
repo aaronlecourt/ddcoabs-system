@@ -1,9 +1,9 @@
 export interface IUser {
-    fullName: string,
+    name: string,
     email: string,
     address: string,
-    mobile: string,
-    birthday: Date,
+    contactNumber: string,
+    dateOfBirth: Date,
     age?: number,
     religion?: string,
     nationality?: string,
@@ -13,8 +13,8 @@ export interface IUser {
     newPassword: string,
     confirmPassword: string,
     guardianName?: string,
-    guardianMobile?: string,
-    validID?: string,     // for patient
+    guardianContactNumber?: string,
+    guardianIdFile?: string,     // for patient
     credentials?: string, // for dentist
     role: string
 }
