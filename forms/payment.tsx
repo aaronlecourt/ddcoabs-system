@@ -1,16 +1,16 @@
-import { forwardRef, useContext, useImperativeHandle, useState } from "react";
+import { forwardRef, useContext, useImperativeHandle } from "react";
 import styles from '../styles/forms/payment.module.scss';
-import { faCashRegister, faInfo, faInfoCircle, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faCashRegister, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import { BookingFormContext } from "../pages/book";
 
 const BookPaymentForm = forwardRef(({ }: any, ref) => {
-  const { onStepNext, onStepBack, 
-    services, 
-    selectedPaymentMethod, setSelectedPaymentMethod ,
+  const { onStepNext, onStepBack,
+    services,
+    selectedPaymentMethod, setSelectedPaymentMethod,
     selectedDate,
-    selectedTimeUnit 
+    selectedTimeUnit
   }: any = useContext(BookingFormContext);
 
   const getSelectedService = () => {
@@ -59,13 +59,13 @@ const BookPaymentForm = forwardRef(({ }: any, ref) => {
               <p>Please click on the preferred method to proceed.</p>
             </div>
             <div className={`${styles.details__row} ${styles.details__rowAligned}`}>
-              <div onClick={() => setSelectedPaymentMethod('cash')}
-                className={`${styles.paymentMethod} ${selectedPaymentMethod == 'cash' ? styles.selected : ''}`}>
+              <div onClick={() => setSelectedPaymentMethod('Pay in Cash')}
+                className={`${styles.paymentMethod} ${selectedPaymentMethod == 'Pay in Cash' ? styles.selected : ''}`}>
                 <FontAwesomeIcon icon={faWallet} size="2x" />
                 <span>Pay in cash</span>
               </div>
-              <div onClick={() => setSelectedPaymentMethod('gcash')}
-                className={`${styles.paymentMethod} ${selectedPaymentMethod == 'gcash' ? styles.selected : ''}`}>
+              <div onClick={() => setSelectedPaymentMethod('GCash')}
+                className={`${styles.paymentMethod} ${selectedPaymentMethod == 'GCash' ? styles.selected : ''}`}>
                 <FontAwesomeIcon icon={faCashRegister} size="2x" />
                 <span>GCash</span>
               </div>

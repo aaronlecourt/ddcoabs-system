@@ -99,10 +99,10 @@ export const PatientFormCheckboxList = [
 ]
 
 const BookPatientForm = forwardRef(({ }: any, ref) => {
-  const { 
-    patientForm, 
-    setPatientForm, 
-    patientErrorForm, 
+  const {
+    patientForm,
+    setPatientForm,
+    patientErrorForm,
     setPatientErrorForm,
     patientFormCheckbox,
     setPatientFormCheckbox,

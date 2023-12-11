@@ -8,7 +8,8 @@ import {
   BookPatientForm,
   BookServicesForm,
   BookScheduleForm,
-  BookPaymentForm
+  BookPaymentForm,
+  BookConfirmationForm
 } from '../forms';
 import { PatientErrorFormData, PatientFormCheckbox, PatientFormData } from '../types/book';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
@@ -82,7 +83,7 @@ export default function Book() {
     {
       label: 'Confirmation',
       active: false,
-      component: () => <BookServicesForm ref={formRef} />,
+      component: () => <BookConfirmationForm ref={formRef} />,
       current: false
     }
   ])
@@ -93,7 +94,7 @@ export default function Book() {
   const [services, setServices] = useState(servicesCollection);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Pay in Cash');
 
   const bookingFormContextValues = {
     patientForm, setPatientForm,
