@@ -38,7 +38,7 @@ export default async function userHandler (
           'contactNumber',
           'dateOfBirth',
           'sex',
-          'credentials'
+          //'credentials'
         ];
 
         // validation of required registration fields

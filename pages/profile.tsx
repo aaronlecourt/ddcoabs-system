@@ -113,9 +113,9 @@ export default function Profile({
     if (isProfileFormValid(formData, errorFormData, setErrorFormData)) {
       
       // update user logic
-      const data = session.user || {};
-      if (data) {
-        fetch(`/api/${session.user.role}/profile/${session.user.id}`, {
+      const user = session.user || {};
+      if (user) {
+        fetch(`/api/${user.role}/profile/${user.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
