@@ -166,3 +166,96 @@ input[type="radio"] {
 a {
   text-decoration: none;
 }
+
+.custom-calendar {
+
+  &__toolbar {
+    margin-bottom: .5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &__title {
+      font-size: 25px;
+      color: $text;
+      font-weight: 700;
+    }
+
+    &__nav {
+      cursor: pointer;
+
+      & > svg:first-child {
+        margin-right: 2rem;
+      }
+    }
+  }
+
+  .rbc-month-view,
+  .rbc-month-view .rbc-month-row {
+    border: 0;
+    border-top: 0;
+  }
+
+  .rbc-header {
+    border: 0;
+    border-bottom: 0;
+    border-left: 0!important;
+    margin-bottom: 1rem;
+  }
+
+  .rbc-header span {
+    font-size: 20px;
+    color: $green;
+    font-weight: 700;
+  }
+
+  .rbc-day-bg {
+    border: 0;
+    border-left: 0!important;
+  }
+
+  .rbc-row-content {
+    height: 100%;
+  }
+
+  .rbc-row {
+    height: 100%;
+  }
+
+  .rbc-month-header {
+    height: auto;
+  }
+
+  .rbc-date-cell {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .rbc-button-link {
+    color: $text;
+    font-size: 20px;
+    pointer-events: none;
+  }
+
+  .rbc-off-range-bg {
+    background: transparent;
+  }
+
+  .rbc-off-range .rbc-button-link {
+    color: $grey;
+  }
+
+  .rbc-current {
+    background-color: $green;
+
+    .rbc-button-link {
+      color: $white;
+    }
+  }
+
+}
+
