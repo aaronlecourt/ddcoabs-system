@@ -3,10 +3,10 @@ import styles from './style.module.scss'
 import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react';
 import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
-import { useRouter } from 'next/router';
 
 export default function Appointment({ appointment, onCancelAppointment }: any) {
   const [collapse, setCollapse] = useState(true);
+  const [name, setName] = useState(appointment.patientName || '')
 
   const openAppointment = (e: any) => {
     e.preventDefault();
@@ -49,6 +49,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
           Object.assign(appointment, {
             patientName: patient.name || ''
           })
+          setName(patient?.name)
       }
     }
     
@@ -59,12 +60,12 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
     <div className={styles.appointments__itemContainer}>
       <div className={styles.appointments__item} onClick={openAppointment}>
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
-        <div className={styles.appointments__user}>
+        {!collapse && <div className={styles.appointments__user}>
           <FontAwesomeIcon icon={faUser} width={15} height={15} color={'#3AB286'} />
-          <span>{ appointment.patientName || ''}</span>
-        </div>
+          <span>{ appointment.patientName || name || ''}</span>
+        </div>}
         <div className={styles.appointments__statusContainer}>
-          <div className={`${styles.appointments__status} ${appointment.status == APPOINTMENT_STATUS.confirmed ? styles.appointments__statusConfirmed : styles.appointments__statusPending}`}>{appointment.status}</div>
+          <div className={`${styles.appointments__status} ${appointment.status == APPOINTMENT_STATUS.confirmed ? styles.appointments__statusConfirmed : appointment.status == APPOINTMENT_STATUS.canceled ? styles.appointments__statusCanceled : styles.appointments__statusPending}`}>{appointment.status}</div>
           <FontAwesomeIcon icon={!collapse ? faChevronDown : faChevronRight} width={15} height={16} color={'#737373'} />
         </div>
       </div>
