@@ -121,11 +121,11 @@ export default function Reschedule() {
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Service:</strong>
-                    <span>{appointment.dentistService}</span>
+                    <span>{appointment.dentistService || 'Consultation'}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Price:</strong>
-                    <span>{appointment.price.toFixed(2)}</span>
+                    <span>{appointment.price ? appointment.price.toFixed(2) : '500'}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>

@@ -103,11 +103,11 @@ export default function Confirmation() {
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Service:</strong>
-                    <span>{appointment.dentistService}</span>
+                    <span>{appointment.dentistService || 'Consultation'}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Price:</strong>
-                    <span>{appointment.price}</span>
+                    <span>{appointment.price || '500'}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>
