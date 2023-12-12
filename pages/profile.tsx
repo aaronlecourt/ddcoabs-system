@@ -1,6 +1,5 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import connectMongo from '../utils/connectMongo';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { getSession } from "next-auth/react"
 import styles from '../styles/pages/profile.module.scss'
@@ -25,7 +24,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     }
 
     try {
-      const user = session.user;
+      const user: any = session.user;
       let initialFormData = {}
 
       if (user) {
@@ -164,7 +163,7 @@ export default function Profile({
       <>
         {session && (
           <main className={styles.main}>
-            <h1 className={styles.title}>Hello {session.user?.email}!</h1>
+            <h1 className={styles.title}>Hello {session.user?.name}!</h1>
             <p className={styles.subtitle}>You can edit your profile information, change your password, and update your patient record here.</p>
             <div className={styles.information}>
               <div className={styles.information__title}>{session.user?.role == 'patient' ? 'Patient Information Record' : 'Edit Profile Information'}</div>

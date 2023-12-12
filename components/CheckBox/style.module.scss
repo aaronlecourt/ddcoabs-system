@@ -12,12 +12,11 @@
     opacity: 0;
     cursor: pointer;
 
-    // Adjust to cover the label
-    &:checked + label::before {
-      background-color: $green; // Change background color when checked
+    &:checked+label::before {
+      background-color: $green;
     }
 
-    &:checked + label::after {
+    &:checked+label::after {
       display: block;
     }
   }
@@ -42,8 +41,8 @@
       background-color: transparent;
     }
 
-    input:checked + &::before {
-      background-color: $green; 
+    input:checked+&::before {
+      background-color: $green;
     }
 
     &:after {
@@ -51,15 +50,15 @@
       position: absolute;
       display: none;
       left: 8px;
-      top: 5px; 
-      width: 5px; 
-      height: 10px; 
+      top: 5px;
+      width: 5px;
+      height: 10px;
       border: solid $white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
     }
 
-    input:checked + &::before:after {
+    input:checked+&::before:after {
       display: block;
     }
   }

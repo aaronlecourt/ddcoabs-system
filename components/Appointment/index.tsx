@@ -1,8 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './style.module.scss'
-import { faCalendar, faCancel, faChevronRight, faClock, faPencil, faUser, faUserAlt, faWallet } from '@fortawesome/free-solid-svg-icons'
+import { faCalendar, faCancel, faChevronRight, faClock, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 
 export default function Appointment({ appointment, onCancelAppointment }: any) {
   const [collapse, setCollapse] = useState(true);
@@ -13,7 +12,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
   }
 
   const reschedule = () => {
-    window.location.href= `/reschedule/${appointment.id}`;
+    window.location.href = `/reschedule/${appointment.id}`;
   }
 
   const cancel = () => {
@@ -21,7 +20,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
   }
 
   const confirm = () => {
-    window.location.href= `/confirmation/${appointment.id}`;
+    window.location.href = `/confirmation/${appointment.id}`;
   }
 
   return (
@@ -52,7 +51,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
             <span>Pay in cash</span>
           </div>
         </div>
-        {appointment.status == 'Pending' && 
+        {appointment.status == 'Pending' &&
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row}>

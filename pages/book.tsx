@@ -14,11 +14,13 @@ import {
 import { PatientErrorFormData, PatientFormCheckbox, PatientFormData } from '../types/book';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
 import { servicesCollection } from '../forms/services';
+import { useRouter } from 'next/router';
 
 export const BookingFormContext = createContext({})
 
 export default function Book() {
   const { session, status } = useAuthGuard();
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
 
   const stepsRef = useRef(null)
@@ -54,7 +56,7 @@ export default function Book() {
       let data = await response.json() || [];
       console.log('data ', response)
 
-      data = data.map(v => {
+      data = data.map((v: any) => {
         v.selected = false
         return v
       })

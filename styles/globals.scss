@@ -6,7 +6,13 @@ body {
   padding: 0;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0;
 }
 
@@ -28,7 +34,7 @@ input {
     display: flex;
     align-items: center;
   }
-  
+
   &__file-button {
     text-align: center;
     width: 100px;
@@ -126,12 +132,12 @@ input[type="radio"] {
   width: 22px;
   height: 22px;
   position: relative;
-  border: 1px solid $text; 
-  border-radius: 50%; 
-  outline: none; 
+  border: 1px solid $text;
+  border-radius: 50%;
+  outline: none;
 
   &.error {
-    border: 1px solid $red; 
+    border: 1px solid $red;
   }
 
   &::before {
@@ -139,11 +145,11 @@ input[type="radio"] {
     display: block;
     width: 100%;
     height: 100%;
-    background-color: transparent; 
+    background-color: transparent;
     border-radius: 50%;
     position: absolute;
-    top: 2px; 
-    left: 2px; 
+    top: 2px;
+    left: 2px;
     background-clip: content-box;
   }
 
@@ -151,9 +157,9 @@ input[type="radio"] {
     &::after {
       content: "";
       display: block;
-      width: 70%; 
-      height: 70%; 
-      background-color: $green; 
+      width: 70%;
+      height: 70%;
+      background-color: $green;
       border-radius: 50%;
       position: absolute;
       top: 50%;
@@ -180,13 +186,14 @@ a {
     &__title {
       font-size: 25px;
       color: $text;
+      font-family: 'Poppins-Bold';
       font-weight: 700;
     }
 
     &__nav {
       cursor: pointer;
 
-      & > svg:first-child {
+      &>svg:first-child {
         margin-right: 2rem;
       }
     }
@@ -201,19 +208,20 @@ a {
   .rbc-header {
     border: 0;
     border-bottom: 0;
-    border-left: 0!important;
+    border-left: 0 !important;
     margin-bottom: 1rem;
   }
 
   .rbc-header span {
     font-size: 20px;
     color: $green;
+    font-family: 'Poppins-Bold';
     font-weight: 700;
   }
 
   .rbc-day-bg {
     border: 0;
-    border-left: 0!important;
+    border-left: 0 !important;
   }
 
   .rbc-row-content {
@@ -259,4 +267,3 @@ a {
   }
 
 }
-
