@@ -25,12 +25,6 @@ export default function Confirmation() {
   const formattedDate = (new Date(appointment.date)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   useEffect(() => {
-    if (session && session.user.role == 'patient') {
-      router.replace('/');
-    }
-  }, [session])
-
-  useEffect(() => {
     const getAppointmentDetails = async () => {
       const { id } = router.query;
       console.log('Appointment ID: ', id);

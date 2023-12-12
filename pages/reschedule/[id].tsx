@@ -17,12 +17,6 @@ export default function Reschedule() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (session && session.user.role == 'patient') {
-      router.replace('/');
-    }
-  }, [session])
-
-  useEffect(() => {
     const { id }: any = router.query;
     console.log('Appointment ID: ', id);
 
