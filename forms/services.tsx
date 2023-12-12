@@ -8,38 +8,38 @@ import { BookingFormContext } from "../pages/book";
 export const servicesCollection = [
   {
     name: 'Plastic (heat cure/lab fabricated)',
-    price: 'P 3,500.00',
+    price: 3500,
     selected: true
   },
   {
     name: 'PMMA (Polymethy Methacrylate)',
-    price: 'P 5,000.00',
+    price: 5000,
     selected: false
   },
   {
     name: 'PFM',
-    price: 'P 5,000.00',
+    price: 5000,
     selected: false
   },
   {
     name: 'PFT (Tilite)',
-    price: 'P 10,000.00',
+    price: 10000,
     selected: false
   },
   {
     name: 'EMAX',
-    price: 'P 20,000.00',
+    price: 20000,
     selected: false
   },
   {
     name: 'Zirconia',
-    price: 'P 25,000.00',
+    price: 25000,
     selected: false
   },
 ]
 
 const BookServicesForm = forwardRef(({ }: any, ref) => {
-  const { onStepNext, onStepBack, services, setServices }: any = useContext(BookingFormContext);
+  const { onStepNext, onStepBack, services, setServices, concern, setConcern }: any = useContext(BookingFormContext);
 
   const next = (e: any) => {
     e.preventDefault();
@@ -71,6 +71,12 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
     })
   }
 
+  const handleConcernChange = (e: any) => {
+    e.preventDefault();
+
+    setConcern(e.target.value);
+  }
+
   return (
     <div className={styles.servicesForm}>
       <div className={styles.noteContainer}>
@@ -81,12 +87,23 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
         <div className={styles.servicesContainer}>
           <strong>Jacket Crowns</strong>
           <ul className={styles.services}>
-            {services.map((service: any) =>
+            {services.filter(v => v.type == 'Jacket Crowns').map((service: any) =>
               <li key={service.name} className={service.selected ? styles.selected : ''}
                 onClick={() => selectService(service)}
               >
                 <span>{service.name}</span>
-                <span>{service.price}</span>
+                <span>P {(service.price || 0).toFixed(2)}</span>
+              </li>
+            )}
+          </ul>
+          <strong>Removable Partial Denture</strong>
+          <ul className={styles.services}>
+            {services.filter(v => v.type == 'Removable Partial Denture').map((service: any) =>
+              <li key={service.name} className={service.selected ? styles.selected : ''}
+                onClick={() => selectService(service)}
+              >
+                <span>{service.name}</span>
+                <span>P {(service.price || 0).toFixed(2)}</span>
               </li>
             )}
           </ul>
@@ -94,7 +111,7 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
         <div className={styles.servicesContainer}>
           <strong>Concern:</strong>
           <br />
-          <textarea rows={5} cols={50} placeholder="Please indicate here your concern if unsure of the needed service...." />
+          <textarea rows={5} cols={50} value={ concern } onChange={e => handleConcernChange(e) } placeholder="Please indicate here your concern if unsure of the needed service...." />
           <br />
           <div className={styles.buttons}>
             <div>

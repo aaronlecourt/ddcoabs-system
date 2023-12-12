@@ -4,19 +4,24 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import { BookingFormContext } from "../pages/book";
+import useAuthGuard from '../guards/auth.guard';
 
 const BookConfirmationForm = forwardRef(({ }: any, ref) => {
+  const { session, status } = useAuthGuard();
+
   const { onStepBack,
     services,
     selectedPaymentMethod,
     selectedDate,
-    selectedTimeUnit
+    selectedTimeUnit,
+    patientForm,
+    concern
   }: any = useContext(BookingFormContext);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   const getSelectedService = () => {
-    return services.find((service: any) => service.selected);
+    return services.find((service: any) => service.selected) || {};
   }
 
   const back = (e: any) => {
@@ -30,19 +35,45 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
     }
   }))
 
-  const confirmBooking = () => {
+  const confirmBooking = async () => {
+    if (!session) return
+    const user = session.user
+
     const payload = {
-      service: getSelectedService().name,
-      date: formattedDate,
-      time: selectedTimeUnit,
-      amount: getSelectedService().price,
-      paymentMethod: selectedPaymentMethod
+      dentistService: getSelectedService().name,
+      date: new Date(selectedDate).toISOString().substring(0, 10),
+      timeUnit: selectedTimeUnit,
+      price: getSelectedService().price,
+      paymentMethod: selectedPaymentMethod,
+      concern: concern,
+      details: patientForm
     }
+
+    Object.assign(payload, { [`${user.role}Id`]: user.id })
 
     console.log(payload);
 
     // Confirm Booking API Call Here
-    alert('Confirm Booking API Call Here')
+    fetch(`/api/${user.role}/appointment/book`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+    .then(async (response) => {
+      const responseMsg = await response.json()
+      if (!response.ok) {
+        alert('Booking failed: ' + responseMsg)
+      } else {
+        alert('appointment booked successfully!');
+        console.log('appointment booked ', responseMsg);
+      }
+    })
+    .catch(error => {
+      alert('appointment booking failed');
+      console.error('Error data:', error);
+    });
   }
 
   return (
@@ -57,7 +88,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
           <div className={styles.details}>
             <div className={styles.details__row}>
               <label>Service:</label>
-              <span>{getSelectedService().name}</span>
+              <span>{getSelectedService().name || 'Consultation'}</span>
             </div>
             <div className={styles.details__row}>
               <label>Date:</label>

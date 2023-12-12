@@ -12,9 +12,8 @@ const schema = new Schema<IDentistService>({
     description: {
         type: String,
     },
-    dentistServiceTypeId: {
-        type: Types.ObjectId,
-        required: true,
+    type: {
+        type: String,
     },
     price: {
         type: Number,

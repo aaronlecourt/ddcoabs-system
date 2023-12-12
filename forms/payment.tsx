@@ -16,7 +16,7 @@ const BookPaymentForm = forwardRef(({ }: any, ref) => {
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   const getSelectedService = () => {
-    return services.find((service: any) => service.selected);
+    return services.find((service: any) => service.selected) || {};
   }
 
   const next = (e: any) => {

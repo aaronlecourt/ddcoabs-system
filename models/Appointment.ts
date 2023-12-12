@@ -12,9 +12,8 @@ const schema = new Schema<IAppointment>({
     patientId: {
         type: Types.ObjectId,
     },
-    dentistServiceId: {
-        type: Types.ObjectId,
-        required: true
+    dentistService: {
+        type: String,
     },
     concern: {
         type: String
@@ -45,7 +44,6 @@ const schema = new Schema<IAppointment>({
     // derived from dentistservices by id
     price: {
         type: Number,
-        required: true
     },
     paymentMethod: {
         type: String,

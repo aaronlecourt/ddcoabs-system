@@ -22,8 +22,8 @@ export default async function userHandler (
         res.status(200).json(dentistServiceCreated);
         break
       default:
-          res.setHeader('Allow', ['GET', 'POST'])
-          res.status(405).end(`Method ${method} Not Allowed`)
+        res.setHeader('Allow', ['GET', 'POST'])
+        res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (error) {
     console.log(error);

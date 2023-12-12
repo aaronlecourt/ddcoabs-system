@@ -27,10 +27,8 @@ export default async function userHandler (
 
         const validBookingFields = [
           'patientId',
-          'dentistServiceId',
           'date',
           'timeUnit',
-          'price',
           'paymentMethod'
         ];
 
@@ -43,10 +41,16 @@ export default async function userHandler (
           errorMessages.push(`Time should be in ${TIME_UNIT}`);
         }
 
-        // validate dentistService
-        const dentistService = await DentistService.findOne({ _id: body.dentistServiceId}).exec();
-        if (!dentistService) {
-          errorMessages.push(`dentistServiceId is invalid or does not exist.`);
+        // validate dentistService and concern
+        if (!body.dentistService) {
+          if (!body.concern) errorMessages.push(`concern is required since no dentistService was selected.`);
+        }
+
+        if (body.dentistService) {
+          const dentistService = await DentistService.findOne({ name: body.dentistService }).exec();
+          if (!dentistService) {
+            errorMessages.push(`dentistService is invalid or does not exist.`);
+          }
         }
 
         // validate payment method

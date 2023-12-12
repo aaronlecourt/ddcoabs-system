@@ -24,7 +24,7 @@ export default function Book() {
   const stepsRef = useRef(null)
   const formRef = useRef(null)
 
-  const onStepNext = (e: any, index?: number) => {
+  const onStepNext = async (e: any, index?: number) => {
     e.preventDefault()
 
     let stepValid = false;
@@ -45,6 +45,25 @@ export default function Book() {
       }
     }
   }
+
+
+  useEffect(() => {
+
+    const setServicesData = async () => {
+      let response = await fetch('api/dentist/dentist-service');
+      let data = await response.json() || [];
+      console.log('data ', response)
+
+      data = data.map(v => {
+        v.selected = false
+        return v
+      })
+
+      setServices(data)
+    }
+
+    if (currentStepIndex == 1) setServicesData()
+  }, [ currentStepIndex ])
 
   const onStepBack = (e: any) => {
     e.preventDefault()
@@ -92,6 +111,7 @@ export default function Book() {
   const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
   const [patientFormCheckbox, setPatientFormCheckbox] = useState<Array<PatientFormCheckbox[]>>(PatientFormCheckboxList)
   const [services, setServices] = useState(servicesCollection);
+  const [concern, setConcern] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Pay in Cash');
@@ -101,6 +121,7 @@ export default function Book() {
     patientErrorForm, setPatientErrorForm,
     patientFormCheckbox, setPatientFormCheckbox,
     services, setServices,
+    concern, setConcern,
     selectedDate, setSelectedDate,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,
