@@ -43,7 +43,8 @@
     padding: 1rem 3rem;
     font-size: 30px;
     font-style: normal;
-    font-weight: 700;
+    font-family: 'Poppins-Bold';
+font-weight: 700;
     line-height: normal;
     border-bottom: 2px dashed rgba(255, 255, 255, 0.50);
   }
@@ -88,5 +89,6 @@
 
 .termsConditionText {
   color: $green;
-  font-weight: 700;
+  font-family: 'Poppins-Bold';
+font-weight: 700;
 }

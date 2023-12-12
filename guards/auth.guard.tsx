@@ -10,6 +10,10 @@ export default function useAuthGuard() {
     '/register'
   ]
 
+  const nonDentistRoutes = [
+    '/book' 
+  ]
+
   useEffect(() => {
     if (status === 'loading') return;
 
@@ -23,6 +27,10 @@ export default function useAuthGuard() {
       let profileCompleted = true;
       if (!profileCompleted) {
         router.push('/profile');
+      }
+
+      if (session.user.role == 'dentist' && nonDentistRoutes.includes(router.pathname)) {
+        router.push('/');
       }
     }
 

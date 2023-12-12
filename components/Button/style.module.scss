@@ -5,11 +5,12 @@
   background: linear-gradient(90deg, #3AB286 22.53%, #3A66B2 91.21%);
   color: $white;
   font-size: 18px;
+  font-family: 'Poppins-Bold';
   font-weight: 700;
   padding: 1rem 2rem;
   cursor: pointer;
 
   &Secondary {
     background: $text;
-  }  
+  }
 }

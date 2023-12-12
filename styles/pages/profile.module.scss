@@ -8,6 +8,7 @@
   color: $green;
   font-size: 40px;
   font-style: normal;
+  font-family: 'Poppins-Bold';
   font-weight: 700;
   line-height: normal;
 }
@@ -33,6 +34,7 @@
     top: -15px;
     color: $text;
     font-size: 20px;
+    font-family: 'Poppins-Bold';
     font-weight: 700;
     padding: 0 .5rem;
     background-color: $white;
@@ -58,7 +60,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        
+
         label {
           padding-left: .2rem;
         }
@@ -84,6 +86,7 @@
   color: $text;
   font-size: 18px;
   font-style: italic;
+  font-family: 'Poppins-Bold';
   font-weight: 700;
   margin-left: .5rem;
 }
