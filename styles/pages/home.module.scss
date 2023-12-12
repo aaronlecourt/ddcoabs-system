@@ -29,3 +29,32 @@
     }
   }
 }
+
+.cancelTitle {
+  text-align: center;
+  color: $text;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.cancelText {
+  margin: 1rem 0;
+  display: flex;
+
+  p {
+    margin-left: 1rem;
+    color: $text;
+    font-size: 16px;
+    font-weight: 400;
+  }
+}
+
+.cancelActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > div:first-child {
+    margin-right: 1rem;
+  }
+}

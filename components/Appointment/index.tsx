@@ -4,7 +4,7 @@ import { faCalendar, faCancel, faChevronRight, faClock, faPencil, faUser, faUser
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-export default function Appointment({ appointment }: any) {
+export default function Appointment({ appointment, onCancelAppointment }: any) {
   const [collapse, setCollapse] = useState(true);
 
   const openAppointment = (e: any) => {
@@ -17,7 +17,7 @@ export default function Appointment({ appointment }: any) {
   }
 
   const cancel = () => {
-    alert('Cancel');
+    onCancelAppointment(appointment);
   }
 
   const confirm = () => {
