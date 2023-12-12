@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './style.module.scss'
 import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
 import { useRouter } from 'next/router';
 
@@ -40,13 +40,28 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
       : `${startTime == 12 ? 12 : startTime - 12}:00${timeUnit}-${endTime - 12}:00${timeUnit}` 
   }
 
+  useEffect(() => {
+    const getPatientName = async () => {
+      if (appointment.patientId) {
+        const response = await fetch(`http://localhost:3000/api/global/user/${appointment.patientId}`);
+        const patient = await response.json();
+        if (patient)
+          Object.assign(appointment, {
+            patientName: patient.name || ''
+          })
+      }
+    }
+    
+    getPatientName()
+  }, [])
+
   return (
     <div className={styles.appointments__itemContainer}>
       <div className={styles.appointments__item} onClick={openAppointment}>
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
         <div className={styles.appointments__user}>
           <FontAwesomeIcon icon={faUser} width={15} height={15} color={'#3AB286'} />
-          <span>Maria Torres</span>
+          <span>{ appointment.patientName || ''}</span>
         </div>
         <div className={styles.appointments__statusContainer}>
           <div className={`${styles.appointments__status} ${appointment.status == APPOINTMENT_STATUS.confirmed ? styles.appointments__statusConfirmed : styles.appointments__statusPending}`}>{appointment.status}</div>
