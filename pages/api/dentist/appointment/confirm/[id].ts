@@ -45,7 +45,6 @@ export default async function userHandler (
           'endTime',
         ];
         const requiredAppointmentFields = [
-          'dentistService',
           'date',
           'timeUnit',
           'price',
