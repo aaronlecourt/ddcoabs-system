@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import connectMongo from '../utils/connectMongo';
+import { getSession } from "next-auth/react"
 import styles from '../styles/pages/home.module.scss'
 import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
@@ -10,26 +13,43 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps<any> = async (context) => {
+  const session = await getSession(context);
+
+  try {
+    await connectMongo();
+
+    if (!session) {
+      return {
+        props: { isConnected: false },
+      }
+    }
+
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/global/appointment`);
+    const data = await response.json();
+    console.log('appointments data ', data)
+
+    return {
+      props: { isConnected: true, initialAppointmentData: data || [] },
+    }
+  
+  } catch (e) {
+    console.error(e)
+    return {
+      props: { isConnected: false },
+    }
+  }
+}
+
+export default function Home({
+  isConnected,
+  initialAppointmentData
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+  console.log(' ehhehehe ', initialAppointmentData )
   const { session, status } = useAuthGuard();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      service: 'Brace Adjustment',
-      status: 'Confirmed'
-    },
-    {
-      id: 2,
-      service: 'Cleaning',
-      status: 'Pending'
-    },
-    {
-      id: 3,
-      service: 'Tooth Extraction',
-      status: 'Pending'
-    },
-  ])
+  const [appointments, setAppointments] = useState(initialAppointmentData)
   const [showCancelAppointment, setShowCancelAppointment] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
 
@@ -78,7 +98,7 @@ export default function Home() {
             <div className={styles.container}>
               <section>
                 <div className={styles.appointments}>
-                  {appointments.map((appointment, index) =>
+                  {appointments.map((appointment: any, index: number) =>
                     <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
                   )}
                 </div>

@@ -65,7 +65,7 @@ export default function useAuthGuard() {
     const emptyFields = Object.keys(requiredFields).filter((key: any) => !requiredFields[key]);
 
     if (emptyFields.length > 0) {
-      router.push('/profile');
+      // router.push('/profile');
     } else {
       if (session.user.role == 'patient' && !patientRoutes.includes(router.pathname)) {
         router.push('/');

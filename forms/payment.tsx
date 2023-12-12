@@ -3,6 +3,7 @@ import styles from '../styles/forms/payment.module.scss';
 import { faCashRegister, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
+
 import { BookingFormContext } from "../pages/book";
 
 const BookPaymentForm = forwardRef(({ }: any, ref) => {

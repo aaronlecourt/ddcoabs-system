@@ -23,41 +23,33 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       }
     }
 
-    try {
-      const user: any = session.user;
-      let initialFormData = {}
+    const user: any = session.user;
+    let initialFormData = {}
 
-      if (user) {
-        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/global/user/${user?.id}`);
-        const data = await response.json();
-        console.log('data ', user)
+    if (user) {
+      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/global/user/${user?.id}`);
+      const data = await response.json();
+      console.log('data ', user)
 
-        initialFormData = {
-          name: data.name || '',
-          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().substring(0, 10) : '',
-          age: data.age || '',
-          email: data.email || '',
-          religion: data.religion || '',
-          nationality: data.nationality || '',
-          sex: data.sex || '',
-          bloodType: data.bloodType || '',
-          address: data.address || '',
-          contactNumber: data.contactNumber || '',
-          guardianName: data.guardianName || '',
-          guardianContactNumber: data.guardianContactNumber || '',
-          guardianIdFile: data.validID || ''
-        }
+      initialFormData = {
+        name: data.name || '',
+        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().substring(0, 10) : '',
+        age: data.age || '',
+        email: data.email || '',
+        religion: data.religion || '',
+        nationality: data.nationality || '',
+        sex: data.sex || '',
+        bloodType: data.bloodType || '',
+        address: data.address || '',
+        contactNumber: data.contactNumber || '',
+        guardianName: data.guardianName || '',
+        guardianContactNumber: data.guardianContactNumber || '',
+        guardianIdFile: data.validID || ''
       }
+    }
 
-      return {
-        props: { isConnected: true, initialFormData: initialFormData },
-      }
-
-    } catch {
-      console.error('Profile: Something went wrong while fetching initial user data')
-      return {
-        props: { isConnected: false },
-      }
+    return {
+      props: { isConnected: true, initialFormData: initialFormData },
     }
 
   } catch (e) {
