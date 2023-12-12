@@ -17,6 +17,9 @@
     color: $text;
     font-family: 'Poppins-Bold';
     font-weight: 700;
+    border-bottom: 1px dashed $grey;
+    padding-bottom: 1rem;
+
   }
 
   tr {

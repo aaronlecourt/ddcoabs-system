@@ -10,6 +10,7 @@ import { handleFormEnter, handleFormDataChange } from '../../utils/form-handles'
 import { isChangePasswordFormValid } from '../../validations/changepassword';
 import Button from '../Button';
 import useAuthGuard from '../../guards/auth.guard';
+import { useRouter } from 'next/router';
 
 interface Item {
   text: string,
@@ -19,6 +20,7 @@ interface Item {
 
 export default function Navbar({ items = [] }: { items: Item[] }) {
   const { session, status } = useAuthGuard();
+  const router = useRouter();
   const user = session.user;
 
   const [showDropdown, setShowDropdown] = useState(false)
@@ -223,7 +225,13 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
           height={0}
         />
         <div className={styles.navbar__itemContainer}>
-          {items.map(item => <a key={item.text} className={`${styles.navbar__item} ${item.className ? styles[item.className] : ''}`} href={item.link}>{item.text}</a>)}
+          {items.map(item => 
+            <a key={item.text} 
+            className={`${styles.navbar__item} ${item.className ? styles[item.className] : ''} ${router.pathname == item.link ? styles.active : ''}`} 
+            href={item.link}>
+              {item.text}
+            </a>
+          )}
           <div className={styles.navbar__profileContainer} onClick={() => setShowDropdown(!showDropdown)}>
             <div className={styles.navbar__profileIcon}></div>
             <Image 
