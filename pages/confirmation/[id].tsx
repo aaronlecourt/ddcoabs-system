@@ -9,6 +9,16 @@ export default function Confirmation() {
   const { session, status } = useAuthGuard();
   const router = useRouter();
 
+  const [appointment, setAppointment] = useState({
+    patientName: '',
+    timeUnit: '',
+    dentistService: '',
+    concern: '',
+    price: '',
+    date: '',
+    paymentMethod: ''
+  })
+
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('11:00')
 
@@ -19,15 +29,60 @@ export default function Confirmation() {
   }, [session])
 
   useEffect(() => {
-    const { id } = router.query;
-    console.log('Appointment ID: ', id);
+    const getAppointmentDetails = async () => {
+      const { id } = router.query;
+      console.log('Appointment ID: ', id);
+  
+      const response = await fetch(`http://localhost:3000/api/global/appointment/${router.query.id}`);
+      const appointment = await response.json();
+
+      if (appointment.patientId) {
+        const response = await fetch(`http://localhost:3000/api/global/user/${appointment.patientId}`);
+        const patient = await response.json();
+        console.log('patient ', patient)
+        Object.assign(appointment, { patientName: patient.name })
+      }
+      console.log('confirm appointment ', appointment)
+      setAppointment(appointment)      
+    }
     // Get Appointment Details Here then populate the details
+    getAppointmentDetails()
+
   }, [router.query])
 
   const confirmBooking = () => {
-    console.log(startTime)
-    console.log(endTime)
+    const { id } = router.query;
+    console.log(startTime.replace(/^0+/, "").replace(/:00/, ''))
+    console.log(endTime.replace(/^0+/, "").replace(/:00/, ''))
     alert('API CALL HERE CONFIRM BOOKING')
+    const user = session.user
+
+    if (user) {
+      fetch(`/api/${user.role}/appointment/confirm/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Object.assign(appointment, {
+          dentistId: user.id,
+          patientId: appointment.patientId,
+          startTime: Number((startTime || '0').replace(/^0+/, "").replace(/:00/, '')),
+          endTime: Number((endTime || '0').replace(/^0+/, "").replace(/:00/, ''))
+        })),
+      })
+        .then(async (response) => {
+          const responseMsg = await response.json()
+          if (!response.ok) {
+            alert('appointment confirmation failed ' + responseMsg)
+          } else {
+            alert('appointment confirmation successful' + responseMsg)
+          }
+        })
+        .catch(error => {
+          alert('appointment confirmation failed');
+          console.error('Error updating data:', error);
+        });  
+    }
   }
 
   const renderContent = () => {
@@ -43,33 +98,33 @@ export default function Confirmation() {
                 <div className={styles.bookingDetails}>
                   <div className={styles.bookingDetails__row}>
                     <strong>Patient Name:</strong>
-                    <span>Maria Torres</span>
+                    <span>{appointment.patientName}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Time:</strong>
-                    <span>AM</span>
+                    <span>{appointment.timeUnit}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Service:</strong>
-                    <span>Consultation</span>
+                    <span>{appointment.dentistService}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Price:</strong>
-                    <span>500</span>
+                    <span>{appointment.price}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>
-                    <span>November 21, 2023</span>
+                    <span>{appointment.date}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Payment Method:</strong>
-                    <span>Pay in cash</span>
+                    <span>{appointment.paymentMethod}</span>
                   </div>
                 </div>
               </div>
               <div className={styles.container__row}>
                 <strong>Patient Concern</strong>
-                <p className={styles.subtitle}>My tooth on the back part hurts so much.</p>
+                <p className={styles.subtitle}>{appointment.concern}</p>
               </div>
               <div className={styles.container__row}>
                 <strong>Select Time</strong>

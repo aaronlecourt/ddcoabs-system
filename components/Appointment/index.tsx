@@ -14,7 +14,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
   }
 
   const reschedule = () => {
-    window.location.href = `/reschedule/${appointment.id}`;
+    window.location.href = `/reschedule/${appointment._id}`;
   }
 
   const cancel = () => {

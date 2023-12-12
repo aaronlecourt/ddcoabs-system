@@ -46,7 +46,7 @@ export default async function userHandler (
           'endTime',
         ];
         const requiredAppointmentFields = [
-          'dentistServiceId',
+          'dentistService',
           'date',
           'timeUnit',
           'price',
@@ -109,14 +109,13 @@ export default async function userHandler (
         }
 
         // validate dentistService
-        const dentistService = await DentistService
-          .findOne({ _id: appointment.dentistServiceId})
-          .exec();
-
-        if (!dentistService) {
-          errorMessages.push(`dentistServiceId is invalid or does not exist.`);
+        if (body.dentistService) {
+          const dentistService = await DentistService.findOne({ name: body.dentistService }).exec();
+          if (!dentistService) {
+            errorMessages.push(`dentistService is invalid or does not exist.`);
+          }
         }
-
+        
         // validate payment method
         if (!PAYMENT_METHOD.includes(appointment.paymentMethod)) {
             errorMessages.push(`Payment Method should in ${PAYMENT_METHOD}`);
