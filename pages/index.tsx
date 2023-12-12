@@ -3,8 +3,6 @@ import styles from '../styles/pages/home.module.scss'
 import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import CustomCalendar from '../components/CustomCalendar';
 import Appointment from '../components/Appointment';
 
