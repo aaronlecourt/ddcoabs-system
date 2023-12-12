@@ -13,14 +13,17 @@ export default function Home() {
 
   const [appointments, setAppointments] = useState([
     {
+      id: 1,
       service: 'Brace Adjustment',
       status: 'Confirmed'
     },
     {
+      id: 2,
       service: 'Cleaning',
       status: 'Pending'
     },
     {
+      id: 3,
       service: 'Tooth Extraction',
       status: 'Pending'
     },

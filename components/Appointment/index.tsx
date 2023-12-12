@@ -22,7 +22,7 @@ export default function Appointment({ appointment }: any) {
 
   const confirm = () => {
     if (appointment.status == 'Pending') {
-      window.location.href= '/confirmation'
+      window.location.href= `/confirmation/${appointment.id}`;
     } else {
       // Done
     }

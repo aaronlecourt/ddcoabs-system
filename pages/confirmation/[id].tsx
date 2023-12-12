@@ -1,22 +1,34 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import styles from '../styles/pages/confirmation.module.scss'
-import DentistLayout from '../layouts/DentistLayout';
-import useAuthGuard from '../guards/auth.guard';
-import Button from '../components/Button';
+import styles from '../../styles/pages/confirmation.module.scss'
+import DentistLayout from '../../layouts/DentistLayout';
+import useAuthGuard from '../../guards/auth.guard';
+import Button from '../../components/Button';
 
 export default function Confirmation() {
   const { session, status } = useAuthGuard();
   const router = useRouter();
 
-  const [startTime, setStartTime] = useState('')
-  const [endTime, setEndTime] = useState('')
+  const [startTime, setStartTime] = useState('09:00')
+  const [endTime, setEndTime] = useState('11:00')
 
   useEffect(() => {
     if (session && session.user.role == 'patient') {
       router.replace('/');
     }
   }, [session])
+
+  useEffect(() => {
+    const { id } = router.query;
+    console.log('Appointment ID: ', id);
+    // Get Appointment Details Here then populate the details
+  }, [router.query])
+
+  const confirmBooking = () => {
+    console.log(startTime)
+    console.log(endTime)
+    alert('API CALL HERE CONFIRM BOOKING')
+  }
 
   const renderContent = () => {
     return (
@@ -77,7 +89,7 @@ export default function Confirmation() {
                 </div>
               </div>
               <div className={styles.container__row}>
-                <Button style={{ display: 'inline-block' }}>Confirm</Button>
+                <Button style={{ display: 'inline-block' }} onClick={confirmBooking}>Confirm</Button>
               </div>
             </div>
           </main>
