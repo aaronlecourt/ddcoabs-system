@@ -5,12 +5,14 @@ import styles from '../styles/pages/auth.module.scss'
 import pageStyles from '../styles/pages/register.module.scss'
 import Button from '../components/Button';
 import { useContext, useState } from 'react';
-import { DentalFixContext } from './_app';
 import AuthLayout from '../layouts/AuthLayout';
 import { isRegistrationFormValid } from '../validations/register';
 import { FormData, ErrorFormData } from '../types/register';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import useAuthGuard from '../guards/auth.guard';
+import Modal from '../components/Modal';
+import CheckBox from '../components/CheckBox';
+import { useRouter } from 'next/router';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -36,7 +38,6 @@ export const getServerSideProps: GetServerSideProps<
 export default function Register({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { isTermsModalVisible, setIsTermsModalVisible }: any = useContext(DentalFixContext);
   const { session, status } = useAuthGuard();
 
   const [formData, setFormData] = useState<FormData>({
@@ -61,14 +62,66 @@ export default function Register({
     confirmPassword: { error: false, message: null }
   })
 
+  const [isCheckedTerms, setIsCheckedTerms] = useState(false)
+  const [isTermsModalVisible, setIsTermsModalVisible] = useState(false)
+
   const proceed = (e: any) => {
     e.preventDefault();
-
     if (isRegistrationFormValid(formData, errorFormData, setErrorFormData)) setIsTermsModalVisible(true);
+  }
+
+  const signup = () => {
+    if (!isCheckedTerms) return alert('Please Agree to the Terms & Conditions');
+
+    fetch(`/api/patient/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+      .then(response => response.json())
+      .then(data => {
+        setIsTermsModalVisible(false)
+        console.log('registered user ', data); // Handle the response from the API
+
+        if (Array.isArray(data)) {
+          alert(data[0]);
+          if (data[0] === 'Email address already exists') {
+            setErrorFormData(prevValue => ({
+              ...prevValue,
+              ['email']: {
+                error: true,
+                message: data[0]
+              }
+            }))
+          }
+        } else {
+          alert('Registered Successfully!');
+          window.location.href = '/login';
+        }
+      })
+      .catch(error => {
+        alert('user register failed');
+        setIsTermsModalVisible(false)
+        console.error('Error register data:', error);
+      });
   }
 
   return (
     <>
+      <Modal title='Terms & Conditions' open={isTermsModalVisible} setOpen={setIsTermsModalVisible}>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.</p>
+        <div className={styles.termsAgree}>
+          <CheckBox id='agree' value={isCheckedTerms} setValue={setIsCheckedTerms}>
+            <span>I agree to the <span className={styles.termsConditionText}>Terms & Condition</span></span>
+          </CheckBox>
+          <div className={styles.termsAgreeAction}>
+            <Button style={{ marginRight: '1rem' }} type='secondary' onClick={() => setIsTermsModalVisible(false)}>Cancel</Button>
+            <Button onClick={signup}>Sign up</Button>
+          </div>
+        </div>
+      </Modal>
       {(status !== 'loading' && !session) && <AuthLayout>
         <div className={styles.container}>
           <div className={styles.header}>
