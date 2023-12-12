@@ -6,6 +6,7 @@ import useAuthGuard from '../guards/auth.guard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import CustomCalendar from '../components/CustomCalendar';
+import Appointment from '../components/Appointment';
 
 export default function Home() {
   const { session, status } = useAuthGuard();
@@ -49,13 +50,7 @@ export default function Home() {
               <section>
                 <div className={styles.appointments}>
                   {appointments.map((appointment, index) => 
-                    <div key={index} className={styles.appointments__item}>
-                      <div className={styles.appointments__title}>{appointment.service}</div>
-                      <div className={styles.appointments__statusContainer}>
-                        <div className={`${styles.appointments__status} ${appointment.status == 'Confirmed' ? styles.appointments__statusConfirmed : styles.appointments__statusPending}`}>{appointment.status}</div>
-                        <FontAwesomeIcon icon={faChevronRight} width={15} />
-                      </div>
-                    </div>
+                    <Appointment key={index} appointment={appointment} />
                   )}
                 </div>
               </section>
