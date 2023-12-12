@@ -38,16 +38,19 @@ export default function Reschedule() {
       if (appointment.patientId) {
         const response = await fetch(`/api/global/user/${appointment.patientId}`);
         const patient = await response.json();
-        console.log('patient ', patient)
         Object.assign(appointment, { patientName: patient.name })
       }
 
-      if (appointment.timeUnit == 'PM') {
+      if (!appointment.startTime && !appointment.endTime && appointment.timeUnit == 'PM') {
         setStartTime('13:00')
         setEndTime('15:00')
       }
 
-      console.log('confirm appointment ', appointment)
+      if (appointment.startTime && appointment.endTime) {
+        setStartTime(`${appointment.startTime < 10 ? '0'+appointment.startTime: appointment.startTime}:00`)
+        setEndTime(`${appointment.endTime}:00`)
+      }
+
       setReschedDate(appointment.date);
       setAppointment(appointment)      
       setLoading(false);
@@ -60,9 +63,37 @@ export default function Reschedule() {
   }, [router.query])
 
   const submit = () => {
-    console.log(startTime)
-    console.log(endTime)
-    alert('API CALL HERE SUBMIT RESCHEDULE')
+    const user = session.user
+
+    if (user) {
+      const { id }: any = router.query;
+      fetch(`/api/${user.role}/appointment/resched/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Object.assign(appointment, {
+          dentistId: user.id,
+          patientId: appointment.patientId,
+          date: reschedDate,
+          startTime: Number((startTime || '0').replace(/^0+/, "").replace(/:00/, '')),
+          endTime: Number((endTime || '0').replace(/^0+/, "").replace(/:00/, ''))
+        })),
+      })
+        .then(async (response) => {
+          const responseMsg = await response.json()
+          if (!response.ok) {
+            alert('appointment reschedule failed ' + responseMsg)
+          } else {
+            alert('appointment Reschedule Successful')
+            window.location.href = '/'
+          }
+        })
+        .catch(error => {
+          alert('appointment reschedule failed');
+          console.error('Error updating data:', error);
+        });  
+    }
   }
 
   const renderContent = () => {
