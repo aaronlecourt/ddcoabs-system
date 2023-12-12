@@ -13,6 +13,8 @@ export default function Reschedule() {
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('11:00')
   const [reschedDate, setReschedDate] = useState(new Date())
+  const [appointment, setAppointment] = useState({})
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (session && session.user.role == 'patient') {
@@ -21,9 +23,25 @@ export default function Reschedule() {
   }, [session])
 
   useEffect(() => {
-    const { id } = router.query;
+    const { id }: any = router.query;
     console.log('Appointment ID: ', id);
-    // Get Appointment Details Here then populate the details
+
+    const getAppointment = async (id: any) => {
+      let response = await fetch(`api/global/appointment/${id}`);
+
+      if (!response.ok) {
+        setLoading(false);
+      }
+
+      let data = await response.json() || [];
+      console.log(data)
+      setLoading(false);
+    }
+
+    if (id) {
+      getAppointment(id);
+    }
+
   }, [router.query])
 
   const submit = () => {
@@ -39,7 +57,8 @@ export default function Reschedule() {
           <main className={styles.main}>
             <h1 className={styles.title}>Reschedule</h1>
             <p className={styles.subtitle}>Reschedule the appointment by selecting a different start time and/or date.</p>
-            <div className={styles.container}>
+            {loading && <div>Loading...</div>}
+            {!loading &&<div className={styles.container}>
               <div className={styles.container__row}>
                 <strong>Select Date</strong>
                 <div style={{ marginTop: '.5rem' }}>
@@ -98,7 +117,7 @@ export default function Reschedule() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div>}
           </main>
         )}
       </>
