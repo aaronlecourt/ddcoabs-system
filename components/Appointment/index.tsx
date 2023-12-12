@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './style.module.scss'
 import { faCalendar, faCancel, faChevronRight, faClock, faPencil, faUser, faUserAlt, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Appointment({ appointment }: any) {
   const [collapse, setCollapse] = useState(true);
@@ -20,7 +21,11 @@ export default function Appointment({ appointment }: any) {
   }
 
   const confirm = () => {
-    alert('Confirm');
+    if (appointment.status == 'Pending') {
+      window.location.href= `/confirmation/${appointment.id}`;
+    } else {
+      // Done
+    }
   }
 
   return (
