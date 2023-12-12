@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -52,7 +53,7 @@ export default function Home({
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState(initialAppointmentData)
   const [showCancelAppointment, setShowCancelAppointment] = useState(false)
-  const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [selectedAppointment, setSelectedAppointment] = useState<any>(null)
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
@@ -60,8 +61,30 @@ export default function Home({
   }
 
   const cancelAppointment = () => {
-    console.log(selectedAppointment);
-    alert('API CALL HERE CANCEL APPOINTMENT');
+    const user = session.user
+
+    if (user) {
+      fetch(`/api/${user.role}/appointment/cancel/${selectedAppointment._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: '',
+      })
+        .then(async (response) => {
+          const responseMsg = await response.json()
+          if (!response.ok) {
+            alert('appointment cancel failed ' + responseMsg)
+          } else {
+            alert('Appointment Cancel Successful')
+            window.location.href = '/'
+          }
+        })
+        .catch(error => {
+          alert('Appointment Cancel Failed');
+          console.error('Error updating data:', error);
+        });  
+    }
   }
 
   const renderContent = () => {
