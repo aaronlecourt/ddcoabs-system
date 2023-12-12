@@ -55,7 +55,7 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
         components={{
           toolbar: customToolbar,
         }}
-        className="custom-calendar"
+        className={`custom-calendar ${!selectable ? 'custom-calendar--not-selectable' : ''}`}
       />
     </div>
   )

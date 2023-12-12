@@ -265,5 +265,14 @@ a {
       color: $white;
     }
   }
+}
 
+.custom-calendar--not-selectable {
+  .rbc-now.rbc-current {
+    background-color: transparent;
+
+    .rbc-button-link {
+      color: $text;
+    }
+  }
 }

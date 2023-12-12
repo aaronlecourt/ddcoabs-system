@@ -63,6 +63,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
       } else {
         alert('appointment booked successfully!');
         console.log('appointment booked ', responseMsg);
+        window.location.href = '/book';
       }
     })
     .catch(error => {

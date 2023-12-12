@@ -2,6 +2,15 @@
 
 .main {
   padding: 2rem;
+
+  &LandingPage {
+    background: linear-gradient(180deg, #3C6CAF 0%, #55BD97 100%);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $white;
+  }
 }
 
 .title {

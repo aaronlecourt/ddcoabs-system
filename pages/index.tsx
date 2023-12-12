@@ -12,6 +12,7 @@ import Modal from '../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
+import Image from 'next/image';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -32,7 +33,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     return {
       props: { isConnected: true, initialAppointmentData: data || [] },
     }
-  
+
   } catch (e) {
     console.error(e)
     return {
@@ -46,7 +47,7 @@ export default function Home({
   initialAppointmentData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-  console.log(' ehhehehe ', initialAppointmentData )
+  console.log(' ehhehehe ', initialAppointmentData)
   const { session, status } = useAuthGuard();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState(initialAppointmentData)
@@ -67,8 +68,14 @@ export default function Home({
     return (
       <>
         {session && (
-          <main className={styles.main}>
-            <h1>DENTALFIX DENTAL CLINIC!</h1>
+          <main className={`${styles.main} ${styles.mainLandingPage}`}>
+            <Image
+              src='/logo.png'
+              alt='logo'
+              width={500}
+              height={150}
+            />
+            <h1>Landing Page</h1>
           </main>
         )}
       </>
