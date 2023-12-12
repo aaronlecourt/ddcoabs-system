@@ -1,13 +1,9 @@
 import connectMongo from '../../../../../utils/connectMongo';
 import Appointment from '../../../../../models/Appointment';
-import User from '../../../../../models/User';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IAppointment } from '../../../../interfaces/IAppointment'
-import APPOINTMENT_STATUS from "../../../../../constants/appointmentStatus";
 import PAYMENT_METHOD from "../../../../../constants/paymentMethod";
 import TIME_UNIT from "../../../../../constants/timeUnit";
 import HTTP_CODES from "../../../../../constants/httpCodes";
-import ROLES from "../../../../../constants/roles";
 import DentistService from '../../../../../models/DentistService';
 import { ObjectId } from 'mongodb'
 

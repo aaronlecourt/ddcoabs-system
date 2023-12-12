@@ -15,14 +15,10 @@ export default async function userHandler (
     const { query, method, body } = req
     const id = new ObjectId(query.id as string);
   
-    const appointment = await Appointment
-      .findOne({ _id : id })
-
     switch (method) {
       case 'GET':
         const appointment = await Appointment
           .findOne({ _id :id })
-          console.log('sarahhh ', appointment)
           res.status(200).json(appointment)
         break
       case 'PUT':

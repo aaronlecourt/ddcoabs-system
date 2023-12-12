@@ -15,15 +15,6 @@ export default async function userHandler (
   try {
     await connectMongo();
 
-    // const token = await getToken({ req, secret })
-    
-    // if (!token) {
-    //   res.status(401).json({ unauthorized: true })
-    // } else {
-    //   console.log('sessionappt ', token)
-    //   return
-    // }
-
     const { query, method, body } = req  
   
     switch (method) {
