@@ -10,8 +10,18 @@ export default function useAuthGuard() {
     '/register'
   ]
 
-  const nonDentistRoutes = [
-    '/book' 
+  const patientRoutes = [
+    '/',
+    '/profile',
+    '/book',
+  ]
+
+  const dentistRoutes = [
+    '/',
+    '/profile',
+    '/confirmation',
+    '/reschedule',
+    '/services'
   ]
 
   useEffect(() => {
@@ -27,10 +37,14 @@ export default function useAuthGuard() {
       let profileCompleted = true;
       if (!profileCompleted) {
         router.push('/profile');
-      }
+      } else {
+        if (session.user.role == 'patient' && !patientRoutes.includes(router.pathname)) {
+          router.push('/');
+        }
 
-      if (session.user.role == 'dentist' && nonDentistRoutes.includes(router.pathname)) {
-        router.push('/');
+        if (session.user.role == 'dentist' && !dentistRoutes.includes(router.pathname)) {
+          router.push('/');
+        }
       }
     }
 
