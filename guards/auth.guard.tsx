@@ -42,7 +42,16 @@ export default function useAuthGuard() {
   useEffect(() => {
     if (Object.keys(userProfile).length == 0) return;
 
-    const requiredFields: any = {
+    const dentistRequiredFields = {
+      name: null,
+      dateOfBirth: null,
+      email: null,
+      sex: null,
+      address: null,
+      contactNumber: null,
+    }
+
+    const patientRequiredFields: any = {
       name: null,
       dateOfBirth: null,
       age: null,
@@ -55,6 +64,8 @@ export default function useAuthGuard() {
       contactNumber: null,
     }
 
+    const requiredFields = userProfile.role == 'dentist' ? dentistRequiredFields : patientRequiredFields;
+
     // Populate required fields from data
     for (const key in requiredFields) {
       if (Object.hasOwn(userProfile, key)) {
@@ -65,7 +76,7 @@ export default function useAuthGuard() {
     const emptyFields = Object.keys(requiredFields).filter((key: any) => !requiredFields[key]);
 
     if (emptyFields.length > 0) {
-      // router.push('/profile');
+      router.push('/profile');
     } else {
       if (session.user.role == 'patient' && !patientRoutes.includes(router.pathname)) {
         router.push('/');
