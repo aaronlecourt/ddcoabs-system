@@ -67,9 +67,11 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
         body: JSON.stringify({ password: formData.oldPassword }),
       })
       .then(async (response) => { 
+        console.log(response)
         if (!response.ok) {
           correctOldPassword = false
-          alert(await response.json())
+          await response.json();
+          // alert(await response.json())
         }
         return response.json()
       })  
@@ -92,6 +94,13 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
         setShowChangePasswordField(true);
       })
       .catch(error => {
+        setErrorFormData(prevValue => ({
+          ...prevValue,
+          ['oldPassword']: {
+            error: true,
+            message: 'Invalid password'
+          }
+        }))
         console.error('Error comparison of old password to existing password:', error);
       });
     }
