@@ -1,0 +1,32 @@
+@import '../variables.scss';
+
+.main {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table {
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid $grey;
+  background-color: #FAFAFA;
+
+  th {
+    color: $text;
+    font-family: 'Poppins-Bold';
+    font-weight: 700;
+  }
+
+  tr {
+    height: 30px;
+  }
+
+  td {
+    color: $text;
+    border-bottom: 1px dashed $grey;
+    padding: 1rem 2rem;
+    text-align: center;
+  }
+}
