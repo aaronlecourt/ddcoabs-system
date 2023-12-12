@@ -13,7 +13,7 @@ export default function Appointment({ appointment }: any) {
   }
 
   const reschedule = () => {
-    alert('Reschedule');
+    window.location.href= `/reschedule/${appointment.id}`;
   }
 
   const cancel = () => {
@@ -21,11 +21,7 @@ export default function Appointment({ appointment }: any) {
   }
 
   const confirm = () => {
-    if (appointment.status == 'Pending') {
-      window.location.href= `/confirmation/${appointment.id}`;
-    } else {
-      // Done
-    }
+    window.location.href= `/confirmation/${appointment.id}`;
   }
 
   return (
@@ -56,20 +52,24 @@ export default function Appointment({ appointment }: any) {
             <span>Pay in cash</span>
           </div>
         </div>
-        <div className={styles.appointments__details__separator}></div>
-        <div className={styles.appointments__details__row}>
-          <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
-            <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} />
-            <span>Reschedule</span>
-          </div>
-          <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
-            <FontAwesomeIcon icon={faCancel} color={'#F01900'} />
-            <span>Cancel</span>
-          </div>
-          <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={confirm}>
-            <div className={styles.mainAction}>{appointment.status == 'Confirmed' ? 'DONE' : 'CONFIRM'}</div>
-          </div>
-        </div>
+        {appointment.status == 'Pending' && 
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
+                <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} />
+                <span>Reschedule</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
+                <FontAwesomeIcon icon={faCancel} color={'#F01900'} />
+                <span>Cancel</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={confirm}>
+                <div className={styles.mainAction}>CONFIRM</div>
+              </div>
+            </div>
+          </>
+        }
       </div>
       }
     </div>
