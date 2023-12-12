@@ -22,6 +22,8 @@ export default function Confirmation() {
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('11:00')
 
+  const formattedDate = (new Date(appointment.date)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
   useEffect(() => {
     if (session && session.user.role == 'patient') {
       router.replace('/');
@@ -54,7 +56,7 @@ export default function Confirmation() {
     const { id } = router.query;
     console.log(startTime.replace(/^0+/, "").replace(/:00/, ''))
     console.log(endTime.replace(/^0+/, "").replace(/:00/, ''))
-    alert('API CALL HERE CONFIRM BOOKING')
+    // alert('API CALL HERE CONFIRM BOOKING')
     const user = session.user
 
     if (user) {
@@ -72,10 +74,11 @@ export default function Confirmation() {
       })
         .then(async (response) => {
           const responseMsg = await response.json()
+          console.log('appointment confirmation response msg ', responseMsg)
           if (!response.ok) {
-            alert('appointment confirmation failed ' + responseMsg)
+            alert('appointment confirmation failed')
           } else {
-            alert('appointment confirmation successful' + responseMsg)
+            alert('appointment confirmation successful')
           }
         })
         .catch(error => {
@@ -114,7 +117,7 @@ export default function Confirmation() {
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>
-                    <span>{appointment.date}</span>
+                    <span>{formattedDate}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Payment Method:</strong>
