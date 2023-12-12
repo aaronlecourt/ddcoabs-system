@@ -13,7 +13,7 @@ export default function Reschedule() {
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('11:00')
   const [reschedDate, setReschedDate] = useState(new Date())
-  const [appointment, setAppointment] = useState({})
+  const [appointment, setAppointment] = useState<any>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -27,14 +27,29 @@ export default function Reschedule() {
     console.log('Appointment ID: ', id);
 
     const getAppointment = async (id: any) => {
-      let response = await fetch(`api/global/appointment/${id}`);
+      let response = await fetch(`/api/global/appointment/${id}`);
 
       if (!response.ok) {
         setLoading(false);
       }
 
-      let data = await response.json() || [];
-      console.log(data)
+      let appointment = await response.json() || [];
+
+      if (appointment.patientId) {
+        const response = await fetch(`/api/global/user/${appointment.patientId}`);
+        const patient = await response.json();
+        console.log('patient ', patient)
+        Object.assign(appointment, { patientName: patient.name })
+      }
+
+      if (appointment.timeUnit == 'PM') {
+        setStartTime('13:00')
+        setEndTime('15:00')
+      }
+
+      console.log('confirm appointment ', appointment)
+      setReschedDate(appointment.date);
+      setAppointment(appointment)      
       setLoading(false);
     }
 
@@ -73,27 +88,27 @@ export default function Reschedule() {
                 <div className={styles.bookingDetails}>
                   <div className={styles.bookingDetails__row}>
                     <strong>Patient Name:</strong>
-                    <span>Maria Torres</span>
+                    <span>{appointment.patientName}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Time:</strong>
-                    <span>AM</span>
+                    <span>{appointment.timeUnit}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Service:</strong>
-                    <span>Consultation</span>
+                    <span>{appointment.dentistService}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Price:</strong>
-                    <span>500</span>
+                    <span>{appointment.price.toFixed(2)}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>
-                    <span>November 21, 2023</span>
+                    <span>{new Date(appointment.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Payment Method:</strong>
-                    <span>Pay in cash</span>
+                    <span>{appointment.paymentMethod}</span>
                   </div>
                 </div>
                 <div className={styles.container__action}>
