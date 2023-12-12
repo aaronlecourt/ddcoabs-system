@@ -10,19 +10,14 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
   const { session, status } = useAuthGuard();
 
   const { onStepBack,
-    services,
     selectedPaymentMethod,
     selectedDate,
     selectedTimeUnit,
     patientForm,
-    concern
+    servicesForm
   }: any = useContext(BookingFormContext);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-  const getSelectedService = () => {
-    return services.find((service: any) => service.selected) || {};
-  }
 
   const back = (e: any) => {
     e.preventDefault();
@@ -40,12 +35,12 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
     const user = session.user
 
     const payload = {
-      dentistService: getSelectedService().name,
+      dentistService: servicesForm.service.name,
       date: new Date(selectedDate).toISOString().substring(0, 10),
       timeUnit: selectedTimeUnit,
-      price: getSelectedService().price,
+      price: servicesForm.service.price,
       paymentMethod: selectedPaymentMethod,
-      concern: concern,
+      concern: servicesForm.concern,
       details: patientForm
     }
 
@@ -88,7 +83,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
           <div className={styles.details}>
             <div className={styles.details__row}>
               <label>Service:</label>
-              <span>{getSelectedService().name || 'Consultation'}</span>
+              <span>{servicesForm.service.name || 'Consultation'}</span>
             </div>
             <div className={styles.details__row}>
               <label>Date:</label>
@@ -100,7 +95,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
             </div>
             <div className={styles.details__row}>
               <label>Base Charge:</label>
-              <span>{getSelectedService().price}</span>
+              <span>{servicesForm.service.price}</span>
             </div>
             <div className={styles.details__row}>
               <label>Payment Method:</label>
