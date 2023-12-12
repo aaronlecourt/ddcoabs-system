@@ -31,6 +31,13 @@
   }
 }
 
+.appointments {
+  border-radius: 10px;
+  border: 1px solid $grey;
+  background-color: #FAFAFA;
+  padding: 0 1rem;
+}
+
 .cancelTitle {
   text-align: center;
   color: $text;
@@ -42,6 +49,8 @@
 .cancelText {
   margin: 1rem 0;
   display: flex;
+  justify-content: center;
+  align-items: center;
 
   p {
     margin-left: 1rem;

@@ -74,6 +74,10 @@
       font-size: 15px;
 
       &Item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
         span {
           margin-left: .5rem;
         }

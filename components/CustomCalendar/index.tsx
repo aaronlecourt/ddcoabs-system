@@ -24,9 +24,9 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
         <strong className="custom-calendar__toolbar__title">{label}</strong>
         <div className="custom-calendar__toolbar__nav">
           <FontAwesomeIcon onClick={navigateBackward}
-            icon={faChevronLeft} />
+            icon={faChevronLeft} width={15} height={16} />
           <FontAwesomeIcon onClick={navigateForward}
-            icon={faChevronRight} />
+            icon={faChevronRight} width={15} height={16} />
         </div>
       </div>
     )
