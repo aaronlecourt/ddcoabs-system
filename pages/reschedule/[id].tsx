@@ -13,6 +13,8 @@ export default function Reschedule() {
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('11:00')
   const [reschedDate, setReschedDate] = useState(new Date())
+  const [appointment, setAppointment] = useState<any>({})
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (session && session.user.role == 'patient') {
@@ -21,15 +23,77 @@ export default function Reschedule() {
   }, [session])
 
   useEffect(() => {
-    const { id } = router.query;
+    const { id }: any = router.query;
     console.log('Appointment ID: ', id);
-    // Get Appointment Details Here then populate the details
+
+    const getAppointment = async (id: any) => {
+      let response = await fetch(`/api/global/appointment/${id}`);
+
+      if (!response.ok) {
+        setLoading(false);
+      }
+
+      let appointment = await response.json() || [];
+
+      if (appointment.patientId) {
+        const response = await fetch(`/api/global/user/${appointment.patientId}`);
+        const patient = await response.json();
+        Object.assign(appointment, { patientName: patient.name })
+      }
+
+      if (!appointment.startTime && !appointment.endTime && appointment.timeUnit == 'PM') {
+        setStartTime('13:00')
+        setEndTime('15:00')
+      }
+
+      if (appointment.startTime && appointment.endTime) {
+        setStartTime(`${appointment.startTime < 10 ? '0'+appointment.startTime: appointment.startTime}:00`)
+        setEndTime(`${appointment.endTime}:00`)
+      }
+
+      setReschedDate(appointment.date);
+      setAppointment(appointment)      
+      setLoading(false);
+    }
+
+    if (id) {
+      getAppointment(id);
+    }
+
   }, [router.query])
 
   const submit = () => {
-    console.log(startTime)
-    console.log(endTime)
-    alert('API CALL HERE SUBMIT RESCHEDULE')
+    const user = session.user
+
+    if (user) {
+      const { id }: any = router.query;
+      fetch(`/api/${user.role}/appointment/resched/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Object.assign(appointment, {
+          dentistId: user.id,
+          patientId: appointment.patientId,
+          date: reschedDate,
+          startTime: Number((startTime || '0').replace(/^0+/, "").replace(/:00/, '')),
+          endTime: Number((endTime || '0').replace(/^0+/, "").replace(/:00/, ''))
+        })),
+      })
+        .then(async (response) => {
+          const responseMsg = await response.json()
+          if (!response.ok) {
+            alert('appointment reschedule failed ' + responseMsg)
+          } else {
+            alert('appointment Reschedule Successful')
+            window.location.href = '/'
+          }
+        })
+        .catch(error => {
+          alert('appointment reschedule failed');
+          console.error('Error updating data:', error);
+        });  
+    }
   }
 
   const renderContent = () => {
@@ -39,7 +103,8 @@ export default function Reschedule() {
           <main className={styles.main}>
             <h1 className={styles.title}>Reschedule</h1>
             <p className={styles.subtitle}>Reschedule the appointment by selecting a different start time and/or date.</p>
-            <div className={styles.container}>
+            {loading && <div>Loading...</div>}
+            {!loading &&<div className={styles.container}>
               <div className={styles.container__row}>
                 <strong>Select Date</strong>
                 <div style={{ marginTop: '.5rem' }}>
@@ -54,27 +119,27 @@ export default function Reschedule() {
                 <div className={styles.bookingDetails}>
                   <div className={styles.bookingDetails__row}>
                     <strong>Patient Name:</strong>
-                    <span>Maria Torres</span>
+                    <span>{appointment.patientName}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Time:</strong>
-                    <span>AM</span>
+                    <span>{appointment.timeUnit}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Service:</strong>
-                    <span>Consultation</span>
+                    <span>{appointment.dentistService}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Price:</strong>
-                    <span>500</span>
+                    <span>{appointment.price.toFixed(2)}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>
-                    <span>November 21, 2023</span>
+                    <span>{new Date(appointment.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Payment Method:</strong>
-                    <span>Pay in cash</span>
+                    <span>{appointment.paymentMethod}</span>
                   </div>
                 </div>
                 <div className={styles.container__action}>
@@ -98,7 +163,7 @@ export default function Reschedule() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div>}
           </main>
         )}
       </>
