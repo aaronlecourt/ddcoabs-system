@@ -61,7 +61,9 @@ export default function Home() {
         <Modal open={showCancelAppointment} setOpen={setShowCancelAppointment} modalWidth={400} modalRadius={10}>
           <h3 className={styles.cancelTitle}>Cancel Appointment</h3>
           <div className={styles.cancelText}>
-            <FontAwesomeIcon icon={faCancel} size="3x" color={'#F01900'} />
+            <div style={{ width: '54px', height: '54px' }}>
+              <FontAwesomeIcon icon={faCancel} size="3x" width={54} height={54} color={'#F01900'} />
+            </div>
             <p>Please confirm the cancellation of this appointment.
               This action is not irreversible.</p>
           </div>
