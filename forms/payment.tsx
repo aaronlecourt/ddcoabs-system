@@ -7,17 +7,13 @@ import { BookingFormContext } from "../pages/book";
 
 const BookPaymentForm = forwardRef(({ }: any, ref) => {
   const { onStepNext, onStepBack,
-    services,
+    servicesForm,
     selectedPaymentMethod, setSelectedPaymentMethod,
     selectedDate,
     selectedTimeUnit
   }: any = useContext(BookingFormContext);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-  const getSelectedService = () => {
-    return services.find((service: any) => service.selected) || {};
-  }
 
   const next = (e: any) => {
     e.preventDefault();
@@ -43,7 +39,7 @@ const BookPaymentForm = forwardRef(({ }: any, ref) => {
           <div className={styles.details}>
             <div className={styles.details__row}>
               <label>Service:</label>
-              <span>{getSelectedService().name}</span>
+              <span>{servicesForm.service.name || 'Consultation'}</span>
             </div>
             <div className={styles.details__row}>
               <label>Date:</label>
@@ -55,7 +51,7 @@ const BookPaymentForm = forwardRef(({ }: any, ref) => {
             </div>
             <div className={styles.details__row}>
               <label>Base Amount:</label>
-              <span>{getSelectedService().price}</span>
+              <span>{servicesForm.service.price}</span>
             </div>
             <div className={styles.details__row}>
               <p>Please click on the preferred method to proceed.</p>

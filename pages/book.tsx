@@ -3,7 +3,7 @@ import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Steps from '../components/Steps';
-import { useRef, useState, forwardRef, createContext, useEffect } from 'react';
+import { useRef, useState, createContext, useEffect } from 'react';
 import {
   BookPatientForm,
   BookServicesForm,
@@ -11,10 +11,9 @@ import {
   BookPaymentForm,
   BookConfirmationForm
 } from '../forms';
-import { PatientErrorFormData, PatientFormCheckbox, PatientFormData } from '../types/book';
+import { PatientErrorFormData, PatientFormCheckbox, PatientFormData, ServicesErrorFormData, ServicesFormData } from '../types/book';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
-import { servicesCollection } from '../forms/services';
-import { useRouter } from 'next/router';
+import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
 
 export const BookingFormContext = createContext({})
 
@@ -64,7 +63,7 @@ export default function Book() {
       setServices(data)
     }
 
-    if (currentStepIndex == 1) setServicesData()
+    if (currentStepIndex == 1 && services.length == 0) setServicesData()
   }, [ currentStepIndex ])
 
   const onStepBack = (e: any) => {
@@ -112,8 +111,9 @@ export default function Book() {
   const [patientForm, setPatientForm] = useState<PatientFormData>(PatientFormObject)
   const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
   const [patientFormCheckbox, setPatientFormCheckbox] = useState<Array<PatientFormCheckbox[]>>(PatientFormCheckboxList)
-  const [services, setServices] = useState(servicesCollection);
-  const [concern, setConcern] = useState('');
+  const [servicesForm, setServicesForm] = useState<ServicesFormData>(ServicesFormObject);
+  const [servicesErrorForm, setServicesErrorForm] = useState<ServicesErrorFormData>(ErrorServicesFormObject);
+  const [services, setServices] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Pay in Cash');
@@ -122,8 +122,9 @@ export default function Book() {
     patientForm, setPatientForm,
     patientErrorForm, setPatientErrorForm,
     patientFormCheckbox, setPatientFormCheckbox,
+    servicesForm, setServicesForm,
+    servicesErrorForm, setServicesErrorForm,
     services, setServices,
-    concern, setConcern,
     selectedDate, setSelectedDate,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,

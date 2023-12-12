@@ -4,42 +4,26 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import { BookingFormContext } from "../pages/book";
+import { handleFormDataChange, handleFormEnter } from "../utils/form-handles";
+import { isServicesFormValid } from "../validations/servicesform";
 
-export const servicesCollection = [
-  {
-    name: 'Plastic (heat cure/lab fabricated)',
-    price: 3500,
-    selected: true
-  },
-  {
-    name: 'PMMA (Polymethy Methacrylate)',
-    price: 5000,
-    selected: false
-  },
-  {
-    name: 'PFM',
-    price: 5000,
-    selected: false
-  },
-  {
-    name: 'PFT (Tilite)',
-    price: 10000,
-    selected: false
-  },
-  {
-    name: 'EMAX',
-    price: 20000,
-    selected: false
-  },
-  {
-    name: 'Zirconia',
-    price: 25000,
-    selected: false
-  },
-]
+export const ServicesFormObject = {
+  service: '',
+  concern: ''
+}
+
+export const ErrorServicesFormObject = {
+  service: { error: false, message: null },
+  concern: { error: false, message: null },
+}
 
 const BookServicesForm = forwardRef(({ }: any, ref) => {
-  const { onStepNext, onStepBack, services, setServices, concern, setConcern }: any = useContext(BookingFormContext);
+  const { 
+    onStepNext, onStepBack, 
+    services, setServices, 
+    servicesForm, setServicesForm,
+    servicesErrorForm, setServicesErrorForm
+}: any = useContext(BookingFormContext);
 
   const next = (e: any) => {
     e.preventDefault();
@@ -53,7 +37,22 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
 
   useImperativeHandle(ref, () => ({
     checkValidForm: () => {
-      return true;
+      setServicesErrorForm(() => ({
+        ['service']: {
+          error: false,
+          message: null
+        },
+        ['concern']: {
+          error: false,
+          message: null
+        }
+      }))
+
+      if (servicesForm.service == '' && servicesForm.concern == '')  {
+        return isServicesFormValid(servicesForm, servicesErrorForm, setServicesErrorForm)
+      } else {
+        return true;
+      }
     }
   }))
 
@@ -69,12 +68,36 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
         return s
       })
     })
+
+    setServicesForm((prevValue: any) => ({
+      ...prevValue,
+      ['service']: service
+    }))
+
+    setServicesErrorForm(() => ({
+      ['service']: {
+        error: false,
+        message: null
+      },
+      ['concern']: {
+        error: false,
+        message: null
+      }
+    }))
   }
 
   const handleConcernChange = (e: any) => {
-    e.preventDefault();
-
-    setConcern(e.target.value);
+    setServicesErrorForm(() => ({
+      ['service']: {
+        error: false,
+        message: null
+      },
+      ['concern']: {
+        error: false,
+        message: null
+      }
+    }))
+    handleFormDataChange(e, setServicesForm, setServicesErrorForm)
   }
 
   return (
@@ -85,9 +108,10 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
       </div>
       <div className={styles.container}>
         <div className={styles.servicesContainer}>
+          {servicesErrorForm['service'].error && <span className={`formLabel__errorMessage ${styles.errorMessage}`}>{servicesErrorForm['service'].message}</span>}
           <strong>Jacket Crowns</strong>
           <ul className={styles.services}>
-            {services.filter(v => v.type == 'Jacket Crowns').map((service: any) =>
+            {services.filter((v: any) => v.type == 'Jacket Crowns').map((service: any) =>
               <li key={service.name} className={service.selected ? styles.selected : ''}
                 onClick={() => selectService(service)}
               >
@@ -98,7 +122,7 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
           </ul>
           <strong>Removable Partial Denture</strong>
           <ul className={styles.services}>
-            {services.filter(v => v.type == 'Removable Partial Denture').map((service: any) =>
+            {services.filter((v: any) => v.type == 'Removable Partial Denture').map((service: any) =>
               <li key={service.name} className={service.selected ? styles.selected : ''}
                 onClick={() => selectService(service)}
               >
@@ -109,9 +133,18 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
           </ul>
         </div>
         <div className={styles.servicesContainer}>
+          {servicesErrorForm['concern'].error && <span className={`formLabel__errorMessage ${styles.errorMessage}`}>{servicesErrorForm['concern'].message}</span>}
           <strong>Concern:</strong>
           <br />
-          <textarea rows={5} cols={50} value={ concern } onChange={e => handleConcernChange(e) } placeholder="Please indicate here your concern if unsure of the needed service...." />
+          <textarea 
+            rows={5} 
+            cols={50} 
+            placeholder="Please indicate here your concern if unsure of the needed service...." 
+            name="concern"
+            value={servicesForm.concern} 
+            onKeyDown={e => handleFormEnter(e, next)}
+            onChange={handleConcernChange} 
+          />
           <br />
           <div className={styles.buttons}>
             <div>

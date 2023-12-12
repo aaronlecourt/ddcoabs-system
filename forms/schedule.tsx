@@ -1,15 +1,10 @@
 import { forwardRef, useContext, useImperativeHandle } from "react";
 import styles from '../styles/forms/schedule.module.scss';
-import { faCaretLeft, faCaretRight, faChevronLeft, faChevronRight, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import { BookingFormContext } from "../pages/book";
-import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import moment from 'moment';
 import CustomCalendar from "../components/CustomCalendar";
-
-const localizer = momentLocalizer(moment);
 
 const BookScheduleForm = forwardRef(({ }: any, ref) => {
   const { onStepNext, onStepBack,
