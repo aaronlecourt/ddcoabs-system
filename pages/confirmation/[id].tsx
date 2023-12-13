@@ -10,6 +10,7 @@ export default function Confirmation() {
   const router = useRouter();
 
   const [appointment, setAppointment] = useState({
+    patientId: '',
     patientName: '',
     timeUnit: '',
     dentistService: '',
@@ -38,6 +39,17 @@ export default function Confirmation() {
         console.log('patient ', patient)
         Object.assign(appointment, { patientName: patient.name })
       }
+
+      if (!appointment.startTime && !appointment.endTime && appointment.timeUnit == 'PM') {
+        setStartTime('13:00')
+        setEndTime('15:00')
+      }
+
+      if (appointment.startTime && appointment.endTime) {
+        setStartTime(`${appointment.startTime < 10 ? '0'+appointment.startTime: appointment.startTime}:00`)
+        setEndTime(`${appointment.endTime}:00`)
+      }
+
       console.log('confirm appointment ', appointment)
       setAppointment(appointment)      
     }
@@ -48,8 +60,6 @@ export default function Confirmation() {
 
   const confirmBooking = () => {
     const { id } = router.query;
-    console.log(startTime.replace(/^0+/, "").replace(/:00/, ''))
-    console.log(endTime.replace(/^0+/, "").replace(/:00/, ''))
 
     const user = session.user
 
@@ -68,15 +78,16 @@ export default function Confirmation() {
       })
         .then(async (response) => {
           const responseMsg = await response.json()
-          console.log('appointment confirmation response msg ', responseMsg)
+          console.log('Appointment Confirmation Response msg ', responseMsg)
           if (!response.ok) {
-            alert('appointment confirmation failed: ' + responseMsg)
+            alert('Appointment Confirmation Failed: ' + responseMsg)
           } else {
-            alert('appointment confirmation successful')
+            alert('Appointment Confirmation Successful')
+            window.location.href = '/'
           }
         })
         .catch(error => {
-          alert('appointment confirmation failed');
+          alert('Appointment Confirmation Failed');
           console.error('Error updating data:', error);
         });  
     }
