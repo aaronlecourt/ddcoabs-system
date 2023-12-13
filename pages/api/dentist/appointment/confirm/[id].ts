@@ -127,6 +127,7 @@ export default async function userHandler (
         // check schedule conflicts for dentist
         const dentistScheduleConflict = await Appointment
           .find({
+            _id: { $ne: id },
             dentistId: body.dentistId,
             date: appointment.date,
             timeSlots: { $ne: null }
