@@ -23,6 +23,8 @@ export default function Confirmation() {
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('11:00')
 
+  const [errors, setErrors] = useState([])
+
   const formattedDate = (new Date(appointment.date)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   useEffect(() => {
@@ -80,7 +82,8 @@ export default function Confirmation() {
           const responseMsg = await response.json()
           console.log('appointment confirmation response msg ', JSON.stringify(responseMsg))
           if (!response.ok) {
-            alert('appointment confirmation failed: ' + JSON.stringify(responseMsg))
+            setErrors(responseMsg)
+            // alert('appointment confirmation failed: ' + JSON.stringify(responseMsg))
           } else {
             alert('Appointment Confirmation Successful')
             window.location.href = '/'
@@ -136,6 +139,11 @@ export default function Confirmation() {
               </div>
               <div className={styles.container__row}>
                 <strong>Select Time</strong>
+                {errors && errors.length > 0 && errors.map((error, index) => 
+                  <div key={index}>
+                    <span style={{ color: 'red', textTransform: 'uppercase' }}>{error}</span>
+                  </div>
+                )}
                 <div className={styles.timeContainer}>
                   <div className={styles.timePicker}>
                     <strong className={styles.timePicker__label}>Start</strong>

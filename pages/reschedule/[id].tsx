@@ -16,6 +16,8 @@ export default function Reschedule() {
   const [appointment, setAppointment] = useState<any>({})
   const [loading, setLoading] = useState(true)
 
+  const [errors, setErrors] = useState([])
+
   useEffect(() => {
     const { id }: any = router.query;
     console.log('Appointment ID: ', id);
@@ -57,6 +59,7 @@ export default function Reschedule() {
   }, [router.query])
 
   const submit = () => {
+    setErrors([])
     const user = session.user
 
     if (user) {
@@ -77,7 +80,8 @@ export default function Reschedule() {
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            alert('appointment reschedule failed: ' + JSON.stringify(responseMsg))
+            setErrors(responseMsg)
+            // alert('appointment reschedule failed: ' + JSON.stringify(responseMsg))
           } else {
             alert('appointment Reschedule Successful')
             window.location.href = '/'
@@ -142,6 +146,11 @@ export default function Reschedule() {
               </div>
               <div className={styles.container__row}>
                 <strong>Select Time</strong>
+                {errors && errors.length > 0 && errors.map((error, index) => 
+                  <div key={index}>
+                    <span style={{ color: 'red', textTransform: 'uppercase' }}>{error}</span>
+                  </div>
+                )}
                 <div className={styles.timeContainer}>
                   <div className={styles.timePicker}>
                     <strong className={styles.timePicker__label}>Start</strong>
