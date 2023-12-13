@@ -3,7 +3,7 @@ import {
   isMobileNumberValid,
   isDateOfBirthValid,
 } from '../utils/validation-rules';
-import { FormData, ErrorFormData } from '../types/profile';
+import { ProfileFormData as FormData, ProfileErrorFormData as ErrorFormData } from '../types/profile';
 import { Dispatch, SetStateAction } from 'react';
 
 export const isProfileFormValid = (formData: FormData, errorFormData: ErrorFormData, setErrorFormData: Dispatch<SetStateAction<ErrorFormData>>) => {

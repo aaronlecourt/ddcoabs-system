@@ -5,7 +5,7 @@ import { getSession } from "next-auth/react"
 import styles from '../styles/pages/profile.module.scss'
 import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
-import { FormData, ErrorFormData } from '../types/profile';
+import { ProfileFormData, ProfileErrorFormData } from '../types/profile';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import Button from '../components/Button';
 import { isProfileFormValid } from '../validations/profile';
@@ -44,7 +44,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
         contactNumber: data.contactNumber || '',
         guardianName: data.guardianName || '',
         guardianContactNumber: data.guardianContactNumber || '',
-        guardianIdFile: data.validID || ''
+        guardianIdFile: data.guardianIdFile || ''
       }
     }
 
@@ -66,7 +66,7 @@ export default function Profile({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { session, status } = useAuthGuard();
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ProfileFormData>({
     name: '',
     dateOfBirth: '',
     age: '',
@@ -82,7 +82,7 @@ export default function Profile({
     guardianIdFile: ''
   })
 
-  const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
+  const [errorFormData, setErrorFormData] = useState<ProfileErrorFormData>({
     name: { error: false, message: null },
     dateOfBirth: { error: false, message: null },
     age: { error: false, message: null },
@@ -122,7 +122,6 @@ export default function Profile({
     e.preventDefault();
 
     if (isProfileFormValid(formData, errorFormData, setErrorFormData)) {
-
       // update user logic
       const user = session.user || {};
       if (user) {
@@ -136,14 +135,14 @@ export default function Profile({
           .then(async (response) => {
             const responseMsg = await response.json()
             if (!response.ok) {
-              alert('Profile update failed: ' + JSON.stringify(responseMsg))
-            } else {              
-              alert('user successfully updated');
+              alert('Profile Update Failed: ' + JSON.stringify(responseMsg))
+            } else {
+              alert('User Successfully Updated');
               console.log('updated user ', responseMsg); // Handle the response from the API
             }
           })
           .catch(error => {
-            alert('user update failed');
+            alert('User Update Failed');
             console.error('Error updating data:', error);
           });
       }
@@ -359,7 +358,6 @@ export default function Profile({
                         <input type='file'
                           onKeyDown={e => handleFormEnter(e, updateProfile)}
                           name='guardianIdFile'
-                          value={formData.guardianIdFile}
                           onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                         />
                       </div>
