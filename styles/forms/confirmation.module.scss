@@ -1,0 +1,105 @@
+@import '../variables.scss';
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+
+    strong {
+      font-size: 20px;
+      font-family: 'Poppins-Bold';
+font-weight: 700;
+      color: $text;
+    }
+  }
+}
+
+.details {
+  padding: 2rem;
+  margin-top: 1rem;
+  width: 569px;
+  height: auto;
+  border: 1px solid $grey;
+  border-radius: 10px;
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: $text;
+    margin: 1rem 0;
+
+    &Aligned {
+      justify-content: flex-start;
+    }
+
+    label {
+      font-size: 20px;
+      font-family: 'Poppins-Bold';
+font-weight: 700;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: 400;
+    }
+  }
+}
+
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+
+  &>div:first-child {
+    margin-right: 1rem;
+  }
+}
+
+.noteContainer {
+  width: 700px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.note {
+  margin-left: 1rem;
+  color: $text;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.noteText {
+  color: $green;
+  font-family: 'Poppins-Bold';
+font-weight: 700;
+}
+
+.actions {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+  &>div:first-child {
+    margin-right: 1rem;
+  }
+}

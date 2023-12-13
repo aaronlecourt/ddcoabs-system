@@ -67,6 +67,18 @@ export default function Login({
 
       if (res.error) {
         console.log(res.error);
+        if (res.status == 401) {
+          setErrorFormData(prevValue => ({
+            ['email']: {
+              error: true,
+              message: 'Invalid username or password.'
+            },
+            ['password']: {
+              error: true,
+              message: 'Invalid username or password.'
+            }
+          }))
+        }
         return;
       }
 

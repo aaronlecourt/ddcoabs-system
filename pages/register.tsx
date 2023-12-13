@@ -5,12 +5,14 @@ import styles from '../styles/pages/auth.module.scss'
 import pageStyles from '../styles/pages/register.module.scss'
 import Button from '../components/Button';
 import { useContext, useState } from 'react';
-import { DentalFixContext } from './_app';
 import AuthLayout from '../layouts/AuthLayout';
 import { isRegistrationFormValid } from '../validations/register';
 import { FormData, ErrorFormData } from '../types/register';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import useAuthGuard from '../guards/auth.guard';
+import Modal from '../components/Modal';
+import CheckBox from '../components/CheckBox';
+import { useRouter } from 'next/router';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -21,14 +23,6 @@ export const getServerSideProps: GetServerSideProps<
 > = async () => {
   try {
     await connectMongo();
-    // `await clientPromise` will use the default database passed in the MONGODB_URI
-    // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-    //
-    // `const client = await clientPromise`
-    // `const db = client.db("myDatabase")`
-    //
-    // Then you can execute queries against your database like so:
-    // db.find({}) or any of the MongoDB Node Driver commands
 
     return {
       props: { isConnected: true },
@@ -44,14 +38,13 @@ export const getServerSideProps: GetServerSideProps<
 export default function Register({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { isTermsModalVisible, setIsTermsModalVisible }: any = useContext(DentalFixContext);
   const { session, status } = useAuthGuard();
 
   const [formData, setFormData] = useState<FormData>({
-    fullName: '',
+    name: '',
     email: '',
     address: '',
-    mobileNumber: '',
+    contactNumber: '',
     dateOfBirth: '',
     sex: '',
     password: '',
@@ -59,24 +52,81 @@ export default function Register({
   })
 
   const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
-    fullName: { error: false, message: null },
+    name: { error: false, message: null },
     email: { error: false, message: null },
     address: { error: false, message: null },
-    mobileNumber: { error: false, message: null },
+    contactNumber: { error: false, message: null },
     dateOfBirth: { error: false, message: null },
     sex: { error: false, message: null },
     password: { error: false, message: null },
     confirmPassword: { error: false, message: null }
   })
 
+  const [isCheckedTerms, setIsCheckedTerms] = useState(false)
+  const [isTermsModalVisible, setIsTermsModalVisible] = useState(false)
+
   const proceed = (e: any) => {
     e.preventDefault();
-
     if (isRegistrationFormValid(formData, errorFormData, setErrorFormData)) setIsTermsModalVisible(true);
+  }
+
+  const signup = () => {
+    if (!isCheckedTerms) return alert('Please Agree to the Terms & Conditions');
+
+    fetch(`/api/patient/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+      .then(async (response) => {
+        const responseMsg = await response.json()
+        if (!response.ok) {
+          alert('Registration failed: ' + JSON.stringify(responseMsg))
+        } else {
+          const data = responseMsg
+          setIsTermsModalVisible(false)
+          console.log('registered user ', data); // Handle the response from the API
+  
+          if (Array.isArray(data)) {
+            alert(data[0]);
+            if (data[0] === 'Email address already exists') {
+              setErrorFormData(prevValue => ({
+                ...prevValue,
+                ['email']: {
+                  error: true,
+                  message: data[0]
+                }
+              }))
+            }
+          } else {
+            alert('Registered Successfully!');
+            window.location.href = '/login';
+          }
+        }
+      })
+      .catch(error => {
+        alert('user register failed');
+        setIsTermsModalVisible(false)
+        console.error('Error register data:', error);
+      });
   }
 
   return (
     <>
+      <Modal title='Terms & Conditions' open={isTermsModalVisible} setOpen={setIsTermsModalVisible}>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.</p>
+        <div className={styles.termsAgree}>
+          <CheckBox id='agree' value={isCheckedTerms} setValue={setIsCheckedTerms}>
+            <span>I agree to the <span className={styles.termsConditionText}>Terms & Condition</span></span>
+          </CheckBox>
+          <div className={styles.termsAgreeAction}>
+            <Button style={{ marginRight: '1rem' }} type='secondary' onClick={() => setIsTermsModalVisible(false)}>Cancel</Button>
+            <Button onClick={signup}>Sign up</Button>
+          </div>
+        </div>
+      </Modal>
       {(status !== 'loading' && !session) && <AuthLayout>
         <div className={styles.container}>
           <div className={styles.header}>
@@ -92,13 +142,13 @@ export default function Register({
             <div className={styles.formField}>
               <div className='formLabel'>
                 <label>Full Name</label>
-                {errorFormData.fullName.error && <span className='formLabel__errorMessage'>{errorFormData.fullName.message}</span>}
+                {errorFormData.name.error && <span className='formLabel__errorMessage'>{errorFormData.name.message}</span>}
               </div>
-              <div className={`formInput ${errorFormData.fullName.error ? 'formInput--error' : ''}`}>
+              <div className={`formInput ${errorFormData.name.error ? 'formInput--error' : ''}`}>
                 <input type='text'
                   onKeyDown={e => handleFormEnter(e, proceed)}
-                  name='fullName'
-                  value={formData.fullName}
+                  name='name'
+                  value={formData.name}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                 />
               </div>
@@ -134,13 +184,13 @@ export default function Register({
             <div className={styles.formField}>
               <div className='formLabel'>
                 <label>Mobile Number</label>
-                {errorFormData.mobileNumber.error && <span className='formLabel__errorMessage'>{errorFormData.mobileNumber.message}</span>}
+                {errorFormData.contactNumber.error && <span className='formLabel__errorMessage'>{errorFormData.contactNumber.message}</span>}
               </div>
-              <div className={`formInput ${errorFormData.mobileNumber.error ? 'formInput--error' : ''}`}>
+              <div className={`formInput ${errorFormData.contactNumber.error ? 'formInput--error' : ''}`}>
                 <input type='text'
                   onKeyDown={e => handleFormEnter(e, proceed)}
-                  name='mobileNumber'
-                  value={formData.mobileNumber}
+                  name='contactNumber'
+                  value={formData.contactNumber}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                 />
               </div>
@@ -165,11 +215,11 @@ export default function Register({
                 {errorFormData.sex.error && <span className='formLabel__errorMessage'>{errorFormData.sex.message}</span>}
               </div>
               <div className={styles.formFieldRowChild}>
-                <input type='radio' name='sex' id='male-sex' className={errorFormData.sex.error ? 'error' : ''} value='male' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                <input type='radio' name='sex' id='male-sex' className={errorFormData.sex.error ? 'error' : ''} value='M' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                 <label htmlFor='male-sex'>Male</label>
               </div>
               <div className={styles.formFieldRowChild}>
-                <input type='radio' name='sex' id='female-sex' className={errorFormData.sex.error ? 'error' : ''} value='female' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
+                <input type='radio' name='sex' id='female-sex' className={errorFormData.sex.error ? 'error' : ''} value='F' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} />
                 <label htmlFor='female-sex'>Female</label>
               </div>
             </div>

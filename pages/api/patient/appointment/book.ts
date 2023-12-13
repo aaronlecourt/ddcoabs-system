@@ -27,10 +27,8 @@ export default async function userHandler (
 
         const validBookingFields = [
           'patientId',
-          'dentistServiceId',
           'date',
           'timeUnit',
-          'price',
           'paymentMethod'
         ];
 
@@ -38,15 +36,30 @@ export default async function userHandler (
             if (!body[v]) errorMessages.push(`${v} is required.`);
         })
 
+        // date validation
+        if (body.date) {
+          const currentDate = new Date().setHours(0,0,0,0)
+          const appointmentDate = new Date(body.date).setHours(0,0,0,0)
+
+          if (appointmentDate < currentDate)
+            errorMessages.push('Date should not be earlier than today.')
+        }
+
         // validate time unit
         if (!TIME_UNIT.includes(body.timeUnit)) {
           errorMessages.push(`Time should be in ${TIME_UNIT}`);
         }
 
-        // validate dentistService
-        const dentistService = await DentistService.findOne({ _id: body.dentistServiceId}).exec();
-        if (!dentistService) {
-          errorMessages.push(`dentistServiceId is invalid or does not exist.`);
+        // validate dentistService and concern
+        if (!body.dentistService) {
+          if (!body.concern) errorMessages.push(`concern is required since no dentistService was selected.`);
+        }
+
+        if (body.dentistService && body.dentistService != 'Consultation') {
+          const dentistService = await DentistService.findOne({ name: body.dentistService }).exec();
+          if (!dentistService) {
+            errorMessages.push(`dentistService is invalid or does not exist.`);
+          }
         }
 
         // validate payment method

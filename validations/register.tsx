@@ -40,10 +40,10 @@ export const isRegistrationFormValid = (formData: FormData, errorFormData: Error
   }
 
   // Mobile Number Validation
-  if (formData.mobileNumber && !isMobileNumberValid(formData.mobileNumber)) {
+  if (formData.contactNumber && !isMobileNumberValid(formData.contactNumber)) {
     setErrorFormData(prevErrorFormData => ({
       ...prevErrorFormData,
-      ['mobileNumber']: {
+      ['contactNumber']: {
         error: true,
         message: 'Mobile Number is invalid'
       }

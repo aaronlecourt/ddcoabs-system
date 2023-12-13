@@ -1,0 +1,101 @@
+@import '../variables.scss';
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+
+    strong {
+      font-size: 20px;
+      font-family: 'Poppins-Bold';
+font-weight: 700;
+      color: $text;
+    }
+  }
+}
+
+.details {
+  padding: 2rem;
+  margin-top: 1rem;
+  width: 569px;
+  height: 417px;
+  border: 1px solid $grey;
+  border-radius: 10px;
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: $text;
+    margin: 1rem 0;
+
+    &Aligned {
+      justify-content: flex-start;
+    }
+
+    label {
+      font-size: 20px;
+      font-family: 'Poppins-Bold';
+font-weight: 700;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    p {
+      margin-top: 2rem;
+      font-size: 16px;
+    }
+  }
+}
+
+.paymentMethod {
+  cursor: pointer;
+  border-radius: 10px;
+  border: 2px solid $grey;
+  color: $text;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 130px;
+
+  &:first-child {
+    margin-right: 1rem;
+  }
+
+  span {
+    margin-top: .5rem;
+  }
+
+  &.selected {
+    border-color: $green;
+    color: $green;
+  }
+}
+
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+
+  &>div:first-child {
+    margin-right: 1rem;
+  }
+}

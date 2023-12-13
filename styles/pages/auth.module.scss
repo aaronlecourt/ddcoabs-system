@@ -10,8 +10,7 @@
   position: relative;
   overflow: hidden;
   padding: 0 1.5rem 2rem;
-  border-bottom-left-radius: 36px;
-  border-bottom-right-radius: 36px;
+  border-radius: 36px;
 }
 
 .header {
@@ -38,7 +37,8 @@
   align-items: center;
   width: 100%;
 
-  &Field, &FieldChild {
+  &Field,
+  &FieldChild {
     display: flex;
     flex-direction: column;
     align-items: baseline;
@@ -52,7 +52,7 @@
 
     &Child {
       flex: 1;
-      margin: 1rem 0; 
+      margin: 1rem 0;
       display: flex;
       align-items: center;
     }
@@ -63,4 +63,21 @@
       margin-right: 2rem;
     }
   }
+}
+
+.termsAgree {
+  margin-top: 2rem;
+  text-align: right;
+
+  &Action {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.termsConditionText {
+  color: $green;
+  font-family: 'Poppins-Bold';
+  font-weight: 700;
 }

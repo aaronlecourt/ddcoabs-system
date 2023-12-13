@@ -9,6 +9,8 @@ import { FormData, ErrorFormData } from '../../types/changepassword';
 import { handleFormEnter, handleFormDataChange } from '../../utils/form-handles';
 import { isChangePasswordFormValid } from '../../validations/changepassword';
 import Button from '../Button';
+import useAuthGuard from '../../guards/auth.guard';
+import { useRouter } from 'next/router';
 
 interface Item {
   text: string,
@@ -17,6 +19,10 @@ interface Item {
 }
 
 export default function Navbar({ items = [] }: { items: Item[] }) {
+  const { session, status } = useAuthGuard();
+  const router = useRouter();
+  const user = session.user;
+
   const [showDropdown, setShowDropdown] = useState(false)
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
   const [showChangePasswordField, setShowChangePasswordField] = useState(false)
@@ -48,24 +54,52 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
   const proceed = (e: any) => {
     e.preventDefault();
 
+    if (!session) return
+
     if (isChangePasswordFormValid(formData, errorFormData, setErrorFormData)) {
-      // TODO: Confirm Old Password API call here
+      // Confirm Old Password API call here
       let correctOldPassword = true;
-      if (!correctOldPassword) return;
-
-      setErrorFormData(prevErrorFormData => ({
-        ...prevErrorFormData,
-        ['newPassword']: {
-          ...prevErrorFormData['newPassword'],
-          optional: false,
+      fetch(`/api/${user.role}/password/compare/${user.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        ['confirmNewPassword']: {
-          ...prevErrorFormData['confirmNewPassword'],
-          optional: false,
+        body: JSON.stringify({ password: formData.oldPassword }),
+      })
+      .then(async (response) => { 
+        console.log(response)
+        const responseMsg = await response.json()
+        if (!response.ok) {
+          correctOldPassword = false
+          alert('Failed: ' + JSON.stringify(responseMsg))
+        } else {
+          if (!correctOldPassword) return;
+  
+          setErrorFormData(prevErrorFormData => ({
+            ...prevErrorFormData,
+            ['newPassword']: {
+              ...prevErrorFormData['newPassword'],
+              optional: false,
+            },
+            ['confirmNewPassword']: {
+              ...prevErrorFormData['confirmNewPassword'],
+              optional: false,
+            }
+          }));
+    
+          setShowChangePasswordField(true);  
         }
-      }));
-
-      setShowChangePasswordField(true);
+      })  
+      .catch(error => {
+        setErrorFormData(prevValue => ({
+          ...prevValue,
+          ['oldPassword']: {
+            error: true,
+            message: 'Invalid password'
+          }
+        }))
+        console.error('Error comparison of old password to existing password:', error);
+      });
     }
   }
 
@@ -82,8 +116,31 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
     e.preventDefault();
 
     if (isChangePasswordFormValid(formData, errorFormData, setErrorFormData)) {
-      // TODO: Change Password API Call here
-      alert('Change Password Logic here')
+      // Change Password API Call here
+      fetch(`/api/${user.role}/password/update/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      .then(async (response) => {
+        const responseMsg = await response.json()
+        if (!response.ok) {
+          alert('password update failed! ' + JSON.stringify(responseMsg))
+        } else {
+          alert('password successfully updated!')
+        }
+      })  
+      .catch(error => {
+        console.error('Error updating password:', error);
+      })
+      .then(() => {
+        resetForm();
+
+        setShowChangePasswordField(false);
+        setShowChangePasswordModal(false);
+      });
     }
   }
 
@@ -172,7 +229,13 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
           height={0}
         />
         <div className={styles.navbar__itemContainer}>
-          {items.map(item => <a key={item.text} className={`${styles.navbar__item} ${item.className ? styles[item.className] : ''}`} href={item.link}>{item.text}</a>)}
+          {items.map(item => 
+            <a key={item.text} 
+            className={`${styles.navbar__item} ${item.className ? styles[item.className] : ''} ${router.pathname == item.link ? styles.active : ''}`} 
+            href={item.link}>
+              {item.text}
+            </a>
+          )}
           <div className={styles.navbar__profileContainer} onClick={() => setShowDropdown(!showDropdown)}>
             <div className={styles.navbar__profileIcon}></div>
             <Image 

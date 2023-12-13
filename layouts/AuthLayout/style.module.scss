@@ -43,6 +43,7 @@
     padding: 1rem 3rem;
     font-size: 30px;
     font-style: normal;
+    font-family: 'Poppins-Bold';
     font-weight: 700;
     line-height: normal;
     border-bottom: 2px dashed rgba(255, 255, 255, 0.50);
@@ -73,20 +74,4 @@
     font-weight: bold;
     font-size: 20px;
   }
-}
-
-.termsAgree {
-  margin-top: 2rem;
-  text-align: right;
-
-  &Action {
-    margin-top: 2rem;
-    display: flex; 
-    justify-content: flex-end;
-  }
-}
-
-.termsConditionText {
-  color: $green;
-  font-weight: 700;
 }

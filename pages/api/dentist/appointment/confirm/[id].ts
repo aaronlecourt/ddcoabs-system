@@ -2,7 +2,6 @@ import connectMongo from '../../../../../utils/connectMongo';
 import Appointment from '../../../../../models/Appointment';
 import User from '../../../../../models/User';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IAppointment } from '../../../../interfaces/IAppointment'
 import APPOINTMENT_STATUS from "../../../../../constants/appointmentStatus";
 import PAYMENT_METHOD from "../../../../../constants/paymentMethod";
 import TIME_UNIT from "../../../../../constants/timeUnit";
@@ -46,7 +45,6 @@ export default async function userHandler (
           'endTime',
         ];
         const requiredAppointmentFields = [
-          'dentistServiceId',
           'date',
           'timeUnit',
           'price',
@@ -104,19 +102,23 @@ export default async function userHandler (
         }
 
         // validate end time
-        if (appointment.timeUnit === 'PM' && body.endTime < 12 ) {
-          errorMessages.push('startTime should be more than 12.');
+        if (appointment.timeUnit === 'PM') {
+          if (body.startTime < 12 ) {
+            errorMessages.push('startTime should be more 12 PM onwards');
+          } 
+          if (body.endTime < 12 ) {
+            errorMessages.push('endTime should be more than 12.');
+          }
         }
 
         // validate dentistService
-        const dentistService = await DentistService
-          .findOne({ _id: appointment.dentistServiceId})
-          .exec();
-
-        if (!dentistService) {
-          errorMessages.push(`dentistServiceId is invalid or does not exist.`);
+        if (body.dentistService && body.dentistService !== 'Consultation') {
+          const dentistService = await DentistService.findOne({ name: body.dentistService }).exec();
+          if (!dentistService) {
+            errorMessages.push(`dentistService is invalid or does not exist.`);
+          }
         }
-
+        
         // validate payment method
         if (!PAYMENT_METHOD.includes(appointment.paymentMethod)) {
             errorMessages.push(`Payment Method should in ${PAYMENT_METHOD}`);

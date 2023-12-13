@@ -94,3 +94,13 @@ export interface PatientFormCheckbox {
   textbox?: boolean;
   textValue?: string;
 }
+
+export interface ServicesFormData {
+  service: string;
+  concern: string;
+}
+
+export interface ServicesErrorFormData {
+  service: ErrorFormDataField;
+  concern: ErrorFormDataField;
+}

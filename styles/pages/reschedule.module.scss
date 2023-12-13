@@ -1,0 +1,116 @@
+@import '../variables.scss';
+
+.main {
+  padding: 2rem;
+}
+
+.title {
+  color: $green;
+  font-size: 40px;
+  font-style: normal;
+  font-family: 'Poppins-Bold';
+  font-weight: 700;
+  line-height: normal;
+}
+
+.subtitle {
+  color: $text;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  &__action {
+    text-align: right;
+    margin: 2rem 0;
+  }
+
+  &__row {
+    margin: 1rem;
+    flex: 1 1 45%;
+
+
+    strong {
+      font-size: 20px;
+      font-family: 'Poppins-Bold';
+      font-weight: 700;
+      color: $text;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: 400;
+      color: $text;
+    }
+  }
+}
+
+.bookingDetails {
+  margin-top: .5rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid $grey;
+  background: #FAFAFA;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  &__row {
+    padding: .5rem 1rem;
+    flex: 1 1 45%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.timeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  margin-left: 1rem;
+
+  .timePicker {
+    display: flex;
+    flex-direction: column;
+
+    &__label {
+      font-family: 'Poppins-Bold';
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    &__input {
+      margin: .5rem 0;
+      padding: 0 1rem;
+      width: auto;
+      height: 45px;
+      background-color: #FAFAFA;
+      border-radius: 10px;
+      border: 1px solid $grey;
+
+      input[type="time"] {
+        cursor: pointer;
+        color: $text;
+        font-size: 18px;
+        width: 100%;
+        height: 100%;
+        background-color: #FAFAFA;
+        border-radius: 10px;
+        border: 0;
+        outline: none;
+
+        &::-webkit-calendar-picker-indicator {
+          font-size: 31px;
+          filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(130deg) brightness(95%) contrast(80%);
+        }
+      }
+    }
+  }
+}

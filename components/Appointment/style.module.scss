@@ -1,0 +1,112 @@
+@import '../../styles/variables.scss';
+
+.appointments {
+  &__itemContainer {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid $grey;
+    background: #fff;
+  }
+
+  &__item {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: 20px;
+    color: $text;
+    font-weight: 400;
+    flex: 1;
+    padding-right: .5rem;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    flex: 1;
+
+    span {
+      margin-left: .5rem;
+      color: $text;
+    }
+  }
+
+  &__statusContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+
+  &__status {
+    font-size: 12px;
+    color: $text;
+    font-weight: 400;
+    border-radius: 19px;
+    background-color: $yellow;
+    padding: .5rem;
+    margin-right: 2rem;
+
+    &Confirmed {
+      color: $white;
+      background-color: $green;
+    }
+
+    &Canceled {
+      color: $white;
+      background-color: $red;
+    }
+  }
+
+  &__details {
+    margin: 1rem 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__separator {
+      margin: 1rem 0;
+      border: 1px dashed $grey;
+    }
+
+    &__row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      align-items: center;
+      color: $text;
+      font-size: 15px;
+
+      &Item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        span {
+          margin-left: .5rem;
+        }
+
+        &Clickable {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+.mainAction {
+  font-size: 15px;
+  font-family: 'Poppins-Bold';
+  font-family: 'Poppins-Bold';
+  font-weight: 700;
+  border-radius: 19px;
+  color: $white;
+  background-color: $green;
+  padding: .5rem 2rem;
+}

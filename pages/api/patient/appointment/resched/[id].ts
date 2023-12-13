@@ -1,13 +1,10 @@
 import connectMongo from '../../../../../utils/connectMongo';
 import Appointment from '../../../../../models/Appointment';
-import User from '../../../../../models/User';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { IAppointment } from '../../../../interfaces/IAppointment'
 import APPOINTMENT_STATUS from "../../../../../constants/appointmentStatus";
 import PAYMENT_METHOD from "../../../../../constants/paymentMethod";
 import TIME_UNIT from "../../../../../constants/timeUnit";
 import HTTP_CODES from "../../../../../constants/httpCodes";
-import ROLES from "../../../../../constants/roles";
 import DentistService from '../../../../../models/DentistService';
 import { ObjectId } from 'mongodb'
 
@@ -44,7 +41,7 @@ export default async function userHandler (
           'timeUnit'
         ];
         const requiredAppointmentFields = [
-          'dentistServiceId',
+          'dentistService',
           'timeUnit',
           'price',
           'paymentMethod'
@@ -60,18 +57,30 @@ export default async function userHandler (
           if (!appointment[v]) errorMessages.push(`${v} is required.`);
         })
       
+        // date validation
+        if (body.date) {
+          const currentDate = new Date().setHours(0,0,0,0)
+          const appointmentDate = new Date(body.date).setHours(0,0,0,0)
+          
+          if (appointmentDate < currentDate)
+            errorMessages.push('Date should not be earlier than today.')
+        }
+        
         // validate time unit
         if (!TIME_UNIT.includes(body.timeUnit)) {
           errorMessages.push(`Time should be in ${TIME_UNIT}`);
         }
 
         // validate dentistService
-        const dentistService = await DentistService
-          .findOne({ _id: appointment.dentistServiceId})
-          .exec();
+        if (!body.dentistService) {
+          if (!body.concern) errorMessages.push(`concern is required since no dentistService was selected.`);
+        }
 
-        if (!dentistService) {
-          errorMessages.push(`dentistServiceId is invalid or does not exist.`);
+        if (body.dentistService && body.dentistService !== 'Consultation') {
+          const dentistService = await DentistService.findOne({ name: body.dentistService }).exec();
+          if (!dentistService) {
+            errorMessages.push(`dentistService is invalid or does not exist.`);
+          }
         }
 
         // validate payment method
@@ -86,7 +95,7 @@ export default async function userHandler (
 
         // set default values
         body.status = APPOINTMENT_STATUS.pending;
-        body.date = new Date(new Date(body.date).toUTCString()).toISOString();
+        // body.date = new Date(new Date(body.date).toUTCString()).toISOString();
         body.timeSlots = {};
         body.startTime = null;
         body.endTime = null;
