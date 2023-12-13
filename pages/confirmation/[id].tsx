@@ -23,7 +23,7 @@ export default function Confirmation() {
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('11:00')
 
-  const [errors, setErrors] = useState([])
+  const [errors, setErrors] = useState<any[]>([])
 
   const formattedDate = (new Date(appointment.date)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
@@ -82,7 +82,8 @@ export default function Confirmation() {
           const responseMsg = await response.json()
           console.log('appointment confirmation response msg ', JSON.stringify(responseMsg))
           if (!response.ok) {
-            setErrors(responseMsg)
+            const errorMsgs: any = new Set(responseMsg);
+            setErrors([...errorMsgs])
             // alert('appointment confirmation failed: ' + JSON.stringify(responseMsg))
           } else {
             alert('Appointment Confirmation Successful')
