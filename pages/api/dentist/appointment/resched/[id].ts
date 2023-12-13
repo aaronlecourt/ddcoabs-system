@@ -154,7 +154,7 @@ export default async function userHandler (
         }
 
         // set default values
-        body.date = new Date(new Date(body.date).toUTCString()).toISOString()
+        // body.date = new Date(new Date(body.date).toUTCString()).toISOString()
         body.timeSlots = {};
 
         for (let i=body.startTime; i<body.endTime; i++) {

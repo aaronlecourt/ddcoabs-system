@@ -112,7 +112,7 @@ export default async function userHandler (
         }
 
         // validate dentistService
-        if (body.dentistService) {
+        if (body.dentistService && body.dentistService !== 'Consultation') {
           const dentistService = await DentistService.findOne({ name: body.dentistService }).exec();
           if (!dentistService) {
             errorMessages.push(`dentistService is invalid or does not exist.`);

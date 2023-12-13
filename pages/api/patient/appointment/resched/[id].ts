@@ -86,7 +86,7 @@ export default async function userHandler (
 
         // set default values
         body.status = APPOINTMENT_STATUS.pending;
-        body.date = new Date(new Date(body.date).toUTCString()).toISOString();
+        // body.date = new Date(new Date(body.date).toUTCString()).toISOString();
         body.timeSlots = {};
         body.startTime = null;
         body.endTime = null;
