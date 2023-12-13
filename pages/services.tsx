@@ -43,7 +43,7 @@ export default function Services() {
                   <tr key={index}>
                     <td>{index+1}</td>
                     <td>{service.name}</td>
-                    <td>{service.price.toFixed(2)}</td>
+                    <td>P {service.price.toFixed(2)}</td>
                     <td>{service.description}</td>
                   </tr>
                 )}
