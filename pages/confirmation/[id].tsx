@@ -50,7 +50,7 @@ export default function Confirmation() {
     const { id } = router.query;
     console.log(startTime.replace(/^0+/, "").replace(/:00/, ''))
     console.log(endTime.replace(/^0+/, "").replace(/:00/, ''))
-    // alert('API CALL HERE CONFIRM BOOKING')
+
     const user = session.user
 
     if (user) {
@@ -70,7 +70,7 @@ export default function Confirmation() {
           const responseMsg = await response.json()
           console.log('appointment confirmation response msg ', responseMsg)
           if (!response.ok) {
-            alert('appointment confirmation failed')
+            alert('appointment confirmation failed: ' + responseMsg)
           } else {
             alert('appointment confirmation successful')
           }

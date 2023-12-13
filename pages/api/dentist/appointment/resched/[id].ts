@@ -79,8 +79,13 @@ export default async function userHandler (
         }
 
         // validate end time
-        if (appointment.timeUnit === 'PM' && body.endTime < 12 ) {
-          errorMessages.push('startTime should be more than 12.');
+        if (appointment.timeUnit === 'PM') {
+          if (body.startTime < 12 ) {
+            errorMessages.push('startTime should be 12 PM onwards.');
+          } 
+          if (body.endTime < 12 ) {
+            errorMessages.push('endTime should be more than 12.');
+          }
         }
 
         // validate dentistService

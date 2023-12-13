@@ -43,7 +43,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
   useEffect(() => {
     const getPatientName = async () => {
       if (appointment.patientId) {
-        const response = await fetch(`http://localhost:3000/api/global/user/${appointment.patientId}`);
+        const response = await fetch(`/api/global/user/${appointment.patientId}`);
         const patient = await response.json();
         if (patient)
           Object.assign(appointment, {

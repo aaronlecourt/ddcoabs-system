@@ -133,10 +133,14 @@ export default function Profile({
           },
           body: JSON.stringify(formData),
         })
-          .then(response => response.json())
-          .then(data => {
-            alert('user successfully updated');
-            console.log('updated user ', data); // Handle the response from the API
+          .then(async (response) => {
+            const responseMsg = await response.json()
+            if (!response.ok) {
+              alert('Profile update failed: ' + responseMsg)
+            } else {              
+              alert('user successfully updated');
+              console.log('updated user ', responseMsg); // Handle the response from the API
+            }
           })
           .catch(error => {
             alert('user update failed');

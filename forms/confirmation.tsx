@@ -35,10 +35,10 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
     const user = session.user
 
     const payload = {
-      dentistService: servicesForm.service.name,
+      dentistService: servicesForm.service.name || 'Consultation',
       date: new Date(selectedDate).toISOString().substring(0, 10),
       timeUnit: selectedTimeUnit,
-      price: servicesForm.service.price,
+      price: servicesForm.service.price || 500,
       paymentMethod: selectedPaymentMethod,
       concern: servicesForm.concern,
       details: patientForm
