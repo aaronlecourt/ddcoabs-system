@@ -16,7 +16,7 @@ export default function Reschedule() {
   const [appointment, setAppointment] = useState<any>({})
   const [loading, setLoading] = useState(true)
 
-  const [errors, setErrors] = useState([])
+  const [errors, setErrors] = useState<any[]>([])
 
   useEffect(() => {
     const { id }: any = router.query;
@@ -80,7 +80,8 @@ export default function Reschedule() {
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            setErrors(responseMsg)
+            const errorMsgs: any = new Set(responseMsg);
+            setErrors([...errorMsgs])
             // alert('appointment reschedule failed: ' + JSON.stringify(responseMsg))
           } else {
             alert('appointment Reschedule Successful')
