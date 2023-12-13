@@ -80,25 +80,30 @@ export default function Register({
       },
       body: JSON.stringify(formData),
     })
-      .then(response => response.json())
-      .then(data => {
-        setIsTermsModalVisible(false)
-        console.log('registered user ', data); // Handle the response from the API
-
-        if (Array.isArray(data)) {
-          alert(data[0]);
-          if (data[0] === 'Email address already exists') {
-            setErrorFormData(prevValue => ({
-              ...prevValue,
-              ['email']: {
-                error: true,
-                message: data[0]
-              }
-            }))
-          }
+      .then(async (response) => {
+        const responseMsg = await response.json()
+        if (!response.ok) {
+          alert('Registration failed: ' + responseMsg)
         } else {
-          alert('Registered Successfully!');
-          window.location.href = '/login';
+          const data = responseMsg
+          setIsTermsModalVisible(false)
+          console.log('registered user ', data); // Handle the response from the API
+  
+          if (Array.isArray(data)) {
+            alert(data[0]);
+            if (data[0] === 'Email address already exists') {
+              setErrorFormData(prevValue => ({
+                ...prevValue,
+                ['email']: {
+                  error: true,
+                  message: data[0]
+                }
+              }))
+            }
+          } else {
+            alert('Registered Successfully!');
+            window.location.href = '/login';
+          }
         }
       })
       .catch(error => {

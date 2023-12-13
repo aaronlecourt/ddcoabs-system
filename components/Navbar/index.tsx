@@ -68,31 +68,28 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
       })
       .then(async (response) => { 
         console.log(response)
+        const responseMsg = await response.json()
         if (!response.ok) {
           correctOldPassword = false
-          await response.json();
-          // alert(await response.json())
-        }
-        return response.json()
-      })  
-      .then(data => {
-        console.log('data ', data); // Handle the response from the API
-        if (!correctOldPassword) return;
-
-        setErrorFormData(prevErrorFormData => ({
-          ...prevErrorFormData,
-          ['newPassword']: {
-            ...prevErrorFormData['newPassword'],
-            optional: false,
-          },
-          ['confirmNewPassword']: {
-            ...prevErrorFormData['confirmNewPassword'],
-            optional: false,
-          }
-        }));
+          alert('Failed: ' + responseMsg)
+        } else {
+          if (!correctOldPassword) return;
   
-        setShowChangePasswordField(true);
-      })
+          setErrorFormData(prevErrorFormData => ({
+            ...prevErrorFormData,
+            ['newPassword']: {
+              ...prevErrorFormData['newPassword'],
+              optional: false,
+            },
+            ['confirmNewPassword']: {
+              ...prevErrorFormData['confirmNewPassword'],
+              optional: false,
+            }
+          }));
+    
+          setShowChangePasswordField(true);  
+        }
+      })  
       .catch(error => {
         setErrorFormData(prevValue => ({
           ...prevValue,
@@ -130,13 +127,10 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
       .then(async (response) => { 
         if (!response.ok) {
           alert('password update failed! ' + await response.json())
+        } else {
+          alert('password successfully updated!')
         }
-        return response.json()
       })  
-      .then(data => {
-        alert('password successfully updated!')
-        console.log('data ', data); // Handle the response from the API
-      })
       .catch(error => {
         console.error('Error updating password:', error);
       })
