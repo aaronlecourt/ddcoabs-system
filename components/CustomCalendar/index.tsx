@@ -38,6 +38,10 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
   }
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (new Date(start) < today) return;
+
     setSelectedDate(start);
   };
 

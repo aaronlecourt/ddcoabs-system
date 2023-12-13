@@ -61,7 +61,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
       if (!response.ok) {
         alert('Booking failed: ' + JSON.stringify(responseMsg))
       } else {
-        alert('appointment booked successfully!');
+        alert('Appointment Booked Successfully!');
         console.log('appointment booked ', responseMsg);
         window.location.href = '/book';
       }
