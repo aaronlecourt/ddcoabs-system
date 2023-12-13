@@ -74,7 +74,7 @@ export default function Home({
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            alert('appointment cancel failed: ' + responseMsg)
+            alert('appointment cancel failed ' + responseMsg)
           } else {
             alert('Appointment Cancel Successful')
             window.location.href = '/'
@@ -83,7 +83,7 @@ export default function Home({
         .catch(error => {
           alert('Appointment Cancel Failed');
           console.error('Error updating data:', error);
-        });  
+        });
     }
   }
 
@@ -128,9 +128,15 @@ export default function Home({
             <div className={styles.container}>
               <section>
                 <div className={styles.appointments}>
-                  {appointments.map((appointment: any, index: number) =>
-                    <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
-                  )}
+                  {appointments && appointments.length > 0 ?
+                    <>
+                      {appointments.map((appointment: any, index: number) =>
+                        <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+                      )}
+                    </>
+                    :
+                    <div className={styles.appointments__empty}>There are no appointments</div>
+                  }
                 </div>
               </section>
               <section>

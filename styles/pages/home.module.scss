@@ -45,6 +45,14 @@
   border: 1px solid $grey;
   background-color: #FAFAFA;
   padding: 0 1rem;
+
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+    color: $text;
+  }
 }
 
 .cancelTitle {
