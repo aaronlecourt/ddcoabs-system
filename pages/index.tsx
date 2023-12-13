@@ -10,10 +10,9 @@ import CustomCalendar from '../components/CustomCalendar';
 import Appointment from '../components/Appointment';
 import Modal from '../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCancel } from '@fortawesome/free-solid-svg-icons';
+import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -124,10 +123,29 @@ export default function Home({
         </Modal>
         {session && (
           <main className={styles.main}>
-            <h1 className={styles.title}>Hello {session.user?.name}!</h1>
+            <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
             <div className={styles.container}>
               <section>
+                <div className={styles.filters}>
+                  <div className={styles.filters__search}>
+                    <input type='text' className={styles.filters__searchInput} placeholder='Search appointment...' />
+                    <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
+                  </div>
+                  <div className={styles.filters__sort}>
+                    <span className={styles.filters__sortTitle}>Sort By:</span>
+                    <div className={styles.filters__sortDropdown}>
+                      <span>Latest</span>
+                      <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
+                    </div>
+                  </div>
+                </div>
                 <div className={styles.appointments}>
+                  <div className={styles.appointments__filters}>
+                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>All</div>
+                    <div className={styles.appointments__filtersItem}>Confirmed</div>
+                    <div className={styles.appointments__filtersItem}>Pending</div>
+                    <div className={styles.appointments__filtersItem}>Today</div>
+                  </div>
                   {appointments && appointments.length > 0 ?
                     <>
                       {appointments.map((appointment: any, index: number) =>
