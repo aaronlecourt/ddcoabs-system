@@ -1,9 +1,13 @@
 
 export const handleFormDataChange = (e: any, setFormData: any, setErrorFormData: any) => {
-  const { name, value } = e.target;
+  const { name, value, files } = e.target;
+  let val = value;
+  if (files && files.length > 0) {
+    val = files[0].name
+  }
   setFormData((prevFormData: any) => ({
     ...prevFormData,
-    [name]: value
+    [name]: val
   }))
   setErrorFormData((prevErrorFormData: any) => ({
     ...prevErrorFormData,

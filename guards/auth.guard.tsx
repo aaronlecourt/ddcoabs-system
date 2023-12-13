@@ -78,8 +78,6 @@ export default function useAuthGuard() {
     if (emptyFields.length > 0) {
       router.push('/profile');
     } else {
-      console.log(router)
-      console.log(router.pathname)
       if (session.user.role == 'patient' && !patientRoutes.includes(router.pathname)) {
         router.push('/');
       }

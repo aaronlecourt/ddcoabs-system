@@ -1,6 +1,22 @@
 import { ErrorFormDataField } from "./error";
 
-export interface FormData {
+export type ProfileKeys = 
+  'name' |
+  'dateOfBirth' |
+  'age'
+  'email' |
+  'religion' |
+  'nationality' |
+  'sex' |
+  'bloodType' |
+  'address' |
+  'contactNumber' |
+  'guardianName' |
+  'guardianContactNumber' |
+  'guardianIdFile'
+
+
+export interface ProfileFormData {
   name: string;
   dateOfBirth: string;
   age: string|number;
@@ -16,7 +32,7 @@ export interface FormData {
   guardianIdFile: string;
 }
 
-export interface ErrorFormData {
+export interface ProfileErrorFormData {
   name: ErrorFormDataField;
   dateOfBirth: ErrorFormDataField;
   age: ErrorFormDataField;
