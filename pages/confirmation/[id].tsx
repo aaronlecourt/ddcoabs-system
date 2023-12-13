@@ -78,9 +78,9 @@ export default function Confirmation() {
       })
         .then(async (response) => {
           const responseMsg = await response.json()
-          console.log('Appointment Confirmation Response msg ', responseMsg)
+          console.log('appointment confirmation response msg ', JSON.stringify(responseMsg))
           if (!response.ok) {
-            alert('Appointment Confirmation Failed: ' + responseMsg)
+            alert('appointment confirmation failed: ' + JSON.stringify(responseMsg))
           } else {
             alert('Appointment Confirmation Successful')
             window.location.href = '/'

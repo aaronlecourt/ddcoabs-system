@@ -77,7 +77,7 @@ export default function Reschedule() {
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            alert('appointment reschedule failed: ' + responseMsg)
+            alert('appointment reschedule failed: ' + JSON.stringify(responseMsg))
           } else {
             alert('appointment Reschedule Successful')
             window.location.href = '/'

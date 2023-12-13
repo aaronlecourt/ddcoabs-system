@@ -136,7 +136,7 @@ export default function Profile({
           .then(async (response) => {
             const responseMsg = await response.json()
             if (!response.ok) {
-              alert('Profile update failed: ' + responseMsg)
+              alert('Profile update failed: ' + JSON.stringify(responseMsg))
             } else {              
               alert('user successfully updated');
               console.log('updated user ', responseMsg); // Handle the response from the API

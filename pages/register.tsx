@@ -83,7 +83,7 @@ export default function Register({
       .then(async (response) => {
         const responseMsg = await response.json()
         if (!response.ok) {
-          alert('Registration failed: ' + responseMsg)
+          alert('Registration failed: ' + JSON.stringify(responseMsg))
         } else {
           const data = responseMsg
           setIsTermsModalVisible(false)

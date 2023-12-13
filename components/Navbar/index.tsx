@@ -71,7 +71,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
         const responseMsg = await response.json()
         if (!response.ok) {
           correctOldPassword = false
-          alert('Failed: ' + responseMsg)
+          alert('Failed: ' + JSON.stringify(responseMsg))
         } else {
           if (!correctOldPassword) return;
   
@@ -124,9 +124,10 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
         },
         body: JSON.stringify(formData),
       })
-      .then(async (response) => { 
+      .then(async (response) => {
+        const responseMsg = await response.json()
         if (!response.ok) {
-          alert('password update failed! ' + await response.json())
+          alert('password update failed! ' + JSON.stringify(responseMsg))
         } else {
           alert('password successfully updated!')
         }

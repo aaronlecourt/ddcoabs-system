@@ -59,7 +59,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
     .then(async (response) => {
       const responseMsg = await response.json()
       if (!response.ok) {
-        alert('Booking failed: ' + responseMsg)
+        alert('Booking failed: ' + JSON.stringify(responseMsg))
       } else {
         alert('appointment booked successfully!');
         console.log('appointment booked ', responseMsg);
