@@ -118,6 +118,7 @@ export default async function userHandler (
         if (appointment.destistId) {
             const dentistScheduleConflict = await Appointment
             .find({
+              _id: { $ne: id },
               dentistId: appointment.dentistId,
               date: appointment.date,
               timeSlots: { $ne: null }
