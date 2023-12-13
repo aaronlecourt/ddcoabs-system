@@ -46,7 +46,7 @@ export default async function userHandler (
           if (!body.concern) errorMessages.push(`concern is required since no dentistService was selected.`);
         }
 
-        if (body.dentistService) {
+        if (body.dentistService && body.dentistService != 'Consultation') {
           const dentistService = await DentistService.findOne({ name: body.dentistService }).exec();
           if (!dentistService) {
             errorMessages.push(`dentistService is invalid or does not exist.`);
