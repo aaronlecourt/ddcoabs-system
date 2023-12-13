@@ -74,7 +74,7 @@ export default function Home({
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            alert('appointment cancel failed ' + responseMsg)
+            alert('appointment cancel failed: ' + responseMsg)
           } else {
             alert('Appointment Cancel Successful')
             window.location.href = '/'

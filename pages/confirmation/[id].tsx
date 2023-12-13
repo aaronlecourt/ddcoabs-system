@@ -107,7 +107,7 @@ export default function Confirmation() {
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Price:</strong>
-                    <span>{appointment.price || '500'}</span>
+                    <span>{appointment.price || '500.00'}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>

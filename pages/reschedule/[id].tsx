@@ -77,7 +77,7 @@ export default function Reschedule() {
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            alert('appointment reschedule failed ' + responseMsg)
+            alert('appointment reschedule failed: ' + responseMsg)
           } else {
             alert('appointment Reschedule Successful')
             window.location.href = '/'
@@ -125,7 +125,7 @@ export default function Reschedule() {
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Price:</strong>
-                    <span>{appointment.price ? appointment.price.toFixed(2) : '500'}</span>
+                    <span>{appointment.price ? appointment.price.toFixed(2) : '500.00'}</span>
                   </div>
                   <div className={styles.bookingDetails__row}>
                     <strong>Date:</strong>

@@ -96,7 +96,7 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
             </div>
             <div className={styles.details__row}>
               <label>Base Charge:</label>
-              <span>{servicesForm.service.price || '500'}</span>
+              <span>{servicesForm.service.price || '500.00'}</span>
             </div>
             <div className={styles.details__row}>
               <label>Payment Method:</label>
