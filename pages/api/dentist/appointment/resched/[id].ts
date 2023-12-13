@@ -64,6 +64,15 @@ export default async function userHandler (
           if (!appointment[v]) errorMessages.push(`${v} is required.`);
         })
       
+        // date validation
+        if (body.date) {
+          const currentDate = new Date().setHours(0,0,0,0)
+          const appointmentDate = new Date(body.date).setHours(0,0,0,0)
+          
+          if (appointmentDate < currentDate)
+            errorMessages.push('Date should not be earlier than today.')
+        }
+        
         // validate time unit
         if (!TIME_UNIT.includes(appointment.timeUnit)) {
           errorMessages.push(`Time should be in ${TIME_UNIT}`);
