@@ -116,7 +116,62 @@ export default function Register({
   return (
     <>
       <Modal title='Terms & Conditions' open={isTermsModalVisible} setOpen={setIsTermsModalVisible}>
-        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.</p>
+        <div className={styles.termsScrollable}>
+        <div>
+        <span className={styles.termsSubHeader}>Welcome to DentFix Dental Clinic Online Appointment Booking System! <br/></span>
+        These terms and conditions outline the rules and regulations for the use of our dental appointment booking website.
+        </div>
+        <br />
+        <div>
+        By accessing this website and using our appointment booking services, you agree to accept these terms and conditions. Do not continue to use DentFix Dental Clinic 's website if you do not agree to all of the terms and conditions stated on this page.
+        </div>
+        <br />
+        <div>
+        <span className={styles.termsSubHeader}>Appointment Booking <br /></span>
+        Our website provides a platform for users to schedule appointments with our dental clinic.
+        By booking an appointment, you confirm that you are seeking services offered by DentFix Dental Clinic and that the information provided during the booking process is accurate.
+        </div>
+        <br />
+        <div>
+          <span className={styles.termsSubHeader}>Payment <br /></span>
+          Payment information is collected solely to secure your appointment and will not be charged until services are rendered.
+          We accept various forms of payment including cash and Gcash. The payment method provided during booking will be used to secure the appointment.
+          No charges will be made until services are provided, and the payment method will only be charged according to the services rendered or any cancellation policy in effect.
+        </div>
+        <br />
+        <div>
+          <span className={styles.termsSubHeader}>Cancellation and Rescheduling <br /></span>
+          If you need to cancel or reschedule your appointment, please do so at least 48 hours before the scheduled time.
+          DentFix Dental Clinic reserves the right to cancel or reschedule appointments due to unforeseen circumstances. In such cases, reasonable efforts will be made to accommodate your schedule.
+        </div>
+        <br />
+        <div>
+          <span className={styles.termsSubHeader}>User Responsibilities <br /></span>
+          Users are solely responsible for maintaining the confidentiality of their login information and credentials used for accessing the DentFix Dental Clinic Online Appointment Booking System. This includes but is not limited to emails, passwords, or any other authentication details. Users must not share their login credentials with any third party or allow unauthorized access to their account.
+        </div>
+        <br />
+        <div>
+          <span className={styles.termsSubHeader}>Data Protection and Privacy <br /></span>
+          We are committed to protecting your privacy and personal information. Any data collected during the appointment booking process will be handled in accordance with our Privacy Policy.
+        </div>
+        <br />
+        <div>
+          <span className={styles.termsSubHeader}>Liability <br /></span>
+          DentFix Dental Clinic is not liable for any damages or losses incurred as a result of using our website or services.
+          While we strive to provide accurate information on our website, we cannot guarantee the accuracy, completeness, or suitability of the information provided. It is your responsibility to verify any information provided.
+        </div>
+        <br />
+        <div>
+          <span className={styles.termsSubHeader}>Changes to Terms and Conditions <br /></span>
+          DentFix Dental Clinic reserves the right to update or modify these terms and conditions at any time without prior notice. Changes will be effective immediately upon posting on the website.
+        </div>
+        <br />
+        <div>
+          <span className={styles.termsSubHeader}>Contact Information <br /></span>
+          If you have any questions or concerns regarding these terms and conditions, please contact us at 09774270371
+          By using our website and booking appointments through our platform, you agree to abide by these terms and conditions.
+        </div>
+        </div>
         <div className={styles.termsAgree}>
           <CheckBox id='agree' value={isCheckedTerms} setValue={setIsCheckedTerms}>
             <span>I agree to the <span className={styles.termsConditionText}>Terms & Condition</span></span>

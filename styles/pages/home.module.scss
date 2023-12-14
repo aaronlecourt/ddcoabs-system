@@ -3,13 +3,29 @@
 .main {
   padding: 2rem;
 
+  // &LandingPage {
+  //   background: linear-gradient(180deg, #3C6CAF 0%, #55BD97 100%);
+  //   height: 100vh;
+  //   display: flex;
+  //   flex-direction: column;
+  //   align-items: center;
+  //   color: $white;
+  // }
   &LandingPage {
-    background: linear-gradient(180deg, #3C6CAF 0%, #55BD97 100%);
-    height: 100vh;
+    // height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: $white;
+    color: $text;
+  }
+}
+
+.sub {
+  width: 50vw;
+
+  &Header {
+    font-weight: bolder;
+    color: $green;
   }
 }
 

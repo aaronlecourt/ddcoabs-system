@@ -65,6 +65,20 @@
   }
 }
 
+.termsScrollable {
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 5px;
+  padding: 10px;
+  height: 350px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.termsSubHeader{
+  font-weight: bold;
+}
+
 .termsAgree {
   margin-top: 2rem;
   text-align: right;
