@@ -64,6 +64,10 @@ export default function ServiceRecords() {
     try {
       const response = await fetch(`api/dentist/archive`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateServiceFormData),
       });
 
       if (!response.ok) {
@@ -71,6 +75,7 @@ export default function ServiceRecords() {
       }
 
       // If deletion is successful, update the services state by removing the deleted service
+      setShowDeleteService(false);
       setServices(prevServices =>
         prevServices.filter(service => service._id !== serviceId)
       );
