@@ -24,6 +24,8 @@ export default function Services() {
   const [showAddService, setShowAddService] = useState(false)
   const [showUpdateService, setShowUpdateService] = useState(false)
   const [showArchiveService, setShowArchiveService] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('');
+
 
   // useEffect(() => {
   //   const setServicesData = async () => {
@@ -72,17 +74,6 @@ export default function Services() {
   const onAddService = (appointment: any) => {
     setShowAddService(true);
   }
-
-    // TRIGGERS THE MODAL aND INPUTS DATA FROM TABLE
-    // const onUpdateService = (service: Service) => {
-    //   setUpdateServiceFormData({
-    //     _id: service._id,
-    //     name: service.name,
-    //     price: service.price,
-    //     description: service.description,
-    //   }); // Set the data for the update form fields
-    //   setShowUpdateService(true); // Open the update modal
-    // }
 
     const onUpdateService = (service: Service, buttonName: string) => {
       if (buttonName === 'update') {
@@ -322,20 +313,37 @@ export default function Services() {
       });
   }
 
+  //SEARCHING PURPOSES
+  const handleSearch = () => {
+    const filtered = services.filter((service) =>
+      service.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    setServices(filtered);
+  };
+
+  const handleSearchAction = (e?: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<SVGSVGElement>) => {
+    if (e) {
+      if (e.type === 'click' || (e as React.KeyboardEvent<HTMLInputElement>).key === 'Enter') {
+        handleSearch();
+      }
+    }
+  };
+
   const renderContent = () => {
     return (
       <>
       <section>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
-            <input type='text' className={styles1.filters__searchInput} placeholder='Search appointment...' />
+            <input type='text' className={styles1.filters__searchInput} placeholder='Search appointment...' value = {searchTerm} onChange={e => handleFormDataChange(e, setServiceFormData, setErrorFormData)} />
             <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
           </div>
           <div className={styles1.filters__sort}>
             <span className={styles1.filters__sortTitle}>Sort By:</span>
             <div className={styles1.filters__sortDropdown}>
               <span>Latest</span>
-              <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
+              <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} onClick={handleSearchAction}/>
             </div>
           </div>
         </div>

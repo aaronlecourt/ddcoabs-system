@@ -79,6 +79,34 @@ export default function Accounts() {
   const updateUserRole = async (e: any) => {
     e.preventDefault();
 
+    fetch(`/api/dentist/accounts`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateUserFormData),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = await response.json();
+          alert('Update failed: ' + JSON.stringify(error));
+        } else {
+          const updatedService = await response.json();
+          console.log('User role updated: ', updatedService);
+          setShowValiUser(false); // Close the modal after successful 
+
+          setUsers(prevServices =>
+            prevServices.map(prevService =>
+              prevService._id === updatedService._id ? updatedService : prevService
+            )
+          );
+        }
+      })
+      .catch(error => {
+        alert('Update failed');
+        console.error('Error updating service:', error);
+      });
+
   };
 
   const archiveUser = async (e: any) => {
