@@ -5,9 +5,10 @@ import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Button from '../components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faArchive, faBoxArchive, faChevronDown, faFileArchive, faFolder, faPencil, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { UpdateProfileFormData } from '../types/profile';
 import Modal from '../components/Modal';
+import ArchiveButton from '../components/ArchiveButton';
 
 interface User {
   _id: string;
@@ -144,7 +145,8 @@ export default function Accounts() {
           </div>
         </Modal>
 
-      <section>
+      <section className={styles.main}>
+        <div>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
             <input type='text' className={styles1.filters__searchInput} placeholder='Search account...' />
@@ -158,11 +160,8 @@ export default function Accounts() {
             </div>
           </div>
         </div>
-      </section>
-
-
         {session && (
-          <main className={styles.main}>
+          <main>
             <table className={styles.table}>
               <thead>
                 <tr>
@@ -170,7 +169,7 @@ export default function Accounts() {
                   <th>Full Name</th>
                   <th>Email Address</th>
                   <th>Mobile Number</th>
-                  <th>User Type</th>
+                  <th>User Role</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -184,14 +183,16 @@ export default function Accounts() {
                     <td>
                       <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
                       {roles.map((role) => (
-                        <option key = {role} value = {role}>
+                        <option key={role} value={role}>
                           {role}
                         </option>
                       ))}
                       </select>
                     </td>
-                    <td> 
-                      <Button onClick={() => onUpdateUser(user)}> Archive </Button>
+                    <td className={styles1.tableAction}> 
+                      <ArchiveButton onClick={() => onUpdateUser(user)}>
+                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                      </ArchiveButton>
                       <Button onClick={() => {
                         if (user.role === 'admin' || user.role === 'employee') {
                           setShowValiUser(true);
@@ -207,6 +208,11 @@ export default function Accounts() {
             </table>
           </main>
         )}
+        </div>
+      </section>
+
+
+        
       </>
     )
   }

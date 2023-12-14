@@ -114,6 +114,10 @@
   }
 }
 
+.servicecrud {
+  width: 90%;
+}
+
 .filters {
   display: flex;
   flex-direction: row;
@@ -153,7 +157,7 @@
     flex: 1;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    // justify-content: flex-end;
 
     &Title {
       font-size: 20px;
@@ -177,4 +181,18 @@
       font-weight: 400;
     }
   }
+
+  &__add {
+    background-color: $green;
+    color: white;
+    padding: 0.9rem;
+    width: 200px;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+
+.tableAction {
+  display: flex; gap: 10px;
 }

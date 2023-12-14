@@ -4,9 +4,11 @@ import styles1 from '../styles/pages/home.module.scss'
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faArchive, faBoxArchive, faChevronDown, faFileArchive, faFolder, faPencil, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import Modal from '../components/Modal';
+import EditButton from '../components/EditButton';
+import ArchiveButton from '../components/ArchiveButton';
 import Button from '../components/Button';
 import { AddServicesFormData, ErrorAddServicesFormData, UpdateServicesFormData } from '../types/services';
 
@@ -61,7 +63,7 @@ export default function Services() {
     };
   
     fetchServices();
-  }, []); 
+  }); 
   
   // Update the table whenever 'services' state changes
   useEffect(() => {
@@ -325,10 +327,11 @@ export default function Services() {
   const renderContent = () => {
     return (
       <>
-      <section>
+      <section className={styles.main}>
+        <div className={styles1.servicecrud}>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
-            <input type='text' className={styles1.filters__searchInput} placeholder='Search appointment...' />
+            <input type='text' className={styles1.filters__searchInput} placeholder='Search services...' />
             <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
           </div>
           <div className={styles1.filters__sort}>
@@ -338,15 +341,48 @@ export default function Services() {
               <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
             </div>
           </div>
+          {/* BUTTON TO TRIGGER THE MODAL */}
+          <div className={styles1.filters__add} onClick={onAddService}>
+          Add Service
+          </div>
         </div>
-        {/* BUTTON TO TRIGGER THE MODAL */}
-        <div>
-          <button onClick={onAddService}> Add Service + </button>
+        {session && (
+          <main>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Service Name</th>
+                  <th>Base Charge</th>
+                  <th>Description</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {services.map((service, index) => 
+                  <tr key={service._id}>
+                    <td>{index + 1}</td>
+                    <td>{service.name}</td>
+                    <td>P{service.price}</td>
+                    <td>{service.description}</td>
+                    <td className={styles1.tableAction}>
+                      <EditButton onClick={() => onUpdateService(service, 'update')}>
+                        <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
+                      </EditButton>
+                      <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
+                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                      </ArchiveButton>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </main>
+        )}
         </div>
       </section>
 
       {/* ADD SERVICE */}
-
       <Modal open={showAddService} setOpen={setShowAddService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> Add Service </h3>
           <label> Service Name: </label>
@@ -405,8 +441,7 @@ export default function Services() {
           </div>
         </Modal>
 
-        {/* ARCHIVE SERVICE */}
-
+      {/* ARCHIVE SERVICE */}
       <Modal open={showArchiveService} setOpen={setShowArchiveService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want to archive this dental service?</p>
@@ -416,36 +451,6 @@ export default function Services() {
             <Button onClick={archiveService} type = "submit">Yes</Button>
           </div>
         </Modal>
-
-        {session && (
-          <main className={styles.main}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Service Name</th>
-                  <th>Base Charge</th>
-                  <th>Description</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {services.map((service, index) => 
-                  <tr key={service._id}>
-                    <td>{index + 1}</td>
-                    <td>{service.name}</td>
-                    <td>₱ {service.price}</td>
-                    <td>{service.description}</td>
-                    <td>
-                      <Button onClick={() => onUpdateService(service, 'update')}>Edit</Button> 
-                      <Button onClick={() => onUpdateService(service, 'archive')}>Archive</Button>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </main>
-        )}
       </>
     )
   }

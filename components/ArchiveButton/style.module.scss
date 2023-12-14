@@ -1,0 +1,16 @@
+@import '../../styles/variables.scss';
+
+.button {
+  border-radius: 12px;
+  background: $yellow;
+  color: $white;
+  font-size: 18px;
+  font-family: 'Poppins-Bold';
+  font-weight: 700;
+  padding: 1rem 2rem;
+  cursor: pointer;
+
+  &Secondary {
+    background: $text;
+  }
+}
