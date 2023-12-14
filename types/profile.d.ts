@@ -53,6 +53,7 @@ export interface UpdateProfileFormData {
   _id: string;
   name: string;
   email: string;
-  contactNumber: string;
+  contactNumber: number;
+  role: string;
   isArchived: boolean;
 }
