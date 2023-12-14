@@ -21,7 +21,9 @@ export default function useAuthGuard() {
     '/profile',
     '/confirmation/[id]',
     '/reschedule/[id]',
-    '/services'
+    '/services',
+    '/accounts',
+    'patient-records'
   ]
 
   const [userProfile, setUserProfile] = useState<any>({})

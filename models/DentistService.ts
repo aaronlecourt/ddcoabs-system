@@ -18,7 +18,10 @@ const schema = new Schema<IDentistService>({
     price: {
         type: Number,
         required: true
-    }
+    },
+    isArchived: {
+        type: Boolean,
+    },
 }, {
     timestamps: true
 })
