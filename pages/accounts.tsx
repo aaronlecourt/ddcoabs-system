@@ -186,12 +186,6 @@ export default function Accounts() {
             )
           );
   
-          // setUsers((prevUsers) =>
-          // prevUsers.map((prevUsers) =>
-          // prevUsers._id === updatedUser._id ? updatedUser : prevUsers
-          //   ).filter((user) => user._id !== updatedUser._id)
-          // );
-  
           // Remove the updated service from the table
           // setUsers((prevServices) =>
           //   prevServices.filter((service) => service._id !== updatedUser._id)
@@ -213,7 +207,7 @@ export default function Accounts() {
       <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want to archive this user?</p>
-          <input type='text' name = "_id" value={updateUserFormData._id}/>
+          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
             <Button onClick={archiveUser} type = "submit">Yes</Button>

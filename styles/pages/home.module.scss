@@ -141,6 +141,16 @@
   align-items: center;
   margin-bottom: 1rem;
 
+  &__type {
+    flex: 0.9;
+    border-radius: 10px;
+    border: 1px solid $grey;
+    background-color: #FAFAFA;
+    display: flex;
+    padding: 15px 10px;
+    flex-direction: row;
+  }
+
   &__search {
     flex: 0.9;
     border-radius: 10px;

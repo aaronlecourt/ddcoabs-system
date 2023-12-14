@@ -13,5 +13,6 @@ export interface IAppointment {
     timeSlots: object,
     price?: number,
     paymentMethod: string,
-    details?: object // patient form
+    details?: object, // patient form
+    isArchived: boolean
 }

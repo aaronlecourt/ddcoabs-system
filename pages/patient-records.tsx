@@ -2,26 +2,30 @@ import { useEffect, useState } from 'react';
 import styles from '../styles/pages/services.module.scss'
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
+import Button from '../components/Button';
 
-interface Service {
+interface Record {
+  _id: string;
   name: string;
-  price: number;
-  description: string;
+  contactNumber: number;
+  age: number;
+  sex: string;
+  dateOfBirth: string;
 }
 
 export default function PatientRecords() {
   const { session, status } = useAuthGuard();
-  const [services, setServices] = useState<Service[]>([])
+  const [records, setRecords] = useState<Record[]>([])
 
   useEffect(() => {
-    const setServicesData = async () => {
-      let response = await fetch('api/dentist/patient-records');
+    const setRecordsData = async () => {
+      let response = await fetch('api/dentist/patients-records');
       let data = await response.json() || [];
 
-      setServices(data)
+      setRecords(data)
     }
 
-    setServicesData()
+    setRecordsData()
   }, [])
 
   const renderContent = () => {
@@ -33,18 +37,27 @@ export default function PatientRecords() {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Service Name</th>
-                  <th>Base Charge</th>
-                  <th>Description</th>
+                  <th>Name</th>
+                  <th>Contact Number</th>
+                  <th>Age</th>
+                  <th>Sex</th>
+                  <th>Date of Birth</th>
+                  <th>Age</th>
                 </tr>
               </thead>
               <tbody>
-                {services.map((service, index) => 
-                  <tr key={index}>
+                {records.map((record, index) => 
+                  <tr key={record._id}>
                     <td>{index+1}</td>
-                    <td>{service.name}</td>
-                    <td>P {service.price.toFixed(2)}</td>
-                    <td>{service.description}</td>
+                    <td>{record.name}</td>
+                    <td>{record.contactNumber}</td>
+                    <td>{record.age}</td>
+                    <td>{record.sex}</td>
+                    <td>{record.dateOfBirth}</td>
+                    <td>
+                      <Button>Show More </Button>
+                      <Button> Archive </Button>
+                      </td>
                   </tr>
                 )}
               </tbody>

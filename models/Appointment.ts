@@ -54,6 +54,10 @@ const schema = new Schema<IAppointment>({
     details: {
         type: Object,
     },
+    isArchived: {
+        type: Boolean,
+        default: false,
+    }
 }, {
     timestamps: true
 })

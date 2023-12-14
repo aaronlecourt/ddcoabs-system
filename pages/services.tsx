@@ -488,7 +488,7 @@ export default function Services() {
 
           <label> Type: </label>
           <div className={styles1.cancelText}>
-            <div className={styles1.filters__search}>
+            <div className={styles1.filters__type}>
               <select onChange={(e: any) => setUpdateServiceFormData({ ...updateServiceFormData, type: e.target.value })}
                 value={updateServiceFormData.type}>
                 {types.map((type, index) => (
@@ -503,12 +503,12 @@ export default function Services() {
           <label> Short Description: </label>
           <div className={styles1.cancelText}>
             <div className={styles1.filters__search}>
-              <input type='textarea' name = "description" className={styles1.filters__searchInput} value={updateServiceFormData.description} onChange={e => handleFormDataChange(e, setUpdateServiceFormData, setErrorFormData)} />
+              <input type='text' name = "description" className={styles1.filters__searchInput} value={updateServiceFormData.description} onChange={e => handleFormDataChange(e, setUpdateServiceFormData, setErrorFormData)} />
             </div>
           </div>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowUpdateService(false)}>Cancel</Button>
-            <Button onClick={updateService} type = "submit">Submit</Button>
+            <Button onClick={updateService} type = "submit">Update</Button>
           </div>
         </Modal>
 
