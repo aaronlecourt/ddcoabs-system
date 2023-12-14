@@ -44,7 +44,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
         contactNumber: data.contactNumber || '',
         guardianName: data.guardianName || '',
         guardianContactNumber: data.guardianContactNumber || '',
-        guardianIdFile: data.guardianIdFile || ''
+        guardianIdFile: data.guardianIdFile || '',
       }
     }
 
@@ -79,7 +79,8 @@ export default function Profile({
     contactNumber: '',
     guardianName: '',
     guardianContactNumber: '',
-    guardianIdFile: ''
+    guardianIdFile: '',
+    isArchived: false
   })
 
   const [errorFormData, setErrorFormData] = useState<ProfileErrorFormData>({

@@ -68,6 +68,7 @@ export default function useAuthGuard() {
       bloodType: null,
       address: null,
       contactNumber: null,
+      isArchived: false,
     }
 
     const requiredFields = userProfile.role == 'dentist' ? dentistRequiredFields : patientRequiredFields;

@@ -20,37 +20,32 @@ export default async function userHandler (
         // console.log(patientUsers);
         res.status(200).json(patientUsers);          
         break
-    case 'PUT':
-        const { _id, ...updateData } = body;
-        console.log("Body Data Received:", body);
-        console.log("UPDATED DATA: ", updateData)
-        if (!_id) {
-          res.status(400).json({ error: 'ID is required for update' });
-          return;
-        }
-
-        updateData.isArchived = true; // Set isArchived to true
-
+      case 'PUT':
         try {
-            const user = await User.findById(_id);
-        
-            if (!user) {
-              res.status(404).json({ error: 'User not found' });
-              return;
-            }
-
-            user.isArchived = true; // Update the field
-            await user.save(); // Save the changes
-
-            console.log("USER DATA: ", user)
-        
-            res.status(200).json(user);
-          } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
+          const { _id } = body;
+      
+          if (!_id) {
+            return res.status(400).json({ error: 'ID is required for update' });
           }
-        break
+      
+          const updatedUser = await User.findOneAndUpdate(
+            { _id },
+            { $set: { isArchived: true } },
+            { new: true }
+          );
+      
+          if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+          }
+      
+          res.status(200).json(updatedUser);
+        } catch (error) {
+          console.error("Error updating user:", error);
+          return res.status(500).json({ error: 'Error updating user' });
+        }
+        break;
       default:
-        res.setHeader('Allow', ['GET', 'POST'])
+        res.setHeader('Allow', ['GET', 'POST', 'PUT'])
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (error) {
