@@ -4,7 +4,7 @@ import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faPencil,
 import { useEffect, useState } from 'react';
 import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
 
-export default function Appointment({ appointment, onCancelAppointment }: any) {
+export default function Appointment({ appointment, onCancelAppointment, isPatient }: any) {
   const [collapse, setCollapse] = useState(true);
   const [name, setName] = useState(appointment.patientName || '')
 
@@ -18,6 +18,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
   }
 
   const cancel = () => {
+    console.log('Cancelling appointment:', appointment);
     onCancelAppointment(appointment);
   }
 
@@ -60,7 +61,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
     <div className={styles.appointments__itemContainer}>
       <div className={styles.appointments__item} onClick={openAppointment}>
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
-        {!collapse && <div className={styles.appointments__user}>
+        {!collapse && !isPatient && <div className={styles.appointments__user}>
           <FontAwesomeIcon icon={faUser} width={15} height={15} color={'#3AB286'} />
           <span>{ appointment.patientName || name || ''}</span>
         </div>}
@@ -84,7 +85,7 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
             <span>{appointment.paymentMethod}</span>
           </div>
         </div>
-        {appointment.status == APPOINTMENT_STATUS.pending && 
+        {appointment.status == APPOINTMENT_STATUS.pending && !isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row}>
@@ -98,6 +99,67 @@ export default function Appointment({ appointment, onCancelAppointment }: any) {
               </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={confirm}>
                 <div className={styles.mainAction}>CONFIRM</div>
+              </div>
+            </div>
+          </>
+        }
+        {appointment.status == APPOINTMENT_STATUS.confirmed && !isPatient &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
+                <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
+                <span>Reschedule</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
+                <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
+                <span>Cancel</span>
+              </div>
+              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+                <div className={styles.mainAction}>MARK AS DONE</div>
+              </div>
+            </div>
+          </>
+        }
+
+        {appointment.status == APPOINTMENT_STATUS.canceled && isPatient &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
+                <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
+                <span>Reschedule</span>
+              </div>
+            </div>
+          </>
+        }
+        {appointment.status == APPOINTMENT_STATUS.pending && isPatient &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
+                <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
+                <span>Reschedule</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
+                <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
+                <span>Cancel</span>
+              </div>
+            </div>
+          </>
+        }
+        {appointment.status == APPOINTMENT_STATUS.confirmed && isPatient &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
+                <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
+                <span>Reschedule</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
+                <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
+                <span>Cancel</span>
               </div>
             </div>
           </>

@@ -13,7 +13,9 @@ export default function useAuthGuard() {
   const patientRoutes = [
     '/',
     '/profile',
+    '/appointments',
     '/book',
+    '/reschedule/[id]',
   ]
 
   const dentistRoutes = [
@@ -21,7 +23,8 @@ export default function useAuthGuard() {
     '/profile',
     '/confirmation/[id]',
     '/reschedule/[id]',
-    '/services'
+    '/services',
+    '/appointments'
   ]
 
   const [userProfile, setUserProfile] = useState<any>({})

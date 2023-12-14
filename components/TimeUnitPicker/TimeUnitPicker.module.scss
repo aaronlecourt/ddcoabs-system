@@ -1,0 +1,27 @@
+@import '../../styles/variables.scss';
+/* TimeUnitPicker.module.scss */
+.timeUnit {
+    display: flex;
+    flex-direction: row;
+  
+    div {
+      margin: 1rem 0;
+      padding: .7rem 5rem;
+      color: $text;
+      border: 1px solid $grey;
+      background-color: $white;
+      border-radius: 8px;
+      box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.10);
+      cursor: pointer;
+  
+      &:first-child {
+        margin-right: 1rem;
+      }
+  
+      &.selected {
+        color: $green;
+        border-color: green;  
+      }
+    }
+  }
+  

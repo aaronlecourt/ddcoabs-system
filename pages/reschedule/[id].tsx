@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import styles from '../../styles/pages/reschedule.module.scss'
+import styles from '../../styles/pages/reschedule.module.scss';
+import PatientLayout from '../../layouts/PatientLayout';
 import DentistLayout from '../../layouts/DentistLayout';
 import useAuthGuard from '../../guards/auth.guard';
 import Button from '../../components/Button';
 import CustomCalendar from '../../components/CustomCalendar';
+import TimeUnitPicker from '../../components/TimeUnitPicker';
 
 export default function Reschedule() {
   const { session, status } = useAuthGuard();
@@ -15,6 +17,8 @@ export default function Reschedule() {
   const [reschedDate, setReschedDate] = useState(new Date())
   const [appointment, setAppointment] = useState<any>({})
   const [loading, setLoading] = useState(true)
+  const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
+
 
   const [errors, setErrors] = useState<any[]>([])
 
@@ -48,7 +52,10 @@ export default function Reschedule() {
       }
 
       setReschedDate(appointment.date);
-      setAppointment(appointment)      
+      setAppointment(appointment);
+
+      setSelectedTimeUnit(appointment.timeUnit || 'AM');    
+
       setLoading(false);
     }
 
@@ -74,7 +81,8 @@ export default function Reschedule() {
           patientId: appointment.patientId,
           date: reschedDate,
           startTime: Number((startTime || '0').replace(/^0+/, "").replace(/:00/, '')),
-          endTime: Number((endTime || '0').replace(/^0+/, "").replace(/:00/, ''))
+          endTime: Number((endTime || '0').replace(/^0+/, "").replace(/:00/, '')),
+          timeUnit: selectedTimeUnit,
         })),
       })
         .then(async (response) => {
@@ -96,6 +104,82 @@ export default function Reschedule() {
   }
 
   const renderContent = () => {
+    return (
+      <>
+        {session && (
+          <main className={styles.main}>
+            <h1 className={styles.title}>Reschedule</h1>
+            <p className={styles.subtitle}>Reschedule the appointment by selecting a different start time and/or date.</p>
+            {loading && <div>Loading...</div>}
+            {!loading &&<div className={styles.container}>
+              <div className={styles.container__row}>
+                <strong>Select Date</strong>
+                <div style={{ marginTop: '.5rem' }}>
+                  <CustomCalendar 
+                    selectedDate={reschedDate}
+                    setSelectedDate={setReschedDate}
+                  />
+                </div>
+              </div>
+              <div className={styles.container__row}>
+                <strong>Booking Details</strong>
+                <div className={styles.bookingDetails}>
+                  <div className={styles.bookingDetails__row}>
+                    <strong>Service:</strong>
+                    <span>{appointment.dentistService || 'Consultation'}</span>
+                  </div>
+                  <div className={styles.bookingDetails__row}>
+                    <strong>Date:</strong>
+                    <span>{new Date(appointment.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                  </div>
+                  <div className={styles.bookingDetails__row}>
+                    <strong>Time:</strong>
+                    <span>{appointment.timeUnit}</span>
+                  </div>
+                  {/* <div className={styles.bookingDetails__row}>
+                    <strong>Price:</strong>
+                    <span>P {appointment.price ? appointment.price.toFixed(2) : '500.00'}</span>
+                  </div> */}
+                  <div className={styles.bookingDetails__row}>
+                    <strong>Payment Method:</strong>
+                    <span>{appointment.paymentMethod}</span>
+                  </div>                  
+                </div>
+                <div className={styles.container__action}>
+                  <Button style={{ display: 'inline-block' }} onClick={submit}>Submit Changes</Button>
+                </div>
+              </div>
+              <div className={styles.container__row}>
+                <strong>Select Time</strong>
+                {errors && errors.length > 0 && errors.map((error, index) => 
+                  <div key={index}>
+                    <span style={{ color: 'red', textTransform: 'uppercase' }}>{error}</span>
+                  </div>
+                )}
+                <div className={styles.timeContainer}>
+                  <TimeUnitPicker selectedTimeUnit={selectedTimeUnit} onSelectTimeUnit={setSelectedTimeUnit} />
+                  {/* <div className={styles.timePicker}>
+                    <strong className={styles.timePicker__label}>Start</strong>
+                    <div className={styles.timePicker__input}>
+                      <input type='time' value={startTime} onChange={e => setStartTime(e.target.value)} />
+                    </div>
+                  </div>
+                  <div className={styles.timePicker}>
+                    <strong className={styles.timePicker__label}>End</strong>
+                    <div className={styles.timePicker__input}>
+                      <input type='time' value={endTime} onChange={e => setEndTime(e.target.value)} />
+                    </div>
+                  </div> */}
+                </div>
+              </div>
+            </div>}
+          </main>
+        )}
+      </>
+    )
+  }
+
+  const renderDentistContent = () => {
     return (
       <>
         {session && (
@@ -177,9 +261,15 @@ export default function Reschedule() {
   return (
     <>
       {(status !== 'loading' && session) && (
-        <DentistLayout>
-          {renderContent()}
-        </DentistLayout>
+        session.user?.role === 'patient' ? (
+          <PatientLayout>
+            {renderContent()}
+          </PatientLayout>
+        ) : (
+          <DentistLayout>
+            {renderDentistContent()}
+          </DentistLayout>
+        )
       )
       }
     </>

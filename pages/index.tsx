@@ -91,6 +91,8 @@ export default function Home({
       <>
         {session && (
           <main className={`${styles.main} ${styles.mainLandingPage}`}>
+            {/* separate into 2 services scroll 1 side */}
+            <div className="">
             <Image
               src='/logo_dark.png'
               alt='logo'
@@ -106,7 +108,12 @@ export default function Home({
             <br />
             <div>
             <h2 className={styles.subHeader}>Operating Hours</h2>
-
+            <p>
+              Monday - Friday: 8:00 AM - 6:00 PM
+              <br />
+              Saturday - Sunday: Closed
+            </p>
+            </div>
             </div>
             </div>
           </main>
