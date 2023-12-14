@@ -13,7 +13,7 @@ interface User {
   _id: string;
   name: string;
   email: number;
-  contactNumber: string;
+  contactNumber: number;
   role: string;
   isArchived: boolean;
 }
@@ -21,7 +21,7 @@ interface User {
 export default function Accounts() {
   const { session, status } = useAuthGuard();
   const [users, setUsers] = useState<User[]>([])
-  const roles = ['patient', 'admin', 'employee'];
+  const roles = ['patient', 'dentist', 'employee'];
   // const [selectedRole, setSelectedRole] = useState(users.role);
   
   
@@ -56,23 +56,38 @@ export default function Accounts() {
     _id: '',
     name: '',
     email: '',
-    contactNumber: '',
+    contactNumber: 0,
+    role: '',
     isArchived: false,
   })
 
   const [showArchiveUser, setShowArchiveUser] = useState(false)
   const [showValiUser, setShowValiUser] = useState(false)
 
-  const onUpdateUser = (user: User) => {
-      setShowArchiveUser(true);
+  const onUpdateUser = (user: User, buttonName: string) => {
 
-      setUpdateUserFormData({
-        _id: user._id,
-        name: user.name,
-        email: user.email.toString(),
-        contactNumber: user.contactNumber,
-        isArchived: true,
-      }); 
+      if (buttonName === 'updateRole') {
+        setUpdateUserFormData({
+          _id: user._id,
+          name: user.name,
+          email: user.email.toString(),
+          contactNumber: user.contactNumber,
+          role: user.role,
+          isArchived: user.isArchived,
+        }); // Set the data for the update form fields
+        setShowValiUser(true); // Open the update modal
+      } else if (buttonName === 'archiveUser') {
+        setShowArchiveUser(true);
+
+        setUpdateUserFormData({
+          _id: user._id,
+          name: user.name,
+          email: user.email.toString(),
+          contactNumber: user.contactNumber,
+          role: user.role,
+          isArchived: true
+        }); // Set the data for the update form fields
+      }
   };
 
   //UPDATE USER ROLE
@@ -91,13 +106,13 @@ export default function Accounts() {
           const error = await response.json();
           alert('Update failed: ' + JSON.stringify(error));
         } else {
-          const updatedService = await response.json();
-          console.log('User role updated: ', updatedService);
+          const updatedUser = await response.json();
+          console.log('User role updated: ', updatedUser);
           setShowValiUser(false); // Close the modal after successful 
 
           setUsers(prevServices =>
             prevServices.map(prevService =>
-              prevService._id === updatedService._id ? updatedService : prevService
+              prevService._id === updatedUser._id ? updatedUser : prevService
             )
           );
         }
@@ -109,10 +124,11 @@ export default function Accounts() {
 
   };
 
+  //ARCHIVES USER
   const archiveUser = async (e: any) => {
     // e.preventDefault();
 
-    fetch(`/api/dentist/accounts`, {
+    fetch('/api/dentist/accounts', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -124,19 +140,19 @@ export default function Accounts() {
           const error = await response.json();
           alert('Update failed: ' + JSON.stringify(error));
         } else {
-          const updatedService = await response.json();
-          console.log('Service updated: ', updatedService);
+          const updatedUser = await response.json();
+          console.log('User updated: ', updatedUser);
           setShowArchiveUser(false); // Close the modal after successful update
   
-          setUsers((prevServices) =>
-            prevServices.map((prevService) =>
-              prevService._id === updatedService._id ? updatedService : prevService
-            )
+          setUsers((prevUsers) =>
+          prevUsers.map((prevUsers) =>
+          prevUsers._id === updatedUser._id ? updatedUser : prevUsers
+            ).filter((user) => user._id !== updatedUser._id)
           );
   
           // Remove the updated service from the table
           setUsers((prevServices) =>
-            prevServices.filter((service) => service._id !== updatedService._id)
+            prevServices.filter((service) => service._id !== updatedUser._id)
           );
   
         }
@@ -155,7 +171,7 @@ export default function Accounts() {
       <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want to archive this user?</p>
-          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
+          <input type='text' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
             <Button onClick={archiveUser} type = "submit">Yes</Button>
@@ -166,6 +182,7 @@ export default function Accounts() {
         <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want this user to be an admin or employee?</p>
+          <input type='text' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
             <Button onClick={updateUserRole} type = "submit">Yes</Button>
@@ -219,13 +236,12 @@ export default function Accounts() {
                       </select>
                     </td>
                     <td> 
-                      <Button onClick={() => onUpdateUser(user)}> Archive </Button>
+                      <Button onClick={() => onUpdateUser(user, 'archiveUser')}> Archive </Button>
                       <Button onClick={() => {
                         if (user.role === 'admin' || user.role === 'employee') {
                           setShowValiUser(true);
+                          onUpdateUser(user, 'updateRole');
                           // Show the modal for admin or employee users
-                        } else {
-                          updateUserRole(user._id);
                         }
                       }}> Update Role</Button>
                     </td>

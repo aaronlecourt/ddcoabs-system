@@ -16,6 +16,6 @@ export interface IUser {
     guardianContactNumber?: string,
     guardianIdFile?: string,     // for patient
     credentials?: string, // for dentist
-    role: string
+    role: string,
     isArchived: boolean
 }

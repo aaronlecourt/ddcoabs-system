@@ -15,24 +15,34 @@ export default async function userHandler (
     switch (method) {
       case 'GET':
         const patientUsers = await Users.find({
-            $or: [
-                { role: 'patient', isArchived: { $in: [false, null] } },
-                { role: 'employee', isArchived: { $in: [false, null] } }
-              ]
+            isArchived: { $in: [false, null] }
         });
-        console.log(patientUsers);
+        // console.log(patientUsers);
         res.status(200).json(patientUsers);          
         break
     case 'PUT':
-        const { _id, ...updateData } = body; // Assuming 'id' is provided in the update request
+        const { _id, ...updateData } = body;
         if (!_id) {
           res.status(400).json({ error: 'ID is required for update' });
           return;
         }
-        const service = await Users.findByIdAndUpdate(_id, updateData, {
-          new: true,
-        });
-        res.status(200).json(service);
+
+        updateData.isArchived = true; // Set isArchived to true
+
+        try {
+            const user = await Users.findByIdAndUpdate(_id, updateData, {
+              new: true,
+            });
+        
+            if (!user) {
+              res.status(404).json({ error: 'User not found' });
+              return;
+            }
+        
+            res.status(200).json(user);
+          } catch (error) {
+            res.status(500).json({ error: 'Internal server error' });
+          }
         break
       default:
         res.setHeader('Allow', ['GET', 'POST'])
