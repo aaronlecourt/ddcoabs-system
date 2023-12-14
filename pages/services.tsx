@@ -25,10 +25,20 @@ export default function Services() {
 
   useEffect(() => {
     const setServicesData = async () => {
-      let response = await fetch('api/dentist/dentist-service');
-      let data = await response.json() || [];
+      // let response = await fetch('api/dentist/dentist-service');
+      // let data = await response.json() || [];
 
-      setServices(data)
+      // setServices(data)
+      try {
+        const response = await fetch('api/dentist/dentist-service');
+        if (!response.ok) {
+          throw new Error('Failed to fetch services');
+        }
+        const data: Service[] = await response.json();
+        setServices(data);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
     }
 
     setServicesData()
@@ -69,61 +79,6 @@ export default function Services() {
     description: '',
   })
 
-  // // FOR ADDING A SERVICE
-  // const addService = (e: any) => {
-  //   e.preventDefault();
-
-  //   fetch(`/api/dentist/dentist-service`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(serviceFormData),
-  //   })
-  //     .then(async (response) => {
-  //       const responseMsg = await response.json()
-  //       if (!response.ok) {
-  //         alert('Registration failed: ' + JSON.stringify(responseMsg))
-  //       } else {
-  //         const data = responseMsg
-  //         console.log('Service registered ', data); // Handle the response from the API
-  //         setShowAddService(false);
-  //       }
-  //     })
-  //     .catch(error => {
-  //       alert('Service failed');
-  //       console.error('Error adding service:', error);
-  //     });
-  // }
-
-  
-  // // FOR UPDATE BUTTON
-  // const updateService = (e: any) => {
-  //   e.preventDefault();
-
-  //   fetch(`/api/dentist/dentist-service`, {
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(updateServiceFormData),
-  //   })
-  //     .then(async (response) => {
-  //       if (!response.ok) {
-  //         const error = await response.json();
-  //         alert('Update failed: ' + JSON.stringify(error));
-  //       } else {
-  //         const updatedService = await response.json();
-  //         console.log('Service updated: ', updatedService);
-  //         setShowUpdateService(false); // Close the modal after successful 
-  //       }
-  //     })
-  //     .catch(error => {
-  //       alert('Update failed');
-  //       console.error('Error updating service:', error);
-  //     });
-  // }
-
   const handleService = (e: any) => {
     e.preventDefault();
   
@@ -151,8 +106,16 @@ export default function Services() {
             setShowAddService(false); // Close the modal after successful registration
             // Clear the form after adding a service if needed
             setServiceFormData({ name: '', price: '', description: '' });
+
+            //DYNAMIC TABLE
+            setServices(prevServices => [...prevServices, responseData]);
           } else {
             setShowUpdateService(false); // Close the modal after successful update
+            setServices(prevServices =>
+              prevServices.map(prevService =>
+                prevService._id === responseData._id ? responseData : prevService
+              )
+            );
           }
         }
       })
@@ -290,7 +253,7 @@ export default function Services() {
               <tbody>
                 {services.map((service, index) => 
                   <tr key={service._id}>
-                    <td>{index+1}</td>
+                    <td>{index + 1}</td>
                     <td>{service.name}</td>
                     <td>₱ {service.price}</td>
                     <td>{service.description}</td>
