@@ -47,3 +47,12 @@ export interface ProfileErrorFormData {
   guardianContactNumber: ErrorFormDataField;
   guardianIdFile: ErrorFormDataField;
 }
+
+
+export interface UpdateProfileFormData {
+  _id: string;
+  name: string;
+  email: string;
+  contactNumber: string;
+  isArchived: boolean;
+}

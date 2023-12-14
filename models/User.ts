@@ -54,7 +54,7 @@ const schema = new Schema<IUser>({
     role: {
         type: String,
         required: true,
-        enum: [ROLES.dentist, ROLES.patient]
+        enum: [ROLES.dentist, ROLES.patient, ROLES.employee]
     },
     isArchived: {
         type: Boolean,

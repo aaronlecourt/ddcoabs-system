@@ -410,7 +410,7 @@ export default function Services() {
       <Modal open={showArchiveService} setOpen={setShowArchiveService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want to archive this dental service?</p>
-          <input type='text' name = "_id" value={updateServiceFormData._id}/>
+          <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowArchiveService(false)}>No</Button>
             <Button onClick={archiveService} type = "submit">Yes</Button>

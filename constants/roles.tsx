@@ -1,5 +1,6 @@
 export default {
     dentist: 'dentist',
-    patient: 'patient'
+    patient: 'patient',
+    employee: 'employee'
 }
   

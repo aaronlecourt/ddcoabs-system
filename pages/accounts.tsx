@@ -6,6 +6,8 @@ import useAuthGuard from '../guards/auth.guard';
 import Button from '../components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { UpdateProfileFormData } from '../types/profile';
+import Modal from '../components/Modal';
 
 interface User {
   _id: string;
@@ -19,7 +21,15 @@ interface User {
 export default function Accounts() {
   const { session, status } = useAuthGuard();
   const [users, setUsers] = useState<User[]>([])
-
+  const roles = ['patient', 'admin', 'employee'];
+  // const [selectedRole, setSelectedRole] = useState(users.role);
+  
+  
+  const handleRoleChange = (e: any, index: any) => {
+    const updatedUsers = [...users]; // Create a copy of the users array
+    updatedUsers[index].role = e.target.value; // Update the role of the specific user at the given index
+    setUsers(updatedUsers); // Update the state with the modified users array
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,9 +52,97 @@ export default function Accounts() {
   useEffect(() => {
   }, [users]); // Add 'services' to the dependency arr
 
+  const [updateUserFormData, setUpdateUserFormData] = useState<UpdateProfileFormData>({
+    _id: '',
+    name: '',
+    email: '',
+    contactNumber: '',
+    isArchived: false,
+  })
+
+  const [showArchiveUser, setShowArchiveUser] = useState(false)
+  const [showValiUser, setShowValiUser] = useState(false)
+
+  const onUpdateUser = (user: User) => {
+      setShowArchiveUser(true);
+
+      setUpdateUserFormData({
+        _id: user._id,
+        name: user.name,
+        email: user.email.toString(),
+        contactNumber: user.contactNumber,
+        isArchived: true,
+      }); 
+  };
+
+  //UPDATE USER ROLE
+  const updateUserRole = async (e: any) => {
+    e.preventDefault();
+
+  };
+
+  const archiveUser = async (e: any) => {
+    // e.preventDefault();
+
+    fetch(`/api/dentist/accounts`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateUserFormData),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = await response.json();
+          alert('Update failed: ' + JSON.stringify(error));
+        } else {
+          const updatedService = await response.json();
+          console.log('Service updated: ', updatedService);
+          setShowArchiveUser(false); // Close the modal after successful update
+  
+          setUsers((prevServices) =>
+            prevServices.map((prevService) =>
+              prevService._id === updatedService._id ? updatedService : prevService
+            )
+          );
+  
+          // Remove the updated service from the table
+          setUsers((prevServices) =>
+            prevServices.filter((service) => service._id !== updatedService._id)
+          );
+  
+        }
+      })
+      .catch((error) => {
+        alert('Update failed');
+        console.error('Error updating service:', error);
+      });
+  }
+  
+
   const renderContent = () => {
     return (
       <>
+      {/* MODAL FOR ARCHIVE */}
+      <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
+          <h3 className={styles1.cancelTitle}> WARNING! </h3>
+          <p> Are you sure you want to archive this user?</p>
+          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
+          <div className={styles1.cancelActions}>
+            <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
+            <Button onClick={archiveUser} type = "submit">Yes</Button>
+          </div>
+        </Modal>
+
+        {/* MODAL FOR ADMIN/EMPLOYEE VALIDATION */}
+        <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
+          <h3 className={styles1.cancelTitle}> WARNING! </h3>
+          <p> Are you sure you want this user to be an admin or employee?</p>
+          <div className={styles1.cancelActions}>
+            <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
+            <Button onClick={updateUserRole} type = "submit">Yes</Button>
+          </div>
+        </Modal>
 
       <section>
         <div className={styles1.filters}>
@@ -83,8 +181,26 @@ export default function Accounts() {
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>{user.contactNumber}</td>
-                    <td>{user.role}</td>
-                    <td> <Button> Archive </Button></td>
+                    <td>
+                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
+                      {roles.map((role) => (
+                        <option key = {role} value = {role}>
+                          {role}
+                        </option>
+                      ))}
+                      </select>
+                    </td>
+                    <td> 
+                      <Button onClick={() => onUpdateUser(user)}> Archive </Button>
+                      <Button onClick={() => {
+                        if (user.role === 'admin' || user.role === 'employee') {
+                          setShowValiUser(true);
+                          // Show the modal for admin or employee users
+                        } else {
+                          updateUserRole(user._id);
+                        }
+                      }}> Update Role</Button>
+                    </td>
                   </tr>
                 )}
               </tbody>
