@@ -182,7 +182,7 @@ export default function Accounts() {
         <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want this user to be an admin or employee?</p>
-          <input type='text' name = "_id" value={updateUserFormData._id}/>
+          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
             <Button onClick={updateUserRole} type = "submit">Yes</Button>
