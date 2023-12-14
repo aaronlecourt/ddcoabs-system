@@ -23,12 +23,29 @@ export default function Services() {
   const [showAddService, setShowAddService] = useState(false)
   const [showUpdateService, setShowUpdateService] = useState(false)
 
-  useEffect(() => {
-    const setServicesData = async () => {
-      // let response = await fetch('api/dentist/dentist-service');
-      // let data = await response.json() || [];
+  // useEffect(() => {
+  //   const setServicesData = async () => {
+  //     // let response = await fetch('api/dentist/dentist-service');
+  //     // let data = await response.json() || [];
 
-      // setServices(data)
+  //     // setServices(data)
+  //     try {
+  //       const response = await fetch('api/dentist/dentist-service');
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch services');
+  //       }
+  //       const data: Service[] = await response.json();
+  //       setServices(data);
+  //     } catch (error) {
+  //       console.error('Error fetching services:', error);
+  //     }
+  //   }
+
+  //   setServicesData()
+  // }, [])
+
+  useEffect(() => {
+    const fetchServices = async () => {
       try {
         const response = await fetch('api/dentist/dentist-service');
         if (!response.ok) {
@@ -39,10 +56,15 @@ export default function Services() {
       } catch (error) {
         console.error('Error fetching services:', error);
       }
-    }
-
-    setServicesData()
-  }, [])
+    };
+  
+    fetchServices();
+  }, []); 
+  
+  // Update the table whenever 'services' state changes
+  useEffect(() => {
+  }, [services]); // Add 'services' to the dependency array
+  
 
   // TRIGGERS THE MODAL
   const onAddService = (appointment: any) => {
@@ -79,52 +101,157 @@ export default function Services() {
     description: '',
   })
 
-  const handleService = (e: any) => {
+  //CLEAR MODAL
+  const clearModal = () => {
+    setServiceFormData({ name: '', price: '', description: '' }); // Reset add service modal data
+    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '' }); // Reset update service modal data
+  };
+
+  // FOR ADDING A SERVICE
+  const addService = async (e: any) => {
     e.preventDefault();
+
+    try {
+      const apiUrl = '/api/dentist/dentist-service';
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(serviceFormData),
+      });
   
-    const apiUrl = updateServiceFormData._id ? `/api/dentist/dentist-service` : '/api/dentist/dentist-service';
-    const requestData = updateServiceFormData._id ? updateServiceFormData : serviceFormData;
-    const isUpdate = !!updateServiceFormData._id;
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
   
-    fetch(apiUrl, {
-      method: isUpdate ? 'PUT' : 'POST',
+      const responseData = await response.json();
+      console.log('Service registered:', responseData);
+
+      setShowAddService(false); 
+  
+      // Add the new service to the services state
+      setServices(prevServices => [...prevServices, responseData]);
+
+      clearModal();
+
+    } catch (error) {
+      alert('Service failed');
+      console.error('Error adding service:', error);
+    }
+
+    // fetch(`/api/dentist/dentist-service`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(serviceFormData),
+    // })
+    //   .then(async (response) => {
+    //     const responseMsg = await response.json()
+    //     if (!response.ok) {
+    //       alert('Registration failed: ' + JSON.stringify(responseMsg))
+    //     } else {
+    //       const data = responseMsg
+    //       console.log('Service registered ', data); // Handle the response from the API
+    //       setShowAddService(false);
+          
+    //     }
+    //   })
+    //   .catch(error => {
+    //     alert('Service failed');
+    //     console.error('Error adding service:', error);
+    //   });
+  }
+
+  
+  // FOR UPDATE BUTTON
+  const updateService = (e: any) => {
+    e.preventDefault();
+
+    fetch(`/api/dentist/dentist-service`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestData),
+      body: JSON.stringify(updateServiceFormData),
     })
       .then(async (response) => {
         if (!response.ok) {
           const error = await response.json();
-          const action = isUpdate ? 'Update' : 'Registration';
-          alert(`${action} failed: ${JSON.stringify(error)}`);
+          alert('Update failed: ' + JSON.stringify(error));
         } else {
-          const responseData = await response.json();
-          const action = isUpdate ? 'Service updated' : 'Service registered';
-          console.log(`${action}: `, responseData);
-          if (!isUpdate) {
-            setShowAddService(false); // Close the modal after successful registration
-            // Clear the form after adding a service if needed
-            setServiceFormData({ name: '', price: '', description: '' });
+          const updatedService = await response.json();
+          console.log('Service updated: ', updatedService);
+          setShowUpdateService(false); // Close the modal after successful 
 
-            //DYNAMIC TABLE
-            setServices(prevServices => [...prevServices, responseData]);
-          } else {
-            setShowUpdateService(false); // Close the modal after successful update
-            setServices(prevServices =>
-              prevServices.map(prevService =>
-                prevService._id === responseData._id ? responseData : prevService
-              )
-            );
-          }
+          setServices(prevServices =>
+            prevServices.map(prevService =>
+              prevService._id === updatedService._id ? updatedService : prevService
+            )
+          );
+
+          clearModal();
         }
       })
       .catch(error => {
-        const action = isUpdate ? 'Update' : 'Registration';
-        alert(`${action} failed`);
-        console.error(`Error ${action.toLowerCase()} service:`, error);
+        alert('Update failed');
+        console.error('Error updating service:', error);
       });
-  };
+  }
+
+  // const handleService = async (e: any) => {
+  //   e.preventDefault();
+  
+  //   const apiUrl = updateServiceFormData._id ? `/api/dentist/dentist-service` : '/api/dentist/dentist-service';
+  //   const requestData = updateServiceFormData._id ? updateServiceFormData : serviceFormData;
+  //   const isUpdate = !!updateServiceFormData._id;
+  
+  //   fetch(apiUrl, {
+  //     method: isUpdate ? 'PUT' : 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(requestData),
+  //   })
+  //     .then(async (response) => {
+  //       if (!response.ok) {
+  //         const error = await response.json();
+  //         const action = isUpdate ? 'Update' : 'Registration';
+  //         alert(`${action} failed: ${JSON.stringify(error)}`);
+  //       } else {
+  //         const responseData = await response.json();
+  //         const action = isUpdate ? 'Service updated' : 'Service registered';
+  //         console.log(`${action}: `, responseData);
+  //         if (!isUpdate) {
+  //           setShowAddService(false); // Close the modal after successful registration
+  //           // Clear the form after adding a service if needed
+  //           setServiceFormData({ name: '', price: '', description: '' });
+
+  //           const newService: Service = {
+  //             _id: updateServiceFormData._id, // Use the unique identifier from the response
+  //             name: serviceFormData.name,
+  //             price: serviceFormData.price,
+  //             description: serviceFormData.description,
+  //           };
+            
+  //           setServices(prevServices => [...prevServices, newService]);
+  //         } else {
+  //           setShowUpdateService(false); // Close the modal after successful update
+  //           setServices(prevServices =>
+  //             prevServices.map(prevService =>
+  //               prevService._id === responseData._id ? responseData : prevService
+  //             )
+  //           );
+  //         }
+  //       }
+  //     })
+  //     .catch(error => {
+  //       const action = isUpdate ? 'Update' : 'Registration';
+  //       alert(`${action} failed`);
+  //       console.error(`Error ${action.toLowerCase()} service:`, error);
+  //     });
+  // };
 
   //FOR ARCHIVE
   
@@ -202,7 +329,7 @@ export default function Services() {
           </div>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowAddService(false)}>Cancel</Button>
-            <Button onClick={handleService} type = "submit">Submit</Button>
+            <Button onClick={addService} type = "submit">Submit</Button>
           </div>
         </Modal>
 
@@ -234,7 +361,7 @@ export default function Services() {
           </div>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowUpdateService(false)}>Cancel</Button>
-            <Button onClick={handleService} type = "submit">Submit</Button>
+            <Button onClick={updateService} type = "submit">Submit</Button>
           </div>
         </Modal>
       
