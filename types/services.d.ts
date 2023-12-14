@@ -4,6 +4,7 @@ export interface AddServicesFormData {
   name: string;
   price: string;
   description: string;
+  isArchived: boolean;
 }
 
 export interface ErrorAddServicesFormData {
@@ -17,4 +18,5 @@ export interface UpdateServicesFormData {
   name: string;
   price: string;
   description: string;
+  isArchived: boolean;
 }

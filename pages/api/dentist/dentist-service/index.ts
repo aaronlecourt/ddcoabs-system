@@ -14,7 +14,12 @@ export default async function userHandler (
   
     switch (method) {
       case 'GET':
-        const dentistService = await DentistService.find();
+        const dentistService = await DentistService.find({
+          $or: [
+            { isArchived: false },
+            { isArchived: null }
+          ]
+        });
         res.status(200).json(dentistService);
         break
       case 'POST':

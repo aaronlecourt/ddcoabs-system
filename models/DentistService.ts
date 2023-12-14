@@ -21,6 +21,7 @@ const schema = new Schema<IDentistService>({
     },
     isArchived: {
         type: Boolean,
+        default: false
     },
 }, {
     timestamps: true

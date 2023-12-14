@@ -15,6 +15,7 @@ interface Service {
   name: string;
   price: string;
   description: string;
+  isArchived: boolean;
 }
 
 export default function Services() {
@@ -22,6 +23,7 @@ export default function Services() {
   const [services, setServices] = useState<Service[]>([])
   const [showAddService, setShowAddService] = useState(false)
   const [showUpdateService, setShowUpdateService] = useState(false)
+  const [showArchiveService, setShowArchiveService] = useState(false)
 
   // useEffect(() => {
   //   const setServicesData = async () => {
@@ -72,15 +74,39 @@ export default function Services() {
   }
 
     // TRIGGERS THE MODAL aND INPUTS DATA FROM TABLE
-    const onUpdateService = (service: Service) => {
-      setUpdateServiceFormData({
-        _id: service._id,
-        name: service.name,
-        price: service.price,
-        description: service.description,
-      }); // Set the data for the update form fields
-      setShowUpdateService(true); // Open the update modal
-    }
+    // const onUpdateService = (service: Service) => {
+    //   setUpdateServiceFormData({
+    //     _id: service._id,
+    //     name: service.name,
+    //     price: service.price,
+    //     description: service.description,
+    //   }); // Set the data for the update form fields
+    //   setShowUpdateService(true); // Open the update modal
+    // }
+
+    const onUpdateService = (service: Service, buttonName: string) => {
+      if (buttonName === 'update') {
+        setUpdateServiceFormData({
+          _id: service._id,
+          name: service.name,
+          price: service.price,
+          description: service.description,
+          isArchived: service.isArchived,
+        }); // Set the data for the update form fields
+        setShowUpdateService(true); // Open the update modal
+      } else if (buttonName === 'archive') {
+        setShowArchiveService(true);
+
+        setUpdateServiceFormData({
+          _id: service._id,
+          name: service.name,
+          price: service.price,
+          description: service.description,
+          isArchived: true
+        }); // Set the data for the update form fields
+      }
+    };
+    
 
   const [errorFormData, setErrorFormData] = useState<ErrorAddServicesFormData>({
     name: { error: false, message: null },
@@ -92,6 +118,7 @@ export default function Services() {
     name: '',
     price: '',
     description: '',
+    isArchived: false,
   })
 
   const [updateServiceFormData, setUpdateServiceFormData] = useState<UpdateServicesFormData>({
@@ -99,12 +126,13 @@ export default function Services() {
     name: '',
     price: '',
     description: '',
+    isArchived: false,
   })
 
   //CLEAR MODAL
   const clearModal = () => {
-    setServiceFormData({ name: '', price: '', description: '' }); // Reset add service modal data
-    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '' }); // Reset update service modal data
+    setServiceFormData({ name: '', price: '', description: '' , isArchived: false}); // Reset add service modal data
+    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '', isArchived: false}); // Reset update service modal data
   };
 
   // FOR ADDING A SERVICE
@@ -254,33 +282,45 @@ export default function Services() {
   // };
 
   //FOR ARCHIVE
-  
-  // FOR UPDATE BUTTON
-  // const archiveService = async (serviceId)) => {
-  //   e.preventDefault();
 
-  //   fetch(`/api/dentist/dentist-service`, {
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(updateServiceFormData),
-  //   })
-  //     .then(async (response) => {
-  //       if (!response.ok) {
-  //         const error = await response.json();
-  //         alert('Update failed: ' + JSON.stringify(error));
-  //       } else {
-  //         const updatedService = await response.json();
-  //         console.log('Service updated: ', updatedService);
-  //         setShowUpdateService(false); // Close the modal after successful 
-  //       }
-  //     })
-  //     .catch(error => {
-  //       alert('Update failed');
-  //       console.error('Error updating service:', error);
-  //     });
-  // }
+  const archiveService = async (e: any) => {
+    // e.preventDefault();
+
+    fetch(`/api/dentist/dentist-service`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateServiceFormData),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = await response.json();
+          alert('Update failed: ' + JSON.stringify(error));
+        } else {
+          const updatedService = await response.json();
+          console.log('Service updated: ', updatedService);
+          setShowArchiveService(false); // Close the modal after successful update
+  
+          setServices((prevServices) =>
+            prevServices.map((prevService) =>
+              prevService._id === updatedService._id ? updatedService : prevService
+            )
+          );
+  
+          // Remove the updated service from the table
+          setServices((prevServices) =>
+            prevServices.filter((service) => service._id !== updatedService._id)
+          );
+  
+          clearModal();
+        }
+      })
+      .catch((error) => {
+        alert('Update failed');
+        console.error('Error updating service:', error);
+      });
+  }
 
   const renderContent = () => {
     return (
@@ -364,7 +404,19 @@ export default function Services() {
             <Button onClick={updateService} type = "submit">Submit</Button>
           </div>
         </Modal>
-      
+
+        {/* ARCHIVE SERVICE */}
+
+      <Modal open={showArchiveService} setOpen={setShowArchiveService} modalWidth={400} modalRadius={10}>
+          <h3 className={styles1.cancelTitle}> WARNING! </h3>
+          <p> Are you sure you want to archive this dental service?</p>
+          <input type='text' name = "_id" value={updateServiceFormData._id}/>
+          <div className={styles1.cancelActions}>
+            <Button type='secondary' onClick={() => setShowArchiveService(false)}>No</Button>
+            <Button onClick={archiveService} type = "submit">Yes</Button>
+          </div>
+        </Modal>
+
         {session && (
           <main className={styles.main}>
             <table className={styles.table}>
@@ -385,8 +437,8 @@ export default function Services() {
                     <td>₱ {service.price}</td>
                     <td>{service.description}</td>
                     <td>
-                      <Button onClick={() => onUpdateService(service)}>Edit</Button> 
-                      <Button >Archive</Button>
+                      <Button onClick={() => onUpdateService(service, 'update')}>Edit</Button> 
+                      <Button onClick={() => onUpdateService(service, 'archive')}>Archive</Button>
                     </td>
                   </tr>
                 )}

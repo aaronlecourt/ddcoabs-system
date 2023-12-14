@@ -4,5 +4,6 @@ export interface IDentistService {
     name: string,
     description?: string,
     type: string,
-    price: number
+    price: number,
+    isArchived: boolean
 }
