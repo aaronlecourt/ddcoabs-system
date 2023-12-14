@@ -56,6 +56,10 @@ const schema = new Schema<IUser>({
         required: true,
         enum: [ROLES.dentist, ROLES.patient]
     },
+    isArchived: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true
 })
