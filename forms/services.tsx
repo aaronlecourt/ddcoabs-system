@@ -131,6 +131,17 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
               </li>
             )}
           </ul>
+          <strong>Others</strong>
+          <ul className={styles.services}>
+            {services.filter((v: any) => v.type == 'Others').map((service: any) =>
+              <li key={service.name} className={service.selected ? styles.selected : ''}
+                onClick={() => selectService(service)}
+              >
+                <span>{service.name}</span>
+                <span>P {(service.price || 0).toFixed(2)}</span>
+              </li>
+            )}
+          </ul>
         </div>
         <div className={styles.servicesContainer}>
           {servicesErrorForm['concern'].error && <span className={`formLabel__errorMessage ${styles.errorMessage}`}>{servicesErrorForm['concern'].message}</span>}

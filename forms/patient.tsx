@@ -90,11 +90,164 @@ export const PatientFormCheckboxList = [
     },
     {
       id: '6',
+      text: 'Heart Angina',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '7',
+      text: 'Epilepsy/Convulsions',
+      value: false,
+    },
+    {
+      id: '8',
+      text: 'Hepatitis/Liver Disease',
+      value: false,
+    },
+    {
+      id: '9',
+      text: 'Asthma',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '10',
+      text: 'Asthma',
+      value: false,
+    },
+    {
+      id: '11',
+      text: 'Sexually Transmitted Disease',
+      value: false,
+    },
+    {
+      id: '12',
+      text: 'Rheumatic Fever',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '13',
+      text: 'Emphysema',
+      value: false,
+    },
+    {
+      id: '14',
+      text: 'Stomach Troubles/Ulcers',
+      value: false,
+    },
+    {
+      id: '15',
+      text: 'Hay Fever/Allergies',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '16',
+      text: 'Faiting Seizure',
+      value: false,
+    },
+    {
+      id: '17',
+      text: 'Respiratory Problems',
+      value: false,
+    },
+    {
+      id: '18',
+      text: 'Bleeding Problems',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '19',
+      text: 'Blood Diseases',
+      value: false,
+    },
+    {
+      id: '20',
+      text: 'Rapid Weight Loss',
+      value: false,
+    },
+    {
+      id: '21',
+      text: 'Hepatitis/Jaundice',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '22',
+      text: 'Head Injuries',
+      value: false,
+    },
+    {
+      id: '23',
+      text: 'Radiation Therapy',
+      value: false,
+    },
+    {
+      id: '24',
+      text: 'Tubercolosis',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '25',
+      text: 'Arthritis/Rheumatism',
+      value: false,
+    },
+    {
+      id: '26',
+      text: 'Joint Replacement/Implant',
+      value: false,
+    },
+    {
+      id: '27',
+      text: 'Swollen Ankles',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '28',
+      text: 'Kidney Disease',
+      value: false,
+    },
+    {
+      id: '29',
+      text: 'Heart Surgery',
+      value: false,
+    },
+    {
+      id: '30',
+      text: 'Diabetes',
+      value: false,
+    },
+  ],
+  [
+    {
+      id: '31',
+      text: 'Thyroid Problem',
+      value: false,
+    },
+    {
+      id: '32',
+      text: 'Cancer/Tumors',
+      value: false,
+    },
+    {
+      id: '33',
       text: 'Others',
       value: true,
       textbox: true,
       textValue: ''
-    }
+    },
   ]
 ]
 

@@ -91,13 +91,31 @@ export default function Home({
       <>
         {session && (
           <main className={`${styles.main} ${styles.mainLandingPage}`}>
+            {/* separate into 2 services scroll 1 side */}
+            <div className="">
             <Image
-              src='/logo.png'
+              src='/logo_dark.png'
               alt='logo'
-              width={500}
-              height={150}
+              width={415}
+              height={100}
             />
-            <h1>Landing Page</h1>
+            <br />
+            <div className={styles.sub}>
+            <h2 className={styles.subHeader}>About the Clinic</h2>
+            <p>
+              The DentalFix Dental Clinic is a family-owned and newly founded business in the fourth week of January 2023. It is established through thorough planning, hard work, and with the help of Dr. Sheela Mae De Jesus’ parents. Considering the factors such as the population in the area, central business district, and the location of their laboratory, they have decided to establish and rent a space for their dental clinic in a building near the University of Baguio where Dr. De Jesus graduated Doctor of Medicine in Dentistry (DMD) last 2019. 
+            </p>
+            <br />
+            <div>
+            <h2 className={styles.subHeader}>Operating Hours</h2>
+            <p>
+              Monday - Friday: 8:00 AM - 6:00 PM
+              <br />
+              Saturday - Sunday: Closed
+            </p>
+            </div>
+            </div>
+            </div>
           </main>
         )}
       </>
