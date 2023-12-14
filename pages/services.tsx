@@ -28,7 +28,7 @@ export default function Services() {
   const [showUpdateService, setShowUpdateService] = useState(false)
   const [showArchiveService, setShowArchiveService] = useState(false)
   const [searchTerm, setSearchTerm] = useState('');
-  const types = ['Jacket Crowns', 'Removable Partial Denture'];
+  const types = ['Jacket Crowns', 'Removable Partial Denture', 'Others'];
 
   // SEARCH
   // SEARCH
