@@ -1,5 +1,5 @@
 import connectMongo from '../../../../utils/connectMongo';
-import Users from '../../../../models/User';
+import User from '../../../../models/User';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function userHandler (
@@ -14,7 +14,7 @@ export default async function userHandler (
 
     switch (method) {
       case 'GET':
-        const patientUsers = await Users.find({
+        const patientUsers = await User.find({
             isArchived: { $in: [false, null] }
         });
         // console.log(patientUsers);
@@ -22,6 +22,8 @@ export default async function userHandler (
         break
     case 'PUT':
         const { _id, ...updateData } = body;
+        console.log("Body Data Received:", body);
+        console.log("UPDATED DATA: ", updateData)
         if (!_id) {
           res.status(400).json({ error: 'ID is required for update' });
           return;
@@ -30,14 +32,17 @@ export default async function userHandler (
         updateData.isArchived = true; // Set isArchived to true
 
         try {
-            const user = await Users.findByIdAndUpdate(_id, updateData, {
-              new: true,
-            });
+            const user = await User.findById(_id);
         
             if (!user) {
               res.status(404).json({ error: 'User not found' });
               return;
             }
+
+            user.isArchived = true; // Update the field
+            await user.save(); // Save the changes
+
+            console.log("USER DATA: ", user)
         
             res.status(200).json(user);
           } catch (error) {

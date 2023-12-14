@@ -4,6 +4,7 @@ export interface AddServicesFormData {
   name: string;
   price: string;
   description: string;
+  type: string;
   isArchived: boolean;
 }
 
@@ -18,5 +19,6 @@ export interface UpdateServicesFormData {
   name: string;
   price: string;
   description: string;
+  type: string;
   isArchived: boolean;
 }

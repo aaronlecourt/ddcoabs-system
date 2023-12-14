@@ -13,7 +13,8 @@ export type ProfileKeys =
   'contactNumber' |
   'guardianName' |
   'guardianContactNumber' |
-  'guardianIdFile'
+  'guardianIdFile' |
+  'isArchived'
 
 
 export interface ProfileFormData {
@@ -30,6 +31,7 @@ export interface ProfileFormData {
   guardianName: string;
   guardianContactNumber: string;
   guardianIdFile: string;
+  isArchived: boolean;
 }
 
 export interface ProfileErrorFormData {

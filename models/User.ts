@@ -58,7 +58,7 @@ const schema = new Schema<IUser>({
     },
     isArchived: {
         type: Boolean,
-        default: false
+        default: false,
     }
 }, {
     timestamps: true

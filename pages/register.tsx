@@ -48,7 +48,8 @@ export default function Register({
     dateOfBirth: '',
     sex: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    isArchived: false
   })
 
   const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
@@ -73,12 +74,18 @@ export default function Register({
   const signup = () => {
     if (!isCheckedTerms) return alert('Please Agree to the Terms & Conditions');
 
+    // Include isArchived in the formData before sending
+    const formDataWithArchived = {
+      ...formData,
+      isArchived: false,
+    };
+
     fetch(`/api/patient/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(formDataWithArchived),
     })
       .then(async (response) => {
         const responseMsg = await response.json()

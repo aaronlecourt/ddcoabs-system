@@ -23,8 +23,16 @@ export default function Accounts() {
   const { session, status } = useAuthGuard();
   const [users, setUsers] = useState<User[]>([])
   const roles = ['patient', 'dentist', 'employee'];
-  // const [selectedRole, setSelectedRole] = useState(users.role);
+  // SEARCH
+  const [searchQuery, setSearchQuery] = useState('');
   
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
   
   const handleRoleChange = (e: any, index: any) => {
     const updatedUsers = [...users]; // Create a copy of the users array
@@ -87,20 +95,38 @@ export default function Accounts() {
           contactNumber: user.contactNumber,
           role: user.role,
           isArchived: true
-        }); // Set the data for the update form fields
+        });
+         // Set the data for the update form fields
+
+      } else if (buttonName === 'updateRolePatient') {
+        setUpdateUserFormData({
+          _id: user._id,
+          name: user.name,
+          email: user.email.toString(),
+          contactNumber: user.contactNumber,
+          role: user.role, // Set the role to 'patient'
+          isArchived: user.isArchived,
+        });
+
+        updateUserRole(undefined, user._id);
       }
+      
   };
 
   //UPDATE USER ROLE
-  const updateUserRole = async (e: any) => {
-    e.preventDefault();
+  const updateUserRole = async (e: any, userId: string) => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    const updatedData = { ...updateUserFormData, _id: userId }; // Include userId in the request body
 
     fetch(`/api/dentist/accounts`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(updateUserFormData),
+      body: JSON.stringify(updatedData),
     })
       .then(async (response) => {
         if (!response.ok) {
@@ -127,14 +153,21 @@ export default function Accounts() {
 
   //ARCHIVES USER
   const archiveUser = async (e: any) => {
-    // e.preventDefault();
+    e.preventDefault();
 
-    fetch('/api/dentist/accounts', {
+    const updatedData = { ...updateUserFormData };
+    updatedData.isArchived = true;
+  
+    setUpdateUserFormData(updatedData);
+
+    console.log('Update User Form Data:', updatedData);
+
+    fetch(`/api/dentist/accounts`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(updateUserFormData),
+      body: JSON.stringify(updatedData),
     })
       .then(async (response) => {
         if (!response.ok) {
@@ -143,18 +176,26 @@ export default function Accounts() {
         } else {
           const updatedUser = await response.json();
           console.log('User updated: ', updatedUser);
-          setShowArchiveUser(false); // Close the modal after successful update
-  
-          setUsers((prevUsers) =>
-          prevUsers.map((prevUsers) =>
-          prevUsers._id === updatedUser._id ? updatedUser : prevUsers
-            ).filter((user) => user._id !== updatedUser._id)
+          setShowArchiveUser(false); 
+          // Close the modal after successful update
+
+          // Update the 'users' state with the modified 'updatedUser'
+            setUsers((prevUsers) =>
+            prevUsers.map((prevUser) =>
+              prevUser._id === updatedUser._id ? updatedUser : prevUser
+            )
           );
+  
+          // setUsers((prevUsers) =>
+          // prevUsers.map((prevUsers) =>
+          // prevUsers._id === updatedUser._id ? updatedUser : prevUsers
+          //   ).filter((user) => user._id !== updatedUser._id)
+          // );
   
           // Remove the updated service from the table
-          setUsers((prevServices) =>
-            prevServices.filter((service) => service._id !== updatedUser._id)
-          );
+          // setUsers((prevServices) =>
+          //   prevServices.filter((service) => service._id !== updatedUser._id)
+          // );
   
         }
       })
@@ -186,7 +227,7 @@ export default function Accounts() {
           <input type='hidden' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
-            <Button onClick={updateUserRole} type = "submit">Yes</Button>
+            <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type = "submit">Yes</Button>
           </div>
         </Modal>
 
@@ -194,7 +235,8 @@ export default function Accounts() {
         <div>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
-            <input type='text' className={styles1.filters__searchInput} placeholder='Search account...' />
+            <input type='text' className={styles1.filters__searchInput} placeholder='Search account...' value={searchQuery}
+            onChange={handleSearchChange}/>
             <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
           </div>
           <div className={styles1.filters__sort}>
@@ -219,7 +261,40 @@ export default function Accounts() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user, index) => 
+                {filteredUsers.length > 0 ? (
+                   filteredUsers.map((user, index) => (
+                    <tr key={user._id}>
+                    <td>{index + 1}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.contactNumber}</td>
+                    <td>
+                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
+                      {roles.map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
+                      </select>
+                    </td>
+                    <td className={styles1.tableAction}> 
+                      <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                      </ArchiveButton>
+                      <Button onClick={(e: any) => {
+                        if (user.role === 'dentist' || user.role === 'employee') {
+                          setShowValiUser(true);
+                          onUpdateUser(user, 'updateRole');
+                          // Show the modal for admin or employee users
+                        } else {
+                          onUpdateUser(user, 'updateRolePatient');
+                        }
+                      }}> Update Role </Button>
+                    </td>
+                  </tr>
+                   )) 
+                ) : (
+                users.map((user, index) => (
                   <tr key={user._id}>
                     <td>{index + 1}</td>
                     <td>{user.name}</td>
@@ -238,16 +313,19 @@ export default function Accounts() {
                       <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
                         <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
                       </ArchiveButton>
-                      <Button onClick={() => {
-                        if (user.role === 'admin' || user.role === 'employee') {
+                      <Button onClick={(e: any) => {
+                        if (user.role === 'dentist' || user.role === 'employee') {
                           setShowValiUser(true);
                           onUpdateUser(user, 'updateRole');
                           // Show the modal for admin or employee users
+                        } else {
+                          onUpdateUser(user, 'updateRolePatient');
                         }
-                      }}> Update Role</Button>
+                      }}> Update Role </Button>
                     </td>
                   </tr>
-                )}
+                ))
+              )}
               </tbody>
             </table>
           </main>
@@ -255,8 +333,6 @@ export default function Accounts() {
         </div>
       </section>
 
-
-        
       </>
     )
   }

@@ -12,17 +12,27 @@ export const isRegistrationFormValid = (formData: FormData, errorFormData: Error
 
   // Empty Fields
   for (const field in formData) {
-    if (!formData[field as keyof FormData] && !errorFormData[field as keyof ErrorFormData].optional) {
+    // if (!formData[field as keyof FormData] && !errorFormData[field as keyof ErrorFormData].optional) {
+    //   setErrorFormData(prevErrorFormData => ({
+    //     ...prevErrorFormData,
+    //     [field]: {
+    //       optional: errorFormData[field as keyof ErrorFormData].optional || false,
+    //       error: true,
+    //       message: 'This field is required'
+    //     }
+    //   }))
+
+    //   result = false;
+    // }
+
+    if (!formData[field as keyof FormData] && !errorFormData[field as keyof ErrorFormData]?.optional) {
       setErrorFormData(prevErrorFormData => ({
         ...prevErrorFormData,
         [field]: {
-          optional: errorFormData[field as keyof ErrorFormData].optional || false,
-          error: true,
-          message: 'This field is required'
-        }
-      }))
-
-      result = false;
+          ...prevErrorFormData[field as keyof ErrorFormData],
+          required: true,
+        },
+      }));
     }
   }
 

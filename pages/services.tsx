@@ -17,6 +17,7 @@ interface Service {
   name: string;
   price: string;
   description: string;
+  type: string;
   isArchived: boolean;
 }
 
@@ -27,7 +28,19 @@ export default function Services() {
   const [showUpdateService, setShowUpdateService] = useState(false)
   const [showArchiveService, setShowArchiveService] = useState(false)
   const [searchTerm, setSearchTerm] = useState('');
+  const types = ['Jacket Crowns', 'Removable Partial Denture'];
 
+  // SEARCH
+  // SEARCH
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const filteredUsers = services.filter((service) =>
+    service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   // useEffect(() => {
   //   const setServicesData = async () => {
@@ -84,6 +97,7 @@ export default function Services() {
           name: service.name,
           price: service.price,
           description: service.description,
+          type: service.type,
           isArchived: service.isArchived,
         }); // Set the data for the update form fields
         setShowUpdateService(true); // Open the update modal
@@ -95,6 +109,7 @@ export default function Services() {
           name: service.name,
           price: service.price,
           description: service.description,
+          type: service.type,
           isArchived: true
         }); // Set the data for the update form fields
       }
@@ -111,6 +126,7 @@ export default function Services() {
     name: '',
     price: '',
     description: '',
+    type: '',
     isArchived: false,
   })
 
@@ -119,13 +135,14 @@ export default function Services() {
     name: '',
     price: '',
     description: '',
+    type: '',
     isArchived: false,
   })
 
   //CLEAR MODAL
   const clearModal = () => {
-    setServiceFormData({ name: '', price: '', description: '' , isArchived: false}); // Reset add service modal data
-    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '', isArchived: false}); // Reset update service modal data
+    setServiceFormData({ name: '', price: '', description: '' , type: '', isArchived: false}); // Reset add service modal data
+    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '', type: '', isArchived: false}); // Reset update service modal data
   };
 
   // FOR ADDING A SERVICE
@@ -339,7 +356,8 @@ export default function Services() {
         <div className={styles1.servicecrud}>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
-            <input type='text' className={styles1.filters__searchInput} placeholder='Search services...' value = {searchTerm} onChange={e => handleFormDataChange(e, setServiceFormData, setErrorFormData)} />
+            <input type='text' className={styles1.filters__searchInput} placeholder='Search services...' value={searchQuery}
+            onChange={handleSearchChange} />
             <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
           </div>
           <div className={styles1.filters__sort}>
@@ -367,7 +385,25 @@ export default function Services() {
                 </tr>
               </thead>
               <tbody>
-                {services.map((service, index) => 
+              {filteredUsers.length > 0 ? (
+                   filteredUsers.map((service, index) => (
+                    <tr key={service._id}>
+                    <td>{index + 1}</td>
+                    <td>{service.name}</td>
+                    <td>P{service.price}</td>
+                    <td>{service.description}</td>
+                    <td className={styles1.tableAction}>
+                      <EditButton onClick={() => onUpdateService(service, 'update')}>
+                        <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
+                      </EditButton>
+                      <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
+                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                      </ArchiveButton>
+                    </td>
+                  </tr>
+                   ))
+              ) : (
+                services.map((service, index) => (
                   <tr key={service._id}>
                     <td>{index + 1}</td>
                     <td>{service.name}</td>
@@ -382,6 +418,7 @@ export default function Services() {
                       </ArchiveButton>
                     </td>
                   </tr>
+                ))
                 )}
               </tbody>
             </table>
@@ -403,6 +440,18 @@ export default function Services() {
           <div className={styles1.cancelText}>
             <div className={styles1.filters__search}>
               <input type='text' name = "price" className={styles1.filters__searchInput} value={serviceFormData.price} onChange={e => handleFormDataChange(e, setServiceFormData, setErrorFormData)}/>
+            </div>
+          </div>
+          <label> Type: </label>
+          <div className={styles1.cancelText}>
+            <div className={styles1.filters__search}>
+              <select onChange={(e: any) => setServiceFormData({ ...serviceFormData, type: e.target.value })} value={serviceFormData.type}>
+                {types.map((type, index) => (
+                  <option key={index} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <label> Short Description: </label>
@@ -434,6 +483,20 @@ export default function Services() {
           <div className={styles1.cancelText}>
             <div className={styles1.filters__search}>
               <input type='text' name = "price" className={styles1.filters__searchInput} value={updateServiceFormData.price} onChange={e => handleFormDataChange(e, setUpdateServiceFormData, setErrorFormData)}/>
+            </div>
+          </div>
+
+          <label> Type: </label>
+          <div className={styles1.cancelText}>
+            <div className={styles1.filters__search}>
+              <select onChange={(e: any) => setUpdateServiceFormData({ ...updateServiceFormData, type: e.target.value })}
+                value={updateServiceFormData.type}>
+                {types.map((type, index) => (
+                  <option key={index} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

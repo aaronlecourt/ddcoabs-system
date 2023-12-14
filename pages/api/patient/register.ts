@@ -33,6 +33,11 @@ export default async function userHandler (
         const hashedConfirmPassword = await bcrypt.hash(body.confirmPassword, 10);
         body.password = hashedConfirmPassword;
 
+         // Add isArchived: false by default
+         body.isArchived = false;
+
+         console.log("BODY: ", body)
+
         // create user
         const userCreated: IUser = await User.create(body);
         
