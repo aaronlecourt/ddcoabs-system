@@ -78,7 +78,7 @@ export default function useAuthGuard() {
         requiredFields[key] = userProfile[key]
       }
     }
-
+    console.log(requiredFields);
     const emptyFields = Object.keys(requiredFields).filter((key: any) => !requiredFields[key]);
 
     if (emptyFields.length > 0) {
