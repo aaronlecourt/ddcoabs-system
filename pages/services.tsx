@@ -27,20 +27,19 @@ export default function Services() {
   const [showAddService, setShowAddService] = useState(false)
   const [showUpdateService, setShowUpdateService] = useState(false)
   const [showArchiveService, setShowArchiveService] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('');
   const types = ['Jacket Crowns', 'Removable Partial Denture', 'Others'];
 
   // SEARCH
-  // SEARCH
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   
-  const filteredUsers = services.filter((service) =>
-    service.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
+
+  const filteredUsers = services.filter((service) =>
+    service.name && service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // useEffect(() => {
   //   const setServicesData = async () => {

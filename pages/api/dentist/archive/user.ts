@@ -1,6 +1,7 @@
 import connectMongo from '../../../../utils/connectMongo';
 import User from '../../../../models/User';
 import type { NextApiRequest, NextApiResponse } from 'next'
+import Appointment from '../../../../models/Appointment';
 
 export default async function userHandler (
   req: NextApiRequest,
@@ -28,13 +29,15 @@ export default async function userHandler (
           if (!_id) {
             return res.status(400).json({ error: 'ID is required for deletion' });
           }
-          const deletedService = await User.findByIdAndDelete(_id);
-          if (!deletedService) {
-            return res.status(404).json({ message: 'Service not found' });
+          const deletedAccount = await User.findByIdAndDelete(_id);
+          if (!deletedAccount) {
+            return res.status(404).json({ message: 'Account not found' });
           }
-          return res.status(200).json({ message: 'Service deleted successfully', deletedService });
+
+          await Appointment.deleteMany({ patientId: _id });
+          return res.status(200).json({ message: 'Account deleted successfully', deletedAccount });
         } catch (error: any) {
-          return res.status(500).json({ message: 'Failed to delete service', error: error.message });
+          return res.status(500).json({ message: 'Failed to delete account', error: error.message });
         }
         break
 
@@ -45,19 +48,19 @@ export default async function userHandler (
             return res.status(400).json({ error: 'ID is required for update' });
           }
       
-          const updatedService = await User.findByIdAndUpdate(
+          const updatedAccount = await User.findByIdAndUpdate(
             _id,
             { isArchived: false },
             { new: true }
           );
       
-          if (!updatedService) {
-            return res.status(404).json({ message: 'Service not found' });
+          if (!updatedAccount) {
+            return res.status(404).json({ message: 'Account not found' });
           }
       
-          res.status(200).json({ message: 'Service updated successfully', updatedService });
+          res.status(200).json({ message: 'Account updated successfully', updatedAccount });
         } catch (error: any) {
-          res.status(500).json({ message: 'Failed to update service', error: error.message });
+          res.status(500).json({ message: 'Failed to update account', error: error.message });
         }
         break;
 
