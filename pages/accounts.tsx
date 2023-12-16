@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from '../styles/pages/services.module.scss'
 import styles1 from '../styles/pages/home.module.scss'
 import DentistLayout from '../layouts/DentistLayout';
@@ -18,6 +18,7 @@ interface User {
   age: number;
   gender: string;
   role: string;
+  createdAt: string;
   isArchived: boolean;
 }
 
@@ -25,6 +26,7 @@ export default function Accounts() {
   const { session, status } = useAuthGuard();
   const [users, setUsers] = useState<User[]>([])
   const roles = ['patient', 'dentist', 'employee'];
+  
   // SEARCH
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -42,6 +44,58 @@ export default function Accounts() {
     setUsers(updatedUsers); // Update the state with the modified users array
   };
 
+  //SORT BY
+  const sortBy= ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
+  const [selectedFilter, setSelectedFilter] = useState('');
+
+  const handleSortChange = (filter: any) => {
+
+    setSelectedFilter(filter);
+    let sortedUsers = [...users]
+
+      switch(filter){
+        case 'Oldest to Latest':
+          sortedUsers.sort((a, b) => {
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          });
+          break;
+        case 'Latest to Oldest':
+          sortedUsers.sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
+          break;
+        case 'Alphabetical (A-Z)':
+          sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'Alphabetical (Z-A)':
+          sortedUsers.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        default:
+          break;
+      }
+      setUsers(sortedUsers);
+  };
+
+  //FILTER
+  const filterBy= ['Select All', 'Dentist', 'Employee', 'Patient', 'Male', 'Female', 'Minor', 'Adult']
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+  const handleFilterChange = (filter: any) => {
+    const updatedFilters = selectedFilters.includes(filter)
+      ? selectedFilters.filter((selectedFilter) => selectedFilter !== filter)
+      : [...selectedFilters, filter];
+  
+    setSelectedFilters(updatedFilters);
+  
+    const filteredUser = users.filter((user) => {
+      return updatedFilters.length === 0 ? true : updatedFilters.includes(user.role);
+    });
+  
+    setUsers(filteredUser);
+  };
+  
+
+  //FOR USER TABLE
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -71,6 +125,7 @@ export default function Accounts() {
     age: 0,
     gender: '',
     role: '',
+    createdAt: '',
     isArchived: false,
   })
 
@@ -88,6 +143,7 @@ export default function Accounts() {
           age: user.age,
           gender: user.gender,
           role: user.role,
+          createdAt: user.createdAt,
           isArchived: user.isArchived,
         }); // Set the data for the update form fields
         setShowValiUser(true); // Open the update modal
@@ -102,6 +158,7 @@ export default function Accounts() {
           age: user.age,
           gender: user.gender,
           role: user.role,
+          createdAt: user.createdAt,
           isArchived: true
         });
          // Set the data for the update form fields
@@ -115,6 +172,7 @@ export default function Accounts() {
           age: user.age,
           gender: user.gender,
           role: user.role, // Set the role to 'patient'
+          createdAt: user.createdAt,
           isArchived: user.isArchived,
         });
 
@@ -246,8 +304,48 @@ export default function Accounts() {
           <div className={styles1.filters__sort}>
             <span className={styles1.filters__sortTitle}>Sort By:</span>
             <div className={styles1.filters__sortDropdown}>
-              <span>Latest</span>
+              <select
+                id = "sortSelect"
+                value={selectedFilter}
+                onChange={(e) => handleSortChange(e.target.value)}
+              >
+                {sortBy.map((sort) => (
+                <option key = {sort} value = {sort}>
+                    {sort}
+                </option>
+                ))}
+              </select>
               <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
+            </div>
+          </div>
+          <div className={styles1.filters__sort}>
+            <span className={styles1.filters__sortTitle}>Filter:</span>
+            <div className={styles1.filters__sortDropdown}>
+              {/* <select
+                multiple
+                value={selectedFilters}
+                onChange={(e) => {
+                  const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value);
+                  setSelectedFilters(selectedOptions)
+
+                  const filteredUser = users.filter((user) => {
+                    return selectedOptions.length === 0 ? true : selectedOptions.includes(user.role);
+                  });
+
+                  setUsers(filteredUser)
+                }}
+              >
+                <option value= ""> Select Filter </option>
+                {filterBy.map((filter) => (
+                  <option key = {filter} value = {filter}>
+                    {filter}  
+                  </option>
+                ))}
+              </select> */}
+              <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
+            </div>
+            <div className={styles1.filters__sortDropdown}>
+              <button> Generate Report </button>
             </div>
           </div>
         </div>

@@ -111,7 +111,7 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
           {servicesErrorForm['service'].error && <span className={`formLabel__errorMessage ${styles.errorMessage}`}>{servicesErrorForm['service'].message}</span>}
           <strong>Jacket Crowns</strong>
           <ul className={styles.services}>
-            {services.filter((v: any) => v.type == 'Jacket Crowns').map((service: any) =>
+            {services.filter((v: any) => v.type == 'Jacket Crowns' && !v.isArchived).map((service: any) =>
               <li key={service.name} className={service.selected ? styles.selected : ''}
                 onClick={() => selectService(service)}
               >
@@ -122,7 +122,7 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
           </ul>
           <strong>Removable Partial Denture</strong>
           <ul className={styles.services}>
-            {services.filter((v: any) => v.type == 'Removable Partial Denture').map((service: any) =>
+            {services.filter((v: any) => v.type == 'Removable Partial Denture' && !v.isArchived).map((service: any) =>
               <li key={service.name} className={service.selected ? styles.selected : ''}
                 onClick={() => selectService(service)}
               >
@@ -133,7 +133,7 @@ const BookServicesForm = forwardRef(({ }: any, ref) => {
           </ul>
           <strong>Others</strong>
           <ul className={styles.services}>
-            {services.filter((v: any) => v.type == 'Others').map((service: any) =>
+            {services.filter((v: any) => v.type == 'Others' ).map((service: any) =>
               <li key={service.name} className={service.selected ? styles.selected : ''}
                 onClick={() => selectService(service)}
               >

@@ -222,3 +222,63 @@
 .tableAction {
   display: flex; gap: 10px;
 }
+
+.dropbtn {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &__label {
+    color: #333;
+  }
+
+  &__icon {
+    font-size: 16px;
+    color: #ddd;
+  }
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+
+  &__item {
+    padding: 5px 10px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &--active {
+      font-weight: bold;
+      color: #333;
+    }
+  }
+}
+
+.show {
+  display: block;
+}

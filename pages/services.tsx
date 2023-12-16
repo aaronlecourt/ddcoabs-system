@@ -109,33 +109,56 @@ export default function Services() {
 
   //TABLE FOR SORTING
   useEffect(() => {
-    let filteredServices = [...services];
 
-    switch (selectedFilter) {
-      case 'Oldest to Latest':
-        filteredServices.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        break;
-      case 'Latest to Oldest':
-        filteredServices.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        break;
-      case 'Alphabetical (A-Z)':
-        filteredServices.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'Alphabetical (Z-A)':
-        filteredServices.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case 'Price (Lowest to Highest)':
-        filteredServices.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-        break;
-      case 'Price (Highest to Lowest)':
-        filteredServices.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-        break;
-      default:
-        break;
-    }
+    const updateServices = async () => {
+      try {
+        // Fetch services again to get the most updated data
+        const response = await fetch('api/dentist/dentist-service');
+        if (!response.ok) {
+          throw new Error('Failed to fetch services');
+        }
+        const data: Service[] = await response.json();
+  
+        // Apply sorting and filtering
+        let updatedServices = data;
+        switch (selectedFilter) {
+          case 'Oldest to Latest':
+            updatedServices.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            break;
+          case 'Latest to Oldest':
+            updatedServices.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            break;
+          case 'Alphabetical (A-Z)':
+            updatedServices.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+          case 'Alphabetical (Z-A)':
+            updatedServices.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+          case 'Price (Lowest to Highest)':
+            updatedServices.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+            break;
+          case 'Price (Highest to Lowest)':
+            updatedServices.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+            break;
+          default:
+            break;
+        }
+  
+        setServices(updatedServices);
+      } catch (error) {
+        console.error('Error updating services:', error);
+      }
+    };
+  
+    updateServices();
+    // let filteredServices = [...services];
 
-    setServices(filteredServices);
-  }, services);
+    // switch (selectedFilter) {
+      
+    // }
+
+    // setServices(filteredServices);
+  }, [selectedFilter]);
 
   
   // TRIGGERS THE MODAL
@@ -228,7 +251,8 @@ export default function Services() {
       setShowAddService(false); 
   
       // Add the new service to the services state
-      setServices(prevServices => [...prevServices, responseData]);
+      // setServices(prevServices => [...prevServices, responseData]);
+      setServices([...services, responseData]);
 
       clearModal();
 
@@ -364,7 +388,7 @@ export default function Services() {
                     <tr key={service._id}>
                     <td>{index + 1}</td>
                     <td>{service.name}</td>
-                    <td>P{service.price}</td>
+                    <td>₱{service.price}</td>
                     <td>{service.description}</td>
                     <td className={styles1.tableAction}>
                       <EditButton onClick={() => onUpdateService(service, 'update')}>
@@ -381,7 +405,7 @@ export default function Services() {
                   <tr key={service._id}>
                     <td>{index + 1}</td>
                     <td>{service.name}</td>
-                    <td>P{service.price}</td>
+                    <td>₱ {service.price}</td>
                     <td>{service.description}</td>
                     <td className={styles1.tableAction}>
                       <EditButton onClick={() => onUpdateService(service, 'update')}>
