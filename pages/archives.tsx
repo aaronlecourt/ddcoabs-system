@@ -14,6 +14,7 @@ interface Service {
   price: number;
   type: string;
   description: string;
+  createdAt: string;
   updatedAt: string;
   isArchived: boolean;
 }
@@ -112,6 +113,7 @@ export default function ServiceRecords() {
     price: '',
     description: '',
     type: '',
+    createdAt: '',
     updatedAt: '',
     isArchived: true,
   })
@@ -139,6 +141,7 @@ export default function ServiceRecords() {
           price: service.price.toString(),
           description: service.description,
           type: service.type,
+          createdAt: service.createdAt,
           updatedAt: service.updatedAt,
           isArchived: service.isArchived
         });  
@@ -151,6 +154,7 @@ export default function ServiceRecords() {
           price: service.price.toString(),
           description: service.description,
           type: service.type,
+          createdAt: service.createdAt,
           updatedAt: service.updatedAt,
           isArchived: false
         });

@@ -18,6 +18,8 @@ interface Service {
   price: string;
   description: string;
   type: string;
+  createdAt: string;
+  updatedAt: string;
   isArchived: boolean;
 }
 
@@ -31,37 +33,63 @@ export default function Services() {
 
   // SEARCH
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredUsers = services.filter((service) =>
+  const searchedServices = services.filter((service) =>
     service.name && service.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // useEffect(() => {
-  //   const setServicesData = async () => {
-  //     // let response = await fetch('api/dentist/dentist-service');
-  //     // let data = await response.json() || [];
+  //SORT
+  const filterBy = [
+    'Oldest to Latest',
+    'Latest to Oldest',
+    'Alphabetical (A-Z)',
+    'Alphabetical (Z-A)',
+    'Price (Lowest to Highest)',
+    'Price (Highest to Lowest)'
+  ];
+  
+  const [selectedFilter, setSelectedFilter] = useState('');
 
-  //     // setServices(data)
-  //     try {
-  //       const response = await fetch('api/dentist/dentist-service');
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch services');
-  //       }
-  //       const data: Service[] = await response.json();
-  //       setServices(data);
-  //     } catch (error) {
-  //       console.error('Error fetching services:', error);
-  //     }
-  //   }
+  const handleFilterChange = (filter: any) => {
+    setSelectedFilter(filter);
+    
+    let filterServices = [...services]
 
-  //   setServicesData()
-  // }, [])
+    switch(filter){
+      case 'Oldest to Latest':
+        filterServices.sort((a, b) => {
+          return new Date(a.createdAt).getTime() - new Date(b.updatedAt).getTime();
+        });
+        break;
+      case 'Latest to Oldest':
+        filterServices.sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.updatedAt).getTime();
+        });
+        break;
+      case 'Alphabetical (A-Z)':
+        filterServices.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'Alphabetical (Z-A)':
+        filterServices.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'Price (Lowest to Highest)':
+        filterServices.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        break;
+      case 'Price (Highest to Lowest)':
+        filterServices.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        break;
+      default:
+        break;
+    }
 
+    setServices(filterServices);
+  };
+
+//TABLE
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -77,13 +105,39 @@ export default function Services() {
     };
   
     fetchServices();
-  }); 
-  
-  // Update the table whenever 'services' state changes
-  useEffect(() => {
-  }, [services]); // Add 'services' to the dependency array
-  
+  }, []); 
 
+  //TABLE FOR SORTING
+  useEffect(() => {
+    let filteredServices = [...services];
+
+    switch (selectedFilter) {
+      case 'Oldest to Latest':
+        filteredServices.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        break;
+      case 'Latest to Oldest':
+        filteredServices.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+      case 'Alphabetical (A-Z)':
+        filteredServices.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'Alphabetical (Z-A)':
+        filteredServices.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'Price (Lowest to Highest)':
+        filteredServices.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        break;
+      case 'Price (Highest to Lowest)':
+        filteredServices.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        break;
+      default:
+        break;
+    }
+
+    setServices(filteredServices);
+  }, services);
+
+  
   // TRIGGERS THE MODAL
   const onAddService = (appointment: any) => {
     setShowAddService(true);
@@ -97,6 +151,8 @@ export default function Services() {
           price: service.price,
           description: service.description,
           type: service.type,
+          createdAt: service.createdAt,
+          updatedAt: service.type,
           isArchived: service.isArchived,
         }); // Set the data for the update form fields
         setShowUpdateService(true); // Open the update modal
@@ -109,6 +165,8 @@ export default function Services() {
           price: service.price,
           description: service.description,
           type: service.type,
+          createdAt: service.createdAt,
+          updatedAt: service.type,
           isArchived: true
         }); // Set the data for the update form fields
       }
@@ -135,13 +193,15 @@ export default function Services() {
     price: '',
     description: '',
     type: '',
+    createdAt: '',
+    updatedAt: '',
     isArchived: false,
   })
 
   //CLEAR MODAL
   const clearModal = () => {
     setServiceFormData({ name: '', price: '', description: '' , type: '', isArchived: false}); // Reset add service modal data
-    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '', type: '', isArchived: false}); // Reset update service modal data
+    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '', type: '', createdAt: '', updatedAt: '', isArchived: false}); // Reset update service modal data
   };
 
   // FOR ADDING A SERVICE
@@ -176,29 +236,6 @@ export default function Services() {
       alert('Service failed');
       console.error('Error adding service:', error);
     }
-
-    // fetch(`/api/dentist/dentist-service`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(serviceFormData),
-    // })
-    //   .then(async (response) => {
-    //     const responseMsg = await response.json()
-    //     if (!response.ok) {
-    //       alert('Registration failed: ' + JSON.stringify(responseMsg))
-    //     } else {
-    //       const data = responseMsg
-    //       console.log('Service registered ', data); // Handle the response from the API
-    //       setShowAddService(false);
-          
-    //     }
-    //   })
-    //   .catch(error => {
-    //     alert('Service failed');
-    //     console.error('Error adding service:', error);
-    //   });
   }
 
   
@@ -236,60 +273,6 @@ export default function Services() {
         console.error('Error updating service:', error);
       });
   }
-
-  // const handleService = async (e: any) => {
-  //   e.preventDefault();
-  
-  //   const apiUrl = updateServiceFormData._id ? `/api/dentist/dentist-service` : '/api/dentist/dentist-service';
-  //   const requestData = updateServiceFormData._id ? updateServiceFormData : serviceFormData;
-  //   const isUpdate = !!updateServiceFormData._id;
-  
-  //   fetch(apiUrl, {
-  //     method: isUpdate ? 'PUT' : 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(requestData),
-  //   })
-  //     .then(async (response) => {
-  //       if (!response.ok) {
-  //         const error = await response.json();
-  //         const action = isUpdate ? 'Update' : 'Registration';
-  //         alert(`${action} failed: ${JSON.stringify(error)}`);
-  //       } else {
-  //         const responseData = await response.json();
-  //         const action = isUpdate ? 'Service updated' : 'Service registered';
-  //         console.log(`${action}: `, responseData);
-  //         if (!isUpdate) {
-  //           setShowAddService(false); // Close the modal after successful registration
-  //           // Clear the form after adding a service if needed
-  //           setServiceFormData({ name: '', price: '', description: '' });
-
-  //           const newService: Service = {
-  //             _id: updateServiceFormData._id, // Use the unique identifier from the response
-  //             name: serviceFormData.name,
-  //             price: serviceFormData.price,
-  //             description: serviceFormData.description,
-  //           };
-            
-  //           setServices(prevServices => [...prevServices, newService]);
-  //         } else {
-  //           setShowUpdateService(false); // Close the modal after successful update
-  //           setServices(prevServices =>
-  //             prevServices.map(prevService =>
-  //               prevService._id === responseData._id ? responseData : prevService
-  //             )
-  //           );
-  //         }
-  //       }
-  //     })
-  //     .catch(error => {
-  //       const action = isUpdate ? 'Update' : 'Registration';
-  //       alert(`${action} failed`);
-  //       console.error(`Error ${action.toLowerCase()} service:`, error);
-  //     });
-  // };
-
   //FOR ARCHIVE
 
   const archiveService = async (e: any) => {
@@ -331,23 +314,6 @@ export default function Services() {
       });
   }
 
-  //SEARCHING PURPOSES
-  const handleSearch = () => {
-    const filtered = services.filter((service) =>
-      service.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    setServices(filtered);
-  };
-
-  const handleSearchAction = (e?: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<SVGSVGElement>) => {
-    if (e) {
-      if (e.type === 'click' || (e as React.KeyboardEvent<HTMLInputElement>).key === 'Enter') {
-        handleSearch();
-      }
-    }
-  };
-
   const renderContent = () => {
     return (
       <>
@@ -362,13 +328,22 @@ export default function Services() {
           <div className={styles1.filters__sort}>
             <span className={styles1.filters__sortTitle}>Sort By:</span>
             <div className={styles1.filters__sortDropdown}>
-              <span>Latest</span>
-              <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} onClick={handleSearchAction}/>
+             <select
+              id = "filterSelect"
+              value={selectedFilter}
+              onChange={(e) => handleFilterChange(e.target.value)}
+             >
+              {filterBy.map((filter) => (
+                <option key = {filter} value = {filter}>
+                    {filter}
+                </option>
+              ))}
+             </select>
             </div>
           </div>
           {/* BUTTON TO TRIGGER THE MODAL */}
           <div className={styles1.filters__add} onClick={onAddService}>
-          Add Service
+          + Add Service
           </div>
         </div>
         {session && (
@@ -384,8 +359,8 @@ export default function Services() {
                 </tr>
               </thead>
               <tbody>
-              {filteredUsers.length > 0 ? (
-                   filteredUsers.map((service, index) => (
+              {searchedServices.length > 0 ? (
+                   searchedServices.map((service, index) => (
                     <tr key={service._id}>
                     <td>{index + 1}</td>
                     <td>{service.name}</td>
