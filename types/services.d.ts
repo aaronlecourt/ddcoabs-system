@@ -20,5 +20,6 @@ export interface UpdateServicesFormData {
   price: string;
   description: string;
   type: string;
+  updatedAt: string;
   isArchived: boolean;
 }

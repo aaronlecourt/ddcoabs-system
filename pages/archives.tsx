@@ -14,6 +14,7 @@ interface Service {
   price: number;
   type: string;
   description: string;
+  updatedAt: string;
   isArchived: boolean;
 }
 
@@ -26,6 +27,7 @@ interface Accounts {
   dateOfBirth: string;
   address: string;
   role: string;
+  updatedAt: string;
   isArchived: boolean;
 }
 
@@ -38,6 +40,10 @@ export default function ServiceRecords() {
     'January', 'February', 'March', 'April', 'May', 'June', 'July',
     'August', 'September', 'October', 'November', 'December'
   ];
+
+  //SORT
+  const filterBy= ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
+  const [selectedFilter, setSelectedFilter] = useState('');
 
   //MODAL
   const [showDeleteService, setShowDeleteService] = useState(false)
@@ -106,6 +112,7 @@ export default function ServiceRecords() {
     price: '',
     description: '',
     type: '',
+    updatedAt: '',
     isArchived: true,
   })
 
@@ -132,6 +139,7 @@ export default function ServiceRecords() {
           price: service.price.toString(),
           description: service.description,
           type: service.type,
+          updatedAt: service.updatedAt,
           isArchived: service.isArchived
         });  
 
@@ -143,6 +151,7 @@ export default function ServiceRecords() {
           price: service.price.toString(),
           description: service.description,
           type: service.type,
+          updatedAt: service.updatedAt,
           isArchived: false
         });
       }
@@ -179,6 +188,65 @@ export default function ServiceRecords() {
         isArchived: false
       });
     }
+};
+
+//FILTER
+const handleFilterChange = (filter: any) => {
+
+  setSelectedFilter(filter);
+
+  if (selectedRecordType === 'services'){
+    let updatedServices = [...services]
+
+    switch(filter){
+      case 'Oldest to Latest':
+        updatedServices.sort((a, b) => {
+          return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+        });
+        break;
+      case 'Latest to Oldest':
+        updatedServices.sort((a, b) => {
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        });
+        break;
+      case 'Alphabetical (A-Z)':
+        updatedServices.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'Alphabetical (Z-A)':
+        updatedServices.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        break;
+    }
+
+    setServices(updatedServices);
+  } else if (selectedRecordType === 'accounts'){
+    let updatedAccount = [...accounts]
+
+    switch(filter){
+      case 'Oldest to Latest':
+        updatedAccount.sort((a, b) => {
+          return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+        });
+        break;
+      case 'Latest to Oldest':
+        updatedAccount.sort((a, b) => {
+          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+        });
+        break;
+      case 'Alphabetical (A-Z)':
+        updatedAccount.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'Alphabetical (Z-A)':
+        updatedAccount.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        break;
+    }
+
+    setAccounts(updatedAccount);
+  }
+
 };
 
 //ACCOUNT OPTIONS
@@ -348,6 +416,22 @@ const renderContent = () => {
           <h4> Record Type: </h4>
           <button onClick={() => handleRecordTypeChange('accounts')}> Accounts </button>
           <button onClick={() => handleRecordTypeChange('services')}> Services </button>
+        </section>
+
+        {/* FILTER */}
+        <section>
+          <h4> Sort By: </h4>
+          <select 
+            id = "filterSelect"
+            value={selectedFilter}
+            onChange={(e) => handleFilterChange(e.target.value)}
+            >
+              {filterBy.map((filter) => (
+                <option key = {filter} value = {filter}>
+                    {filter}
+                </option>
+              ))}
+          </select>
         </section>
 
         {session && (

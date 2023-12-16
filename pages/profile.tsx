@@ -44,7 +44,6 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
         contactNumber: data.contactNumber || '',
         guardianName: data.guardianName || '',
         guardianContactNumber: data.guardianContactNumber || '',
-        guardianIdFile: data.guardianIdFile || '',
       }
     }
 
@@ -66,6 +65,7 @@ export default function Profile({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { session, status } = useAuthGuard();
 
+  const bloodType = ['O', 'O+', 'O-', 'A', 'A+', 'A-', 'B', 'B+', 'B-', 'AB', 'AB+', 'AB-']
   const [formData, setFormData] = useState<ProfileFormData>({
     name: '',
     dateOfBirth: '',
@@ -273,12 +273,24 @@ export default function Profile({
                     </div>
                     <div className={`formInput ${errorFormData.bloodType.error ? 'formInput--error' : ''}`}>
                       {errorFormData.bloodType.error && <span className='formInput__errorMessage'>{errorFormData.bloodType.message}</span>}
-                      <input type='text'
+                      <select
+                        value={formData.bloodType}
+                        onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                        name='bloodType'
+                        >
+                          {bloodType.map(type => (
+                            <option key={type} value={type}>
+                              {type}
+                            </option>
+                          ))}
+                      </select>
+                      
+                      {/* <input type='text'
                         onKeyDown={e => handleFormEnter(e, updateProfile)}
                         name='bloodType'
                         value={formData.bloodType}
                         onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
-                      />
+                      /> */}
                     </div>
                   </div>}
                   <div className={styles.form__row__field}>
@@ -313,12 +325,12 @@ export default function Profile({
                 {session.user?.role == 'patient' && <>
                   <hr className={styles.divider} />
                   <div className={styles.form__row}>
-                    <div className={styles.minorsTitle}>For Minors:</div>
+                    <div className={styles.minorsTitle}>For Emergency Contact:</div>
                   </div>
                   <div className={styles.form__row}>
                     <div className={styles.form__row__field}>
                       <div className={`formLabel ${styles.form__row__field__label}`}>
-                        <label>Parent's or Guardian's Name: </label>
+                        <label>Emergency Contact's Name: </label>
                       </div>
                       <div className={`formInput ${errorFormData.guardianName.error ? 'formInput--error' : ''}`}>
                         {errorFormData.guardianName.error && <span className='formInput__errorMessage'>{errorFormData.guardianName.message}</span>}
@@ -346,23 +358,6 @@ export default function Profile({
                     </div>
                   </div>
                   <div className={styles.form__row}>
-                    <div className={styles.form__row__field}>
-                      <div className={`formLabel ${styles.form__row__field__label}`}>
-                        <label>Upload Valid ID: </label>
-                      </div>
-                      <div className={`formInput ${errorFormData.guardianIdFile.error ? 'formInput--error' : ''}`}>
-                        {errorFormData.guardianIdFile.error && <span className='formInput__errorMessage'>{errorFormData.guardianIdFile.message}</span>}
-                        <div className='formInput__file-container'>
-                          <div className='formInput__file-button'>File:</div>
-                          <span>{formData.guardianIdFile}</span>
-                        </div>
-                        <input type='file'
-                          onKeyDown={e => handleFormEnter(e, updateProfile)}
-                          name='guardianIdFile'
-                          onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
-                        />
-                      </div>
-                    </div>
                     <div className={styles.form__row__field} style={{ flex: 0.4, justifyContent: 'flex-end' }}>
                       <Button onClick={updateProfile}>Update Profile</Button>
                     </div>
