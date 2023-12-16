@@ -79,12 +79,7 @@ export default function Profile({
     contactNumber: '',
     guardianName: '',
     guardianContactNumber: '',
-    guardianIdFile: '',
-<<<<<<< HEAD
-    isArchived: false
-=======
-    isArchived: false,
->>>>>>> caa72258c721bfe17bd5323a40c582adacb5e93f
+    guardianIdFile: ''
   })
 
   const [errorFormData, setErrorFormData] = useState<ProfileErrorFormData>({
