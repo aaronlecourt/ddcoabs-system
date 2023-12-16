@@ -67,8 +67,7 @@ export default function useAuthGuard() {
       sex: null,
       bloodType: null,
       address: null,
-      contactNumber: null,
-      isArchived: false,
+      contactNumber: null
     }
 
     const requiredFields = userProfile.role == 'dentist' ? dentistRequiredFields : patientRequiredFields;
@@ -84,6 +83,7 @@ export default function useAuthGuard() {
 
     if (emptyFields.length > 0) {
       router.push('/profile');
+      
     } else {
       if (session.user.role == 'patient' && !patientRoutes.includes(router.pathname)) {
         router.push('/');

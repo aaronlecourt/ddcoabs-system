@@ -9,7 +9,6 @@ export interface FormData {
   sex: string;
   password: string;
   confirmPassword: string;
-  isArchived: boolean;
 }
 
 export interface ErrorFormData {
