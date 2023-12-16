@@ -54,5 +54,20 @@ export interface UpdateProfileFormData {
   name: string;
   email: string;
   contactNumber: number;
+  age: number;
+  gender: string;
   role: string;
+  isArchived: boolean
+}
+
+export interface ArchiveProfileFormData {
+  _id: string;
+  name: string;
+  email: string;
+  contactNumber: number;
+  gender: string;
+  dateOfBirth: string;
+  address: string;
+  role: string;
+  isArchived: boolean
 }

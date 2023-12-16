@@ -1,5 +1,5 @@
 import connectMongo from '../../../../utils/connectMongo';
-import DentistService from '../../../../models/DentistService';
+import User from '../../../../models/User';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function userHandler (
@@ -14,16 +14,21 @@ export default async function userHandler (
   
     switch (method) {
       case 'GET':
-        const dentistService = await DentistService.find({ isArchived: true });
-        res.status(200).json(dentistService);
-        break
+        try {
+          const users = await User.find({ isArchived: true });
+
+          res.status(200).json(users);
+        } catch (error: any) {
+          res.status(500).json({ message: 'Failed to fetch data', error: error.message });
+        }
+        break;
       case 'DELETE':
         const { _id } = body;
         try {
           if (!_id) {
             return res.status(400).json({ error: 'ID is required for deletion' });
           }
-          const deletedService = await DentistService.findByIdAndDelete(_id);
+          const deletedService = await User.findByIdAndDelete(_id);
           if (!deletedService) {
             return res.status(404).json({ message: 'Service not found' });
           }
@@ -40,7 +45,7 @@ export default async function userHandler (
             return res.status(400).json({ error: 'ID is required for update' });
           }
       
-          const updatedService = await DentistService.findByIdAndUpdate(
+          const updatedService = await User.findByIdAndUpdate(
             _id,
             { isArchived: false },
             { new: true }

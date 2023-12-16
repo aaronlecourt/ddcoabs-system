@@ -13,8 +13,10 @@ import ArchiveButton from '../components/ArchiveButton';
 interface User {
   _id: string;
   name: string;
-  email: number;
+  email: string;
   contactNumber: number;
+  age: number;
+  gender: string;
   role: string;
   isArchived: boolean;
 }
@@ -66,6 +68,8 @@ export default function Accounts() {
     name: '',
     email: '',
     contactNumber: 0,
+    age: 0,
+    gender: '',
     role: '',
     isArchived: false,
   })
@@ -79,8 +83,10 @@ export default function Accounts() {
         setUpdateUserFormData({
           _id: user._id,
           name: user.name,
-          email: user.email.toString(),
+          email: user.email,
           contactNumber: user.contactNumber,
+          age: user.age,
+          gender: user.gender,
           role: user.role,
           isArchived: user.isArchived,
         }); // Set the data for the update form fields
@@ -91,8 +97,10 @@ export default function Accounts() {
         setUpdateUserFormData({
           _id: user._id,
           name: user.name,
-          email: user.email.toString(),
+          email: user.email,
           contactNumber: user.contactNumber,
+          age: user.age,
+          gender: user.gender,
           role: user.role,
           isArchived: true
         });
@@ -102,8 +110,10 @@ export default function Accounts() {
         setUpdateUserFormData({
           _id: user._id,
           name: user.name,
-          email: user.email.toString(),
+          email: user.email,
           contactNumber: user.contactNumber,
+          age: user.age,
+          gender: user.gender,
           role: user.role, // Set the role to 'patient'
           isArchived: user.isArchived,
         });
@@ -187,9 +197,9 @@ export default function Accounts() {
           );
   
           // Remove the updated service from the table
-          // setUsers((prevServices) =>
-          //   prevServices.filter((service) => service._id !== updatedUser._id)
-          // );
+          setUsers((prevServices) =>
+            prevServices.filter((service) => service._id !== updatedUser._id)
+          );
   
         }
       })
@@ -248,9 +258,12 @@ export default function Accounts() {
                 <tr>
                   <th>#</th>
                   <th>Full Name</th>
+                  <th> Contact Number </th>
                   <th>Email Address</th>
-                  <th>Mobile Number</th>
+                  <th> Age </th>
+                  <th> Sex </th>
                   <th>User Role</th>
+                  <th> Appointment Record </th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -260,8 +273,10 @@ export default function Accounts() {
                     <tr key={user._id}>
                     <td>{index + 1}</td>
                     <td>{user.name}</td>
-                    <td>{user.email}</td>
                     <td>{user.contactNumber}</td>
+                    <td>{user.email}</td>
+                    <td> {user.age }</td>
+                    <td> {user.gender}</td>
                     <td>
                       <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
                       {roles.map((role) => (
@@ -271,6 +286,7 @@ export default function Accounts() {
                       ))}
                       </select>
                     </td>
+                    <td> <Button> Show More </Button></td>
                     <td className={styles1.tableAction}> 
                       <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
                         <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
