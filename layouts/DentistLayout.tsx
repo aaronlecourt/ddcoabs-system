@@ -12,10 +12,6 @@ export default function DentistLayout({ children }: { children: ReactNode }) {
       link: '/accounts'
     },
     {
-      text: 'Patient Records',
-      link: '/patient-records'
-    },
-    {
       text: 'Appointments',
       link: '/appointments'
     },

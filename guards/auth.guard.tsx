@@ -25,7 +25,6 @@ export default function useAuthGuard() {
     '/reschedule/[id]',
     '/services',
     '/accounts',
-    '/patient-records',
     '/archives',
     '/appointments'
   ]

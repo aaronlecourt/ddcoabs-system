@@ -21,6 +21,7 @@ export default function ServiceRecords() {
   const { session, status } = useAuthGuard();
   const [services, setServices] = useState<Service[]>([])
   const [showDeleteService, setShowDeleteService] = useState(false)
+  const [showRestoreService, setShowRestoreService] = useState(false)
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -48,16 +49,30 @@ export default function ServiceRecords() {
     isArchived: true,
   })
 
-  const onDeleteService = (service: Service, buttonName: string) => {
-    setShowDeleteService(true);
-      setUpdateServiceFormData({
-        _id: service._id,
-        name: service.name,
-        price: service.price.toString(),
-        description: service.description,
-        type: service.type,
-        isArchived: true
-      }); 
+  const onUpdateService = (service: Service, buttonName: string) => {
+    
+      if (buttonName === 'delete') {
+        setShowDeleteService(true);
+        setUpdateServiceFormData({
+          _id: service._id,
+          name: service.name,
+          price: service.price.toString(),
+          description: service.description,
+          type: service.type,
+          isArchived: service.isArchived
+        });  
+
+      } else if (buttonName === 'restore') {
+        setShowRestoreService(true);
+        setUpdateServiceFormData({
+          _id: service._id,
+          name: service.name,
+          price: service.price.toString(),
+          description: service.description,
+          type: service.type,
+          isArchived: false
+        });
+      }
   };
 
   const deleteService = async (serviceId: string) => {
@@ -74,8 +89,36 @@ export default function ServiceRecords() {
         throw new Error('Failed to delete service');
       }
 
+      alert("SUCCESSFULLY DELETED")
+
       // If deletion is successful, update the services state by removing the deleted service
       setShowDeleteService(false);
+      setServices(prevServices =>
+        prevServices.filter(service => service._id !== serviceId)
+      );
+    } catch (error) {
+      console.error('Error deleting service:', error);
+    }
+  };
+
+  const restoreService = async (serviceId: string) => {
+    try {
+
+      const response = await fetch(`api/dentist/archive`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateServiceFormData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to restore service');
+      }
+
+      alert("SUCCESSFULLY RESTORE")
+      // If deletion is successful, update the services state by removing the deleted service
+      setShowRestoreService(false);
       setServices(prevServices =>
         prevServices.filter(service => service._id !== serviceId)
       );
@@ -96,11 +139,22 @@ export default function ServiceRecords() {
       {/* DELETE SERVICE */}
       <Modal open={showDeleteService} setOpen={setShowDeleteService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to archive this dental service?</p>
-          <input type='text' name = "_id" value={updateServiceFormData._id}/>
+          <p> Are you sure you want to DELETE this dental service?</p>
+          <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowDeleteService(false)}>No</Button>
             <Button onClick={deleteService} type = "submit">Yes</Button>
+          </div>
+        </Modal>
+
+        {/* RESTORE SERVICE */}
+      <Modal open={showRestoreService} setOpen={setShowRestoreService} modalWidth={400} modalRadius={10}>
+          <h3 className={styles1.cancelTitle}> WARNING! </h3>
+          <p> Are you sure you want to RESTORE this dental service?</p>
+          <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
+          <div className={styles1.cancelActions}>
+            <Button type='secondary' onClick={() => setShowRestoreService(false)}>No</Button>
+            <Button onClick={restoreService} type = "submit">Yes</Button>
           </div>
         </Modal>
 
@@ -114,7 +168,7 @@ export default function ServiceRecords() {
                   <th>Base Charge</th>
                   <th> Type </th>
                   <th>Description</th>
-                  <th>  </th>
+                  <th> Action </th>
                 </tr>
               </thead>
               <tbody>
@@ -125,7 +179,10 @@ export default function ServiceRecords() {
                     <td>P {service.price.toFixed(2)}</td>
                     <td> {service.type} </td>
                     <td>{service.description}</td>
-                    <td> <Button onClick={() => onDeleteService(service, 'update')}> DELETE </Button></td>
+                    <td> 
+                      <Button onClick={() => onUpdateService(service, 'delete')}> DELETE </Button>
+                      <Button onClick={() => onUpdateService(service, 'restore')}> RESTORE </Button>
+                    </td>
                   </tr>
                 )}
               </tbody>

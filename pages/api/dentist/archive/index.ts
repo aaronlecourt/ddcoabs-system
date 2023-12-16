@@ -32,8 +32,32 @@ export default async function userHandler (
           return res.status(500).json({ message: 'Failed to delete service', error: error.message });
         }
         break
+
+      case 'PUT':
+        try {
+          const { _id } = body;
+          if (!_id) {
+            return res.status(400).json({ error: 'ID is required for update' });
+          }
+      
+          const updatedService = await DentistService.findByIdAndUpdate(
+            _id,
+            { isArchived: false },
+            { new: true }
+          );
+      
+          if (!updatedService) {
+            return res.status(404).json({ message: 'Service not found' });
+          }
+      
+          res.status(200).json({ message: 'Service updated successfully', updatedService });
+        } catch (error: any) {
+          res.status(500).json({ message: 'Failed to update service', error: error.message });
+        }
+        break;
+
       default:
-        res.setHeader('Allow', ['GET', 'POST', 'DELETE'])
+        res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (error) {

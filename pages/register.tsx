@@ -48,8 +48,7 @@ export default function Register({
     dateOfBirth: '',
     sex: '',
     password: '',
-    confirmPassword: '',
-    isArchived: false
+    confirmPassword: ''
   })
 
   const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
