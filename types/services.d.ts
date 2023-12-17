@@ -1,5 +1,12 @@
 import { ErrorAddServicesFormData } from "./error";
 
+export interface Service {
+  _id: string;
+  name: string;
+  price: string;
+  description: string;
+}
+
 export interface AddServicesFormData {
   name: string;
   price: string;

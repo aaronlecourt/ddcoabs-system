@@ -1,4 +1,7 @@
 @import '../../styles/variables.scss';
+.transparentNavbar {
+  background: transparent !important;
+}
 
 .navbar {
   position: relative;
@@ -9,6 +12,10 @@
   height: 110px;
   padding: 0 1rem;
   background: linear-gradient(90deg, #3AB286 13.96%, #3A66B2 86.55%);
+
+  &.transparentNavbar {
+    background: transparent;
+  }
 
   &__logo {
     width: 250px;

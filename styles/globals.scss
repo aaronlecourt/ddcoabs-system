@@ -280,3 +280,26 @@ a {
     }
   }
 }
+
+/* Add this style at the end of your SCSS file */
+
+/* Define scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+  border-radius: 150px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.5); /* Color of the track */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $green; /* Color of the scrollbar handle */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $green; /* Color of the scrollbar handle on hover */
+}
