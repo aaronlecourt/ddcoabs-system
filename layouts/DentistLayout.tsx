@@ -8,7 +8,7 @@ export default function DentistLayout({ children }: { children: ReactNode }) {
       link: '/'
     },
     {
-      text: 'Accounts',
+      text: 'Patient Records',
       link: '/accounts'
     },
     {

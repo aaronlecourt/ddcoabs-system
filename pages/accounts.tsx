@@ -9,6 +9,7 @@ import { faArchive, faBoxArchive, faChevronDown, faFileArchive, faFolder, faPenc
 import { UpdateProfileFormData } from '../types/profile';
 import Modal from '../components/Modal';
 import ArchiveButton from '../components/ArchiveButton';
+import { fileURLToPath } from 'url';
 
 interface User {
   _id: string;
@@ -79,12 +80,6 @@ export default function Accounts() {
   //FILTER
   const filterBy= ['Select All', 'Dentist', 'Employee', 'Patient', 'Male', 'Female', 'Minor', 'Adult']
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // const handleMultipleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-  //   setSelectedFilters(selectedOptions);
-  // };
 
   const handleFilterSelection = (filter: string) => {
     if (selectedFilters.includes(filter)) {
@@ -93,24 +88,6 @@ export default function Accounts() {
       setSelectedFilters([...selectedFilters, filter]);
     }
   };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  // const handleFilterChange = (filter: any) => {
-  //   const updatedFilters = selectedFilters.includes(filter)
-  //     ? selectedFilters.filter((selectedFilter) => selectedFilter !== filter)
-  //     : [...selectedFilters, filter];
-  
-  //   setSelectedFilters(updatedFilters);
-  
-  //   const filteredUser = users.filter((user) => {
-  //     return updatedFilters.length === 0 ? true : updatedFilters.includes(user.role);
-  //   });
-  
-  //   setUsers(filteredUser);
-  // };
   
 
   //FOR USER TABLE
@@ -280,6 +257,36 @@ export default function Accounts() {
   
 
   const renderContent = () => {
+
+    const filteredBySelectedFilters = users.filter((user) => {
+      if (selectedFilters.length === 0) {
+        return true;
+      } else {
+        if (selectedFilters.includes('Dentist') && user.role === 'dentist') {
+          return true;
+        }
+        if (selectedFilters.includes('Employee') && user.role === 'employee') {
+          return true;
+        }
+        if (selectedFilters.includes('Patient') && user.role === 'patient') {
+          return true;
+        }
+        if (selectedFilters.includes('Male') && user.gender === 'male') {
+          return true;
+        }
+        if (selectedFilters.includes('Female') && user.gender === 'female') {
+          return true;
+        }
+        if (selectedFilters.includes('Minor') && user.age < 18) {
+          return true;
+        }
+        if (selectedFilters.includes('Adult') && user.age >= 18) {
+          return true;
+        }
+      }
+      return false;
+    });
+
     return (
       <>
       {/* MODAL FOR ARCHIVE */}
@@ -332,62 +339,18 @@ export default function Accounts() {
           <div className={styles1.filters__sort}>
             <span className={styles1.filters__sortTitle}>Filter:</span>
             <div className={styles1.filters__sortDropdown}>
-              {/* <select
-                multiple
-                value={selectedFilters}
-                onChange={(e) => {
-                  const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value);
-                  setSelectedFilters(selectedOptions)
-
-                  const filteredUser = users.filter((user) => {
-                    return selectedOptions.length === 0 ? true : selectedOptions.includes(user.role);
-                  });
-
-                  setUsers(filteredUser)
-                }}
-              >
-                <option value= ""> Select Filter </option>
-                {filterBy.map((filter) => (
-                  <option key = {filter} value = {filter}>
-                    {filter}  
-                  </option>
-                ))}
-              </select> */}
-
-            {/* <select
-              id="filterSelect"
-              multiple  // Allow multiple selection
-              value={selectedFilters}
-              onChange={handleMultipleFilterChange}
-            >
               {filterBy.map((filter) => (
-                <option key={filter} value={filter}>
-                  {filter}
-                </option>
+                <label key = {filter}> {filter}
+                  <input type = "checkbox" value={filter} 
+                  onChange={() => handleFilterSelection(filter)}
+                  checked={selectedFilters.includes(filter)}/>
+                </label>
               ))}
-            </select> */}
-
-        {/* <div className={`${styles1.filters__sortDropdown} ${isDropdownOpen ? styles1.open : ''}`}>
-          <button onClick={toggleDropdown}>Select Filters</button>
-          <ul>
-            {filterBy.map((filter) => (
-              <li key={filter} value={filter} onClick={() => handleFilterSelection(filter)}>
-                <input
-                  type="checkbox"
-                  checked={selectedFilters.includes(filter)}
-                  readOnly
-                />
-                {filter}
-              </li>
-            ))}
-          </ul>
-        </div> */}
-
-              <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
+              
             </div>
-            <div className={styles1.filters__sortDropdown}>
-              <button> Generate Report </button>
-            </div>
+          </div>
+          <div className={styles1.filters__sortDropdown}>
+            <button> Generate Report </button>
           </div>
         </div>
         {session && (
@@ -407,7 +370,42 @@ export default function Accounts() {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.length > 0 ? (
+                {filteredBySelectedFilters.length > 0 ? (
+                  filteredBySelectedFilters.map((user, index) => (
+                    <tr key={user._id}>
+                      <td>{index + 1}</td>
+                      <td>{user.name}</td>
+                      <td>{user.contactNumber}</td>
+                      <td>{user.email}</td>
+                      <td> {user.age }</td>
+                      <td> {user.gender}</td>
+                      <td>
+                        <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
+                        {roles.map((role) => (
+                          <option key={role} value={role}>
+                            {role}
+                          </option>
+                        ))}
+                        </select>
+                      </td>
+                      <td> <Button> Show More </Button></td>
+                      <td className={styles1.tableAction}> 
+                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                        </ArchiveButton>
+                        <Button onClick={(e: any) => {
+                          if (user.role === 'dentist' || user.role === 'employee') {
+                            setShowValiUser(true);
+                            onUpdateUser(user, 'updateRole');
+                            // Show the modal for admin or employee users
+                          } else {
+                            onUpdateUser(user, 'updateRolePatient');
+                          }
+                        }}> Update Role </Button>
+                      </td>
+                    </tr>
+                  ))
+                ) : filteredUsers.length > 0 ? (
                    filteredUsers.map((user, index) => (
                     <tr key={user._id}>
                     <td>{index + 1}</td>
