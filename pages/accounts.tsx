@@ -82,7 +82,14 @@ export default function Accounts() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const handleFilterSelection = (filter: string) => {
-    if (selectedFilters.includes(filter)) {
+    if (filter === 'Select All'){
+      if (selectedFilters.length === filterBy.length - 1) {
+        setSelectedFilters([]); // Uncheck all if 'Select All' was previously checked
+      } else {
+        setSelectedFilters(filterBy.filter((item) => item !== 'Select All'));
+      }
+    }
+     else if (selectedFilters.includes(filter)) {
       setSelectedFilters(selectedFilters.filter((selectedFilter) => selectedFilter !== filter));
     } else {
       setSelectedFilters([...selectedFilters, filter]);
@@ -343,7 +350,7 @@ export default function Accounts() {
                 <label key = {filter}> {filter}
                   <input type = "checkbox" value={filter} 
                   onChange={() => handleFilterSelection(filter)}
-                  checked={selectedFilters.includes(filter)}/>
+                  checked={selectedFilters.length === filterBy.length - 1}/>
                 </label>
               ))}
               
