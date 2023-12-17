@@ -79,27 +79,45 @@ export default function Accounts() {
   //FILTER
   const filterBy= ['Select All', 'Dentist', 'Employee', 'Patient', 'Male', 'Female', 'Minor', 'Adult']
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleFilterChange = (filter: any) => {
-    const updatedFilters = selectedFilters.includes(filter)
-      ? selectedFilters.filter((selectedFilter) => selectedFilter !== filter)
-      : [...selectedFilters, filter];
-  
-    setSelectedFilters(updatedFilters);
-  
-    const filteredUser = users.filter((user) => {
-      return updatedFilters.length === 0 ? true : updatedFilters.includes(user.role);
-    });
-  
-    setUsers(filteredUser);
+  // const handleMultipleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+  //   setSelectedFilters(selectedOptions);
+  // };
+
+  const handleFilterSelection = (filter: string) => {
+    if (selectedFilters.includes(filter)) {
+      setSelectedFilters(selectedFilters.filter((selectedFilter) => selectedFilter !== filter));
+    } else {
+      setSelectedFilters([...selectedFilters, filter]);
+    }
   };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  // const handleFilterChange = (filter: any) => {
+  //   const updatedFilters = selectedFilters.includes(filter)
+  //     ? selectedFilters.filter((selectedFilter) => selectedFilter !== filter)
+  //     : [...selectedFilters, filter];
+  
+  //   setSelectedFilters(updatedFilters);
+  
+  //   const filteredUser = users.filter((user) => {
+  //     return updatedFilters.length === 0 ? true : updatedFilters.includes(user.role);
+  //   });
+  
+  //   setUsers(filteredUser);
+  // };
   
 
   //FOR USER TABLE
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('api/dentist/accounts');
+        const response = await fetch('api/dentist/accounts/role');
         if (!response.ok) {
           throw new Error('Failed to fetch services');
         }
@@ -165,15 +183,8 @@ export default function Accounts() {
 
       } else if (buttonName === 'updateRolePatient') {
         setUpdateUserFormData({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          contactNumber: user.contactNumber,
-          age: user.age,
-          gender: user.gender,
-          role: user.role, // Set the role to 'patient'
-          createdAt: user.createdAt,
-          isArchived: user.isArchived,
+          ...user,
+          role: 'patient'
         });
 
         updateUserRole(undefined, user._id);
@@ -189,7 +200,7 @@ export default function Accounts() {
 
     const updatedData = { ...updateUserFormData, _id: userId }; // Include userId in the request body
 
-    fetch(`/api/dentist/accounts`, {
+    fetch(`/api/dentist/accounts/role`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -230,7 +241,7 @@ export default function Accounts() {
 
     console.log('Update User Form Data:', updatedData);
 
-    fetch(`/api/dentist/accounts`, {
+    fetch(`/api/dentist/accounts/archive`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -342,6 +353,36 @@ export default function Accounts() {
                   </option>
                 ))}
               </select> */}
+
+            {/* <select
+              id="filterSelect"
+              multiple  // Allow multiple selection
+              value={selectedFilters}
+              onChange={handleMultipleFilterChange}
+            >
+              {filterBy.map((filter) => (
+                <option key={filter} value={filter}>
+                  {filter}
+                </option>
+              ))}
+            </select> */}
+
+        {/* <div className={`${styles1.filters__sortDropdown} ${isDropdownOpen ? styles1.open : ''}`}>
+          <button onClick={toggleDropdown}>Select Filters</button>
+          <ul>
+            {filterBy.map((filter) => (
+              <li key={filter} value={filter} onClick={() => handleFilterSelection(filter)}>
+                <input
+                  type="checkbox"
+                  checked={selectedFilters.includes(filter)}
+                  readOnly
+                />
+                {filter}
+              </li>
+            ))}
+          </ul>
+        </div> */}
+
               <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
             </div>
             <div className={styles1.filters__sortDropdown}>
