@@ -31,21 +31,24 @@ export default function Accounts() {
   // SEARCH
   const [searchQuery, setSearchQuery] = useState('');
   
-  const filteredUsers = users.filter((user) =>
+  const sortedUser = users.filter((user) =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  console.log('Filtered Users:', sortedUser);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-  };
+    console.log('Search Query:', e.target.value);
+  };  
   
+  // ROLE UPDATE
   const handleRoleChange = (e: any, index: any) => {
     const updatedUsers = [...users]; // Create a copy of the users array
     updatedUsers[index].role = e.target.value; // Update the role of the specific user at the given index
     setUsers(updatedUsers); // Update the state with the modified users array
   };
 
-  //SORT BY
+  // SORT BY
   const sortBy= ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
   const [selectedFilter, setSelectedFilter] = useState('');
 
@@ -95,6 +98,35 @@ export default function Accounts() {
       setSelectedFilters([...selectedFilters, filter]);
     }
   };
+
+  const filteredBySelectedFilters = users.filter((user) => {
+    if (selectedFilters.length === 0) {
+      return true;
+    } else {
+      if (selectedFilters.includes('Dentist') && user.role === 'dentist') {
+        return true;
+      }
+      if (selectedFilters.includes('Employee') && user.role === 'employee') {
+        return true;
+      }
+      if (selectedFilters.includes('Patient') && user.role === 'patient') {
+        return true;
+      }
+      if (selectedFilters.includes('Male') && user.gender === 'male') {
+        return true;
+      }
+      if (selectedFilters.includes('Female') && user.gender === 'female') {
+        return true;
+      }
+      if (selectedFilters.includes('Minor') && user.age < 18) {
+        return true;
+      }
+      if (selectedFilters.includes('Adult') && user.age >= 18) {
+        return true;
+      }
+    }
+    return false;
+  });
   
 
   //FOR USER TABLE
@@ -265,34 +297,7 @@ export default function Accounts() {
 
   const renderContent = () => {
 
-    const filteredBySelectedFilters = users.filter((user) => {
-      if (selectedFilters.length === 0) {
-        return true;
-      } else {
-        if (selectedFilters.includes('Dentist') && user.role === 'dentist') {
-          return true;
-        }
-        if (selectedFilters.includes('Employee') && user.role === 'employee') {
-          return true;
-        }
-        if (selectedFilters.includes('Patient') && user.role === 'patient') {
-          return true;
-        }
-        if (selectedFilters.includes('Male') && user.gender === 'male') {
-          return true;
-        }
-        if (selectedFilters.includes('Female') && user.gender === 'female') {
-          return true;
-        }
-        if (selectedFilters.includes('Minor') && user.age < 18) {
-          return true;
-        }
-        if (selectedFilters.includes('Adult') && user.age >= 18) {
-          return true;
-        }
-      }
-      return false;
-    });
+    
 
     return (
       <>
@@ -322,7 +327,8 @@ export default function Accounts() {
         <div>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
-            <input type='text' className={styles1.filters__searchInput} placeholder='Search account...' value={searchQuery}
+            <input type='text' className={styles1.filters__searchInput} placeholder='Search account...'
+            value={searchQuery}
             onChange={handleSearchChange}/>
             <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
           </div>
@@ -350,7 +356,7 @@ export default function Accounts() {
                 <label key = {filter}> {filter}
                   <input type = "checkbox" value={filter} 
                   onChange={() => handleFilterSelection(filter)}
-                  checked={selectedFilters.length === filterBy.length - 1}/>
+                  checked={selectedFilters.includes(filter) || (filter === 'Select All' && selectedFilters.length === filterBy.length - 1)}/>
                 </label>
               ))}
               
@@ -377,43 +383,67 @@ export default function Accounts() {
                 </tr>
               </thead>
               <tbody>
+                {/* THIS IS FOR FILTER */}
                 {filteredBySelectedFilters.length > 0 ? (
-                  filteredBySelectedFilters.map((user, index) => (
-                    <tr key={user._id}>
-                      <td>{index + 1}</td>
-                      <td>{user.name}</td>
-                      <td>{user.contactNumber}</td>
-                      <td>{user.email}</td>
-                      <td> {user.age }</td>
-                      <td> {user.gender}</td>
-                      <td>
-                        <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
-                        {roles.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                        </select>
-                      </td>
-                      <td> <Button> Show More </Button></td>
-                      <td className={styles1.tableAction}> 
-                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                        </ArchiveButton>
-                        <Button onClick={(e: any) => {
-                          if (user.role === 'dentist' || user.role === 'employee') {
-                            setShowValiUser(true);
-                            onUpdateUser(user, 'updateRole');
-                            // Show the modal for admin or employee users
-                          } else {
-                            onUpdateUser(user, 'updateRolePatient');
-                          }
-                        }}> Update Role </Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : filteredUsers.length > 0 ? (
-                   filteredUsers.map((user, index) => (
+                  filteredBySelectedFilters
+                  .filter((user) =>
+                    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map((user, index) => (
+                      <tr key={user._id}>
+                        <td>{index + 1}</td>
+                        <td>{user.name}</td>
+                        <td>{user.contactNumber}</td>
+                        <td>{user.email}</td>
+                        <td>{user.age}</td>
+                        <td>{user.gender}</td>
+                        <td>
+                          <select
+                            value={user.role}
+                            onChange={(e) => handleRoleChange(e, index)}
+                          >
+                            {roles.map((role) => (
+                              <option key={role} value={role}>
+                                {role}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <Button> Show More </Button>
+                        </td>
+                        <td className={styles1.tableAction}>
+                          {/* Existing buttons */}
+                          {user.role !== 'dentist' && (
+                            <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                              <FontAwesomeIcon
+                                icon={faFileArchive}
+                                width={24}
+                                height={24}
+                                color={'#ffffff'}
+                              />
+                            </ArchiveButton>
+                          )}
+                          <Button
+                            onClick={(e: any) => {
+                              if (user.role === 'dentist' || user.role === 'employee') {
+                                setShowValiUser(true);
+                                onUpdateUser(user, 'updateRole');
+                                // Show the modal for admin or employee users
+                              } else {
+                                onUpdateUser(user, 'updateRolePatient');
+                              }
+                            }}
+                          >
+                            Update Role
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                ) : 
+                // THIS IS FOR SEARCHING - just named it sort
+                sortedUser.length > 0 ? (
+                  sortedUser.map((user, index) => (
                     <tr key={user._id}>
                     <td>{index + 1}</td>
                     <td>{user.name}</td>
@@ -432,9 +462,11 @@ export default function Accounts() {
                     </td>
                     <td> <Button> Show More </Button></td>
                     <td className={styles1.tableAction}> 
-                      <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                      </ArchiveButton>
+                      {user.role !== 'dentist' && (
+                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                        </ArchiveButton>
+                      )}
                       <Button onClick={(e: any) => {
                         if (user.role === 'dentist' || user.role === 'employee') {
                           setShowValiUser(true);
@@ -464,9 +496,11 @@ export default function Accounts() {
                       </select>
                     </td>
                     <td className={styles1.tableAction}> 
-                      <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                      </ArchiveButton>
+                      {user.role !== 'dentist' && (
+                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                        </ArchiveButton>
+                      )}
                       <Button onClick={(e: any) => {
                         if (user.role === 'dentist' || user.role === 'employee') {
                           setShowValiUser(true);
