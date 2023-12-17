@@ -90,6 +90,48 @@
       font-weight: 400;
       cursor: pointer;
 
+      &1 {
+        text-align: center;
+        min-width: 52px;
+        padding: .2rem .5rem;
+        border-radius: 10px;
+        border: 1px solid $grey;
+        background: $green;
+        color: $white;
+        margin: 0 .3rem;
+        font-size: 20px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      &2 {
+        text-align: center;
+        min-width: 52px;
+        padding: .2rem .5rem;
+        border-radius: 10px;
+        border: 1px solid $grey;
+        background: $yellow;
+        color: $text;
+        margin: 0 .3rem;
+        font-size: 20px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      &3 {
+        text-align: center;
+        min-width: 52px;
+        padding: .2rem .5rem;
+        border-radius: 10px;
+        border: 1px solid $grey;
+        background: $blue;
+        color: $white;
+        margin: 0 .3rem;
+        font-size: 20px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
       &Selected {
         background: #8A8A8A;
         color: $white;
@@ -104,6 +146,11 @@
   font-size: 25px;
   font-family: 'Poppins-Bold';
   font-weight: 700;
+}
+
+.cancelReason {
+  border: 1px solid $grey;
+  padding: 0.5rem;
 }
 
 .cancelText {
@@ -124,6 +171,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 1rem;
 
   &>div:first-child {
     margin-right: 1rem;
@@ -281,4 +329,15 @@
 
 .show {
   display: block;
+}
+
+.rightContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.Calendar{
+  width: 700px;
+  cursor: default;
+  // background-color: red;
 }

@@ -161,10 +161,11 @@ export default function Home({
                 </div>
                 <div className={styles.appointments}>
                   <div className={styles.appointments__filters}>
-                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>All</div>
-                    <div className={styles.appointments__filtersItem}>Confirmed</div>
-                    <div className={styles.appointments__filtersItem}>Pending</div>
-                    <div className={styles.appointments__filtersItem}>Today</div>
+                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>Today</div>
+                    <div className={styles.appointments__filtersItem1}>Confirmed</div>
+                    <div className={styles.appointments__filtersItem2}>Pending</div>
+                    <div className={styles.appointments__filtersItem3}>Rescheduled</div>
+                    <div className={styles.appointments__filtersItem}>All</div>
                   </div>
                   {appointments && appointments.length > 0 ?
                     <>
@@ -177,13 +178,15 @@ export default function Home({
                   }
                 </div>
               </section>
-              <section>
-                <CustomCalendar
-                  selectable={false}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                />
-              </section>
+              <section className={styles.rightContainer}>
+                  <div className={styles.Calendar}>
+                  <CustomCalendar
+                    selectable={false}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                  />
+                  </div>
+                </section>
             </div>
           </main>
         )}

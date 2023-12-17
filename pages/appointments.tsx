@@ -110,6 +110,7 @@ export default function Home({
               <p>Please confirm the cancellation of this appointment.
                 This action is not irreversible.</p>
             </div>
+            <input type="text" className={styles.cancelReason} placeholder='Enter your reason for cancelling...'/>
             <div className={styles.cancelActions}>
               <Button type='secondary' onClick={() => setShowCancelAppointment(false)}>No</Button>
               <Button onClick={cancelAppointment}>Yes</Button>
@@ -153,12 +154,14 @@ export default function Home({
                     }
                   </div>
                 </section>
-                <section>
+                <section className={styles.rightContainer}>
+                  <div className={styles.Calendar}>
                   <CustomCalendar
                     selectable={false}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                   />
+                  </div>
                 </section>
               </div>
             </main>
