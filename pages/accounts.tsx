@@ -19,6 +19,7 @@ interface User {
   age: number;
   gender: string;
   role: string;
+  OGrole: string;
   createdAt: string;
   isArchived: boolean;
 }
@@ -44,7 +45,7 @@ export default function Accounts() {
   // ROLE UPDATE
   const handleRoleChange = (e: any, index: any) => {
     const updatedUsers = [...users]; // Create a copy of the users array
-    updatedUsers[index].role = e.target.value; // Update the role of the specific user at the given index
+    updatedUsers[index].OGrole = e.target.value; // Update the role of the specific user at the given index
     setUsers(updatedUsers); // Update the state with the modified users array
   };
 
@@ -103,13 +104,13 @@ export default function Accounts() {
     if (selectedFilters.length === 0) {
       return true;
     } else {
-      if (selectedFilters.includes('Dentist') && user.role === 'dentist') {
+      if (selectedFilters.includes('Dentist') && user.OGrole === 'dentist') {
         return true;
       }
-      if (selectedFilters.includes('Employee') && user.role === 'employee') {
+      if (selectedFilters.includes('Employee') && user.OGrole === 'employee') {
         return true;
       }
-      if (selectedFilters.includes('Patient') && user.role === 'patient') {
+      if (selectedFilters.includes('Patient') && user.OGrole === 'patient') {
         return true;
       }
       if (selectedFilters.includes('Male') && user.gender === 'male') {
@@ -138,7 +139,14 @@ export default function Accounts() {
           throw new Error('Failed to fetch services');
         }
         const data: User[] = await response.json();
-        setUsers(data);
+  
+        // Update each user's originalRole field
+        const updatedUsers = data.map((user) => ({
+          ...user,
+          OGrole: user.role, // Set originalRole as the fetched role initially
+        }));
+  
+        setUsers(updatedUsers);
       } catch (error) {
         console.error('Error fetching services:', error);
       }
@@ -158,7 +166,7 @@ export default function Accounts() {
     contactNumber: 0,
     age: 0,
     gender: '',
-    role: '',
+    OGrole: '',
     createdAt: '',
     isArchived: false,
   })
@@ -176,7 +184,7 @@ export default function Accounts() {
           contactNumber: user.contactNumber,
           age: user.age,
           gender: user.gender,
-          role: user.role,
+          OGrole: user.role,
           createdAt: user.createdAt,
           isArchived: user.isArchived,
         }); // Set the data for the update form fields
@@ -191,7 +199,7 @@ export default function Accounts() {
           contactNumber: user.contactNumber,
           age: user.age,
           gender: user.gender,
-          role: user.role,
+          OGrole: user.OGrole,
           createdAt: user.createdAt,
           isArchived: true
         });
@@ -200,7 +208,7 @@ export default function Accounts() {
       } else if (buttonName === 'updateRolePatient') {
         setUpdateUserFormData({
           ...user,
-          role: 'patient'
+          OGrole: 'patient'
         });
 
         updateUserRole(undefined, user._id);
@@ -399,7 +407,7 @@ export default function Accounts() {
                         <td>{user.gender}</td>
                         <td>
                           <select
-                            value={user.role}
+                            value={user.OGrole}
                             onChange={(e) => handleRoleChange(e, index)}
                           >
                             {roles.map((role) => (
@@ -414,7 +422,7 @@ export default function Accounts() {
                         </td>
                         <td className={styles1.tableAction}>
                           {/* Existing buttons */}
-                          {user.role !== 'dentist' && (
+                          {user.OGrole !== 'dentist' && (
                             <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
                               <FontAwesomeIcon
                                 icon={faFileArchive}
@@ -452,7 +460,7 @@ export default function Accounts() {
                     <td> {user.age }</td>
                     <td> {user.gender}</td>
                     <td>
-                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
+                      <select value = {user.OGrole} onChange = {(e) => handleRoleChange(e, index)}>
                       {roles.map((role) => (
                         <option key={role} value={role}>
                           {role}
@@ -462,7 +470,7 @@ export default function Accounts() {
                     </td>
                     <td> <Button> Show More </Button></td>
                     <td className={styles1.tableAction}> 
-                      {user.role !== 'dentist' && (
+                      {user.OGrole !== 'dentist' && (
                         <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
                           <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
                         </ArchiveButton>
@@ -480,6 +488,7 @@ export default function Accounts() {
                   </tr>
                    )) 
                 ) : (
+                  // GENERAL VIEWING
                 users.map((user, index) => (
                   <tr key={user._id}>
                     <td>{index + 1}</td>
@@ -487,7 +496,7 @@ export default function Accounts() {
                     <td>{user.email}</td>
                     <td>{user.contactNumber}</td>
                     <td>
-                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
+                      <select value = {user.OGrole} onChange = {(e) => handleRoleChange(e, index)}>
                       {roles.map((role) => (
                         <option key={role} value={role}>
                           {role}
@@ -496,7 +505,7 @@ export default function Accounts() {
                       </select>
                     </td>
                     <td className={styles1.tableAction}> 
-                      {user.role !== 'dentist' && (
+                      {user.OGrole !== 'dentist' &&  (
                         <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
                           <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
                         </ArchiveButton>

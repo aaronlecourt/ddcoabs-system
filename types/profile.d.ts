@@ -56,7 +56,7 @@ export interface UpdateProfileFormData {
   contactNumber: number;
   age: number;
   gender: string;
-  role: string;
+  OGrole: string;
   createdAt: string;
   isArchived: boolean
 }
