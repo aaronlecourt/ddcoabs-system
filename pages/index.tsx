@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -53,6 +54,7 @@ export default function Home({
   const [appointments, setAppointments] = useState(initialAppointmentData)
   const [showCancelAppointment, setShowCancelAppointment] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null)
+  const router = useRouter();
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
@@ -159,10 +161,11 @@ export default function Home({
                 </div>
                 <div className={styles.appointments}>
                   <div className={styles.appointments__filters}>
-                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>All</div>
-                    <div className={styles.appointments__filtersItem}>Confirmed</div>
-                    <div className={styles.appointments__filtersItem}>Pending</div>
-                    <div className={styles.appointments__filtersItem}>Today</div>
+                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>Today</div>
+                    <div className={styles.appointments__filtersItem1}>Confirmed</div>
+                    <div className={styles.appointments__filtersItem2}>Pending</div>
+                    <div className={styles.appointments__filtersItem3}>Rescheduled</div>
+                    <div className={styles.appointments__filtersItem}>All</div>
                   </div>
                   {appointments && appointments.length > 0 ?
                     <>
@@ -175,13 +178,15 @@ export default function Home({
                   }
                 </div>
               </section>
-              <section>
-                <CustomCalendar
-                  selectable={false}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                />
-              </section>
+              <section className={styles.rightContainer}>
+                  <div className={styles.Calendar}>
+                  <CustomCalendar
+                    selectable={false}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                  />
+                  </div>
+                </section>
             </div>
           </main>
         )}

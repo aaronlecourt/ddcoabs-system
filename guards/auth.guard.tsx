@@ -36,7 +36,7 @@ export default function useAuthGuard() {
 
     if (!session) {
       if (!authPaths.includes(router.pathname)) {
-        router.push('/login');
+        router.push('/home');
       }
     } else {
       getUserProfile();
