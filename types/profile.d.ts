@@ -55,7 +55,7 @@ export interface UpdateProfileFormData {
   email: string;
   contactNumber: number;
   age: number;
-  gender: string;
+  sex: string;
   role: string;
   createdAt: string;
   isArchived: boolean
@@ -66,7 +66,7 @@ export interface ArchiveProfileFormData {
   name: string;
   email: string;
   contactNumber: number;
-  gender: string;
+  sex: string;
   dateOfBirth: string;
   address: string;
   role: string;

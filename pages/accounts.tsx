@@ -17,7 +17,7 @@ interface User {
   email: string;
   contactNumber: number;
   age: number;
-  gender: string;
+  sex: string;
   role: string;
   createdAt: string;
   isArchived: boolean;
@@ -112,10 +112,10 @@ export default function Accounts() {
       if (selectedFilters.includes('Patient') && user.role === 'patient') {
         return true;
       }
-      if (selectedFilters.includes('Male') && user.gender === 'male') {
+      if (selectedFilters.includes('Male') && user.sex === 'M') {
         return true;
       }
-      if (selectedFilters.includes('Female') && user.gender === 'female') {
+      if (selectedFilters.includes('Female') && user.sex === 'F') {
         return true;
       }
       if (selectedFilters.includes('Minor') && user.age < 18) {
@@ -157,7 +157,7 @@ export default function Accounts() {
     email: '',
     contactNumber: 0,
     age: 0,
-    gender: '',
+    sex: '',
     role: '',
     createdAt: '',
     isArchived: false,
@@ -175,7 +175,7 @@ export default function Accounts() {
           email: user.email,
           contactNumber: user.contactNumber,
           age: user.age,
-          gender: user.gender,
+          sex: user.sex,
           role: user.role,
           createdAt: user.createdAt,
           isArchived: user.isArchived,
@@ -190,7 +190,7 @@ export default function Accounts() {
           email: user.email,
           contactNumber: user.contactNumber,
           age: user.age,
-          gender: user.gender,
+          sex: user.sex,
           role: user.role,
           createdAt: user.createdAt,
           isArchived: true
@@ -296,9 +296,6 @@ export default function Accounts() {
   
 
   const renderContent = () => {
-
-    
-
     return (
       <>
       {/* MODAL FOR ARCHIVE */}
@@ -346,20 +343,22 @@ export default function Accounts() {
                 </option>
                 ))}
               </select>
-              <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
             </div>
           </div>
           <div className={styles1.filters__sort}>
             <span className={styles1.filters__sortTitle}>Filter:</span>
             <div className={styles1.filters__sortDropdown}>
               {filterBy.map((filter) => (
-                <label key = {filter}> {filter}
-                  <input type = "checkbox" value={filter} 
-                  onChange={() => handleFilterSelection(filter)}
-                  checked={selectedFilters.includes(filter) || (filter === 'Select All' && selectedFilters.length === filterBy.length - 1)}/>
+                <label key={filter}>
+                  <input
+                    type="checkbox"
+                    value={filter}
+                    onChange={() => handleFilterSelection(filter)}
+                    checked={selectedFilters.includes(filter) || (filter === 'Select All' && selectedFilters.length === filterBy.length - 1)}
+                  />
+                  {filter}
                 </label>
               ))}
-              
             </div>
           </div>
           <div className={styles1.filters__sortDropdown}>
@@ -373,12 +372,12 @@ export default function Accounts() {
                 <tr>
                   <th>#</th>
                   <th>Full Name</th>
-                  <th> Contact Number </th>
+                  <th>Contact Number </th>
                   <th>Email Address</th>
-                  <th> Age </th>
-                  <th> Sex </th>
+                  <th>Age</th>
+                  <th>Sex</th>
                   <th>User Role</th>
-                  <th> Appointment Record </th>
+                  <th>Appointment Record </th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -396,7 +395,7 @@ export default function Accounts() {
                         <td>{user.contactNumber}</td>
                         <td>{user.email}</td>
                         <td>{user.age}</td>
-                        <td>{user.gender}</td>
+                        <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
                         <td>
                           <select
                             value={user.role}
@@ -450,7 +449,7 @@ export default function Accounts() {
                     <td>{user.contactNumber}</td>
                     <td>{user.email}</td>
                     <td> {user.age }</td>
-                    <td> {user.gender}</td>
+                    <td> {user.sex}</td>
                     <td>
                       <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
                       {roles.map((role) => (
