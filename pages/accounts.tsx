@@ -165,13 +165,8 @@ export default function Accounts() {
     email: '',
     contactNumber: 0,
     age: 0,
-<<<<<<< HEAD
-    gender: '',
-    OGrole: '',
-=======
     sex: '',
-    role: '',
->>>>>>> cb70828ad9cad458951988b342e6f97383290cfb
+    OGrole: '',
     createdAt: '',
     isArchived: false,
   })
@@ -188,13 +183,8 @@ export default function Accounts() {
           email: user.email,
           contactNumber: user.contactNumber,
           age: user.age,
-<<<<<<< HEAD
-          gender: user.gender,
-          OGrole: user.role,
-=======
           sex: user.sex,
-          role: user.role,
->>>>>>> cb70828ad9cad458951988b342e6f97383290cfb
+          OGrole: user.role,
           createdAt: user.createdAt,
           isArchived: user.isArchived,
         }); // Set the data for the update form fields
@@ -208,13 +198,8 @@ export default function Accounts() {
           email: user.email,
           contactNumber: user.contactNumber,
           age: user.age,
-<<<<<<< HEAD
-          gender: user.gender,
-          OGrole: user.OGrole,
-=======
           sex: user.sex,
-          role: user.role,
->>>>>>> cb70828ad9cad458951988b342e6f97383290cfb
+          OGrole: user.role,
           createdAt: user.createdAt,
           isArchived: true
         });
