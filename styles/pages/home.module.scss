@@ -41,6 +41,7 @@
 .container {
   display: flex;
   flex-direction: row;
+  
 
   section {
     flex: 1;
@@ -51,7 +52,8 @@
     }
 
     &:nth-child(2) {
-      margin-left: .5rem;
+      margin-top: 5.5rem;
+      margin-left: 2rem;
     }
   }
 }
@@ -59,8 +61,8 @@
 .appointments {
   border-radius: 10px;
   border: 1px solid $grey;
-  background-color: #FAFAFA;
   padding: 0 1rem;
+  background-color: #FAFAFA;
 
   &__empty {
     display: flex;
@@ -395,11 +397,6 @@
     font-weight: 700; // You can add other styles for the active button
     color: $green;
   }
-}
-
-.rightContainer {
-  display: flex;
-  justify-content: center;
 }
 
 .Calendar{
