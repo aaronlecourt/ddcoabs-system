@@ -127,20 +127,6 @@ export default function Home({
   const renderDentistContent = () => {
     return (
       <>
-        <Modal open={showCancelAppointment} setOpen={setShowCancelAppointment} modalWidth={400} modalRadius={10}>
-          <h3 className={styles.cancelTitle}>Cancel Appointment</h3>
-          <div className={styles.cancelText}>
-            <div style={{ width: '54px', height: '54px' }}>
-              <FontAwesomeIcon icon={faCancel} size="3x" width={54} height={54} color={'#F01900'} />
-            </div>
-            <p>Please confirm the cancellation of this appointment.
-              This action is not irreversible.</p>
-          </div>
-          <div className={styles.cancelActions}>
-            <Button type='secondary' onClick={() => setShowCancelAppointment(false)}>No</Button>
-            <Button onClick={cancelAppointment}>Yes</Button>
-          </div>
-        </Modal>
         {session && (
           <main className={styles.main}>
             <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
@@ -164,7 +150,7 @@ export default function Home({
                     <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>Today</div>
                     <div className={styles.appointments__filtersItem1}>Confirmed</div>
                     <div className={styles.appointments__filtersItem2}>Pending</div>
-                    <div className={styles.appointments__filtersItem3}>Rescheduled</div>
+                    <div className={styles.appointments__filtersItem3}>Cancelled</div>
                     <div className={styles.appointments__filtersItem}>All</div>
                   </div>
                   {appointments && appointments.length > 0 ?
