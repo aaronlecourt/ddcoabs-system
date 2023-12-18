@@ -167,7 +167,6 @@ export default function Accounts() {
     age: 0,
     sex: '',
     OGrole: '',
-    role: '',
     createdAt: '',
     isArchived: false,
   })
@@ -184,9 +183,8 @@ export default function Accounts() {
           email: user.email,
           contactNumber: user.contactNumber,
           age: user.age,
-          OGrole: user.role,
           sex: user.sex,
-          role: user.role,
+          OGrole: user.role,
           createdAt: user.createdAt,
           isArchived: user.isArchived,
         }); // Set the data for the update form fields
@@ -200,9 +198,8 @@ export default function Accounts() {
           email: user.email,
           contactNumber: user.contactNumber,
           age: user.age,
-          OGrole: user.OGrole,
           sex: user.sex,
-          role: user.role,
+          OGrole: user.role,
           createdAt: user.createdAt,
           isArchived: true
         });
