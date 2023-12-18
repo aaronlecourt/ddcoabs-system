@@ -4,7 +4,7 @@ import styles1 from '../styles/pages/home.module.scss'
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArchive, faBoxArchive, faChevronDown, faFileArchive, faFolder, faPencil, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faArchive, faBoxArchive, faChevronDown, faChevronLeft, faChevronRight, faFileArchive, faFolder, faPencil, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import Modal from '../components/Modal';
 import EditButton from '../components/EditButton';
@@ -25,50 +25,60 @@ interface Service {
 
 export default function Services() {
   const { session, status } = useAuthGuard();
-  const [services, setServices] = useState<Service[]>([])
-  const [showAddService, setShowAddService] = useState(false)
-  const [showUpdateService, setShowUpdateService] = useState(false)
-  const [showArchiveService, setShowArchiveService] = useState(false)
+  const [services, setServices] = useState<Service[]>([]);
+  const [sortedServices, setSortedServices] = useState<Service[]>([]);
+  const [showAddService, setShowAddService] = useState(false);
+  const [showUpdateService, setShowUpdateService] = useState(false);
+  const [showArchiveService, setShowArchiveService] = useState(false);
   const types = ['Jacket Crowns', 'Removable Partial Denture', 'Others'];
-
-  // SEARCH
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const [selectedFilter, setSelectedFilter] = useState('');
+  const [errorFormData, setErrorFormData] = useState<ErrorAddServicesFormData>({
+    name: { error: false, message: null },
+    price: { error: false, message: null },
+    description: { error: false, message: null },
+  });
+  const [serviceFormData, setServiceFormData] = useState<AddServicesFormData>({
+    name: '',
+    price: '',
+    description: '',
+    type: '',
+    isArchived: false,
+  });
+  const [updateServiceFormData, setUpdateServiceFormData] = useState<UpdateServicesFormData>({
+    _id: '',
+    name: '',
+    price: '',
+    description: '',
+    type: '',
+    createdAt: '',
+    updatedAt: '',
+    isArchived: false,
+  });
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  const searchedServices = services.filter((service) =>
-    service.name && service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const searchedServices = sortedServices.filter(
+    (service) => service.name && service.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  //SORT
-  const filterBy = [
-    'Oldest to Latest',
-    'Latest to Oldest',
-    'Alphabetical (A-Z)',
-    'Alphabetical (Z-A)',
-    'Price (Lowest to Highest)',
-    'Price (Highest to Lowest)'
-  ];
-  
-  const [selectedFilter, setSelectedFilter] = useState('');
+  const itemsPerPage = 5;
+  const totalPages = Math.max(Math.ceil(searchedServices.length / itemsPerPage), 1);
 
   const handleFilterChange = (filter: any) => {
     setSelectedFilter(filter);
-    
-    let filterServices = [...services]
 
-    switch(filter){
+    let filterServices = [...services];
+
+    switch (filter) {
       case 'Oldest to Latest':
-        filterServices.sort((a, b) => {
-          return new Date(a.createdAt).getTime() - new Date(b.updatedAt).getTime();
-        });
+        filterServices.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         break;
       case 'Latest to Oldest':
-        filterServices.sort((a, b) => {
-          return new Date(b.createdAt).getTime() - new Date(a.updatedAt).getTime();
-        });
+        filterServices.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         break;
       case 'Alphabetical (A-Z)':
         filterServices.sort((a, b) => a.name.localeCompare(b.name));
@@ -86,10 +96,9 @@ export default function Services() {
         break;
     }
 
-    setServices(filterServices);
+    setSortedServices(filterServices);
   };
 
-//TABLE
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -99,135 +108,95 @@ export default function Services() {
         }
         const data: Service[] = await response.json();
         setServices(data);
+        setSortedServices(data);
       } catch (error) {
         console.error('Error fetching services:', error);
       }
     };
-  
+
     fetchServices();
-  }, []); 
+  },[]);
 
-  //TABLE FOR SORTING
   useEffect(() => {
+    const updateServices = () => {
+      let updatedServices = [...sortedServices];
 
-    const updateServices = async () => {
-      try {
-        // Fetch services again to get the most updated data
-        const response = await fetch('api/dentist/dentist-service');
-        if (!response.ok) {
-          throw new Error('Failed to fetch services');
-        }
-        const data: Service[] = await response.json();
-  
-        // Apply sorting and filtering
-        let updatedServices = data;
-        switch (selectedFilter) {
-          case 'Oldest to Latest':
-            updatedServices.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-            break;
-          case 'Latest to Oldest':
-            updatedServices.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            break;
-          case 'Alphabetical (A-Z)':
-            updatedServices.sort((a, b) => a.name.localeCompare(b.name));
-            break;
-          case 'Alphabetical (Z-A)':
-            updatedServices.sort((a, b) => b.name.localeCompare(a.name));
-            break;
-          case 'Price (Lowest to Highest)':
-            updatedServices.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-            break;
-          case 'Price (Highest to Lowest)':
-            updatedServices.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-            break;
-          default:
-            break;
-        }
-  
-        setServices(updatedServices);
-      } catch (error) {
-        console.error('Error updating services:', error);
+      switch (selectedFilter) {
+        case 'Oldest to Latest':
+          updatedServices.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          break;
+        case 'Latest to Oldest':
+          updatedServices.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          break;
+        case 'Alphabetical (A-Z)':
+          updatedServices.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'Alphabetical (Z-A)':
+          updatedServices.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case 'Price (Lowest to Highest)':
+          updatedServices.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+          break;
+        case 'Price (Highest to Lowest)':
+          updatedServices.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+          break;
+        default:
+          break;
       }
+
+      setSortedServices(updatedServices);
     };
-  
+
     updateServices();
-    // let filteredServices = [...services];
+  }, [selectedFilter, services]);
 
-    // switch (selectedFilter) {
-      
-    // }
-
-    // setServices(filteredServices);
-  }, [selectedFilter]);
-
-  
-  // TRIGGERS THE MODAL
-  const onAddService = (appointment: any) => {
+  const onAddService = () => {
     setShowAddService(true);
-  }
-
-    const onUpdateService = (service: Service, buttonName: string) => {
-      if (buttonName === 'update') {
-        setUpdateServiceFormData({
-          _id: service._id,
-          name: service.name,
-          price: service.price,
-          description: service.description,
-          type: service.type,
-          createdAt: service.createdAt,
-          updatedAt: service.type,
-          isArchived: service.isArchived,
-        }); // Set the data for the update form fields
-        setShowUpdateService(true); // Open the update modal
-      } else if (buttonName === 'archive') {
-        setShowArchiveService(true);
-
-        setUpdateServiceFormData({
-          _id: service._id,
-          name: service.name,
-          price: service.price,
-          description: service.description,
-          type: service.type,
-          createdAt: service.createdAt,
-          updatedAt: service.type,
-          isArchived: true
-        }); // Set the data for the update form fields
-      }
-    };
-    
-
-  const [errorFormData, setErrorFormData] = useState<ErrorAddServicesFormData>({
-    name: { error: false, message: null },
-    price: { error: false, message: null },
-    description: { error: false, message: null }
-  })
-
-  const [serviceFormData, setServiceFormData] = useState<AddServicesFormData>({
-    name: '',
-    price: '',
-    description: '',
-    type: '',
-    isArchived: false,
-  })
-
-  const [updateServiceFormData, setUpdateServiceFormData] = useState<UpdateServicesFormData>({
-    _id: '',
-    name: '',
-    price: '',
-    description: '',
-    type: '',
-    createdAt: '',
-    updatedAt: '',
-    isArchived: false,
-  })
-
-  //CLEAR MODAL
-  const clearModal = () => {
-    setServiceFormData({ name: '', price: '', description: '' , type: '', isArchived: false}); // Reset add service modal data
-    setUpdateServiceFormData({ _id: '', name: '', price: '', description: '', type: '', createdAt: '', updatedAt: '', isArchived: false}); // Reset update service modal data
   };
 
-  // FOR ADDING A SERVICE
+  const onUpdateService = (service: Service, buttonName: string) => {
+    if (buttonName === 'update') {
+      setUpdateServiceFormData({
+        _id: service._id,
+        name: service.name,
+        price: service.price,
+        description: service.description,
+        type: service.type,
+        createdAt: service.createdAt,
+        updatedAt: service.type,
+        isArchived: service.isArchived,
+      });
+      setShowUpdateService(true);
+    } else if (buttonName === 'archive') {
+      setShowArchiveService(true);
+
+      setUpdateServiceFormData({
+        _id: service._id,
+        name: service.name,
+        price: service.price,
+        description: service.description,
+        type: service.type,
+        createdAt: service.createdAt,
+        updatedAt: service.type,
+        isArchived: true,
+      });
+    }
+  };
+
+  const clearModal = () => {
+    setServiceFormData({ name: '', price: '', description: '', type: '', isArchived: false });
+    setUpdateServiceFormData({
+      _id: '',
+      name: '',
+      price: '',
+      description: '',
+      type: '',
+      createdAt: '',
+      updatedAt: '',
+      isArchived: false,
+    });
+  };
+
   const addService = async (e: any) => {
     e.preventDefault();
 
@@ -240,192 +209,222 @@ export default function Services() {
         },
         body: JSON.stringify(serviceFormData),
       });
-  
+
       if (!response.ok) {
         throw new Error('Registration failed');
       }
-  
+
       const responseData = await response.json();
       console.log('Service registered:', responseData);
 
-      setShowAddService(false); 
-  
-      // Add the new service to the services state
-      // setServices(prevServices => [...prevServices, responseData]);
+      setShowAddService(false);
+
       setServices([...services, responseData]);
 
       clearModal();
-
     } catch (error) {
       alert('Service failed');
       console.error('Error adding service:', error);
     }
-  }
+  };
 
-  
-  // FOR UPDATE BUTTON
-  const updateService = (e: any) => {
+  const updateService = async (e: any) => {
     e.preventDefault();
-
-    fetch(`/api/dentist/dentist-service`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updateServiceFormData),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const error = await response.json();
-          alert('Update failed: ' + JSON.stringify(error));
-        } else {
-          const updatedService = await response.json();
-          console.log('Service updated: ', updatedService);
-          setShowUpdateService(false); // Close the modal after successful 
-
-          setServices(prevServices =>
-            prevServices.map(prevService =>
-              prevService._id === updatedService._id ? updatedService : prevService
-            )
-          );
-
-          clearModal();
-        }
-      })
-      .catch(error => {
-        alert('Update failed');
-        console.error('Error updating service:', error);
+  
+    try {
+      const response = await fetch(`/api/dentist/dentist-service`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateServiceFormData),
       });
-  }
-  //FOR ARCHIVE
-
+  
+      if (!response.ok) {
+        const error = await response.json();
+        alert('Update failed: ' + JSON.stringify(error));
+      } else {
+        const updatedService = await response.json();
+        console.log('Service updated: ', updatedService);
+  
+        setShowUpdateService(false);
+  
+        // Update the services array
+        setServices((prevServices) =>
+          prevServices.map((prevService) =>
+            prevService._id === updatedService._id ? updatedService : prevService
+          )
+        );
+  
+        // Update the sortedServices array and apply sorting
+        let updatedSortedServices = [...sortedServices];
+        updatedSortedServices = updatedSortedServices.map((prevService) =>
+          prevService._id === updatedService._id ? updatedService : prevService
+        );
+  
+        switch (selectedFilter) {
+          case 'Oldest to Latest':
+            updatedSortedServices.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            break;
+          case 'Latest to Oldest':
+            updatedSortedServices.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            break;
+          case 'Alphabetical (A-Z)':
+            updatedSortedServices.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+          case 'Alphabetical (Z-A)':
+            updatedSortedServices.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+          case 'Price (Lowest to Highest)':
+            updatedSortedServices.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+            break;
+          case 'Price (Highest to Lowest)':
+            updatedSortedServices.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+            break;
+          default:
+            break;
+        }
+  
+        setSortedServices(updatedSortedServices);
+  
+        clearModal();
+  
+        // Add alert here
+        window.alert('Service updated successfully!');
+      }
+    } catch (error) {
+      alert('Update failed');
+      console.error('Error updating service:', error);
+    }
+  };
+  
+  
+  const filterBy = [
+    'Oldest to Latest',
+    'Latest to Oldest',
+    'Alphabetical (A-Z)',
+    'Alphabetical (Z-A)',
+    'Price (Lowest to Highest)',
+    'Price (Highest to Lowest)',
+  ];
+  
   const archiveService = async (e: any) => {
-    // e.preventDefault();
-
-    fetch(`/api/dentist/dentist-service`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updateServiceFormData),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const error = await response.json();
-          alert('Update failed: ' + JSON.stringify(error));
-        } else {
-          const updatedService = await response.json();
-          console.log('Service updated: ', updatedService);
-          setShowArchiveService(false); // Close the modal after successful update
-  
-          setServices((prevServices) =>
-            prevServices.map((prevService) =>
-              prevService._id === updatedService._id ? updatedService : prevService
-            )
-          );
-  
-          // Remove the updated service from the table
-          setServices((prevServices) =>
-            prevServices.filter((service) => service._id !== updatedService._id)
-          );
-  
-          clearModal();
-        }
-      })
-      .catch((error) => {
-        alert('Update failed');
-        console.error('Error updating service:', error);
+    try {
+      const response = await fetch(`/api/dentist/dentist-service`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateServiceFormData),
       });
-  }
-
+  
+      if (!response.ok) {
+        const error = await response.json();
+        alert('Update failed: ' + JSON.stringify(error));
+      } else {
+        const updatedService = await response.json();
+        console.log('Service updated: ', updatedService);
+  
+        setShowArchiveService(false);
+  
+        setServices((prevServices) =>
+          prevServices.map((prevService) =>
+            prevService._id === updatedService._id ? updatedService : prevService
+          )
+        );
+  
+        setServices((prevServices) =>
+          prevServices.filter((service) => service._id !== updatedService._id)
+        );
+  
+        clearModal();
+      }
+    } catch (error) {
+      alert('Update failed');
+      console.error('Error updating service:', error);
+    }
+  };
+  
+  
   const renderContent = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageItems = searchedServices.slice(startIndex, endIndex);
+
     return (
       <>
-      <section className={styles.main}>
-        <div className={styles1.servicecrud}>
-        <div className={styles1.filters}>
-          <div className={styles1.filters__search}>
-            <input type='text' className={styles1.filters__searchInput} placeholder='Search services...' value={searchQuery}
-            onChange={handleSearchChange} />
-            <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
-          </div>
-          <div className={styles1.filters__sort}>
-            <span className={styles1.filters__sortTitle}>Sort By:</span>
-            <div className={styles1.filters__sortDropdown}>
-             <select
-              id = "filterSelect"
-              value={selectedFilter}
-              onChange={(e) => handleFilterChange(e.target.value)}
-             >
-              {filterBy.map((filter) => (
-                <option key = {filter} value = {filter}>
-                    {filter}
-                </option>
-              ))}
-             </select>
+        <section className={styles.main}>
+          <div className={styles1.servicecrud}>
+            <div className={styles1.filters}>
+              <div className={styles1.filters__search}>
+                <input
+                  type='text'
+                  className={styles1.filters__searchInput}
+                  placeholder='Search Service Name or Base Charge...'
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
+              </div>
+              <div className={styles1.filters__sort}>
+                <span className={styles1.filters__sortTitle}>Sort By:</span>
+                <div className={styles1.filters__sortDropdown}>
+                  <select
+                    id='filterSelect'
+                    value={selectedFilter}
+                    onChange={(e) => handleFilterChange(e.target.value)}
+                  >
+                    {filterBy.map((filter) => (
+                      <option key={filter} value={filter}>
+                        {filter}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className={styles1.filters__add} onClick={onAddService}>
+                + Add Service
+              </div>
             </div>
+            {session && (
+              <main>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Service Name</th>
+                      <th>Base Charge</th>
+                      <th>Description</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {pageItems.map((service, index) => (
+                      <tr key={service._id}>
+                        <td>{startIndex + index + 1}</td>
+                        <td>{service.name}</td>
+                        <td>₱{service.price}</td>
+                        <td>{service.description}</td>
+                        <td className={styles1.tableAction}>
+                          <EditButton onClick={() => onUpdateService(service, 'update')}>
+                            <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
+                          </EditButton>
+                          <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
+                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                          </ArchiveButton>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  
+                </table>
+                <div>{renderPagination()}</div>
+              </main>
+            )}
           </div>
-          {/* BUTTON TO TRIGGER THE MODAL */}
-          <div className={styles1.filters__add} onClick={onAddService}>
-          + Add Service
-          </div>
-        </div>
-        {session && (
-          <main>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Service Name</th>
-                  <th>Base Charge</th>
-                  <th>Description</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-              {searchedServices.length > 0 ? (
-                   searchedServices.map((service, index) => (
-                    <tr key={service._id}>
-                    <td>{index + 1}</td>
-                    <td>{service.name}</td>
-                    <td>₱{service.price}</td>
-                    <td>{service.description}</td>
-                    <td className={styles1.tableAction}>
-                      <EditButton onClick={() => onUpdateService(service, 'update')}>
-                        <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
-                      </EditButton>
-                      <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
-                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                      </ArchiveButton>
-                    </td>
-                  </tr>
-                   ))
-              ) : (
-                services.map((service, index) => (
-                  <tr key={service._id}>
-                    <td>{index + 1}</td>
-                    <td>{service.name}</td>
-                    <td>₱ {service.price}</td>
-                    <td>{service.description}</td>
-                    <td className={styles1.tableAction}>
-                      <EditButton onClick={() => onUpdateService(service, 'update')}>
-                        <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
-                      </EditButton>
-                      <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
-                        <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                      </ArchiveButton>
-                    </td>
-                  </tr>
-                ))
-                )}
-              </tbody>
-            </table>
-          </main>
-        )}
-        </div>
-      </section>
+        </section>
 
-      {/* ADD SERVICE */}
+        {/* ADD SERVICE */}
       <Modal open={showAddService} setOpen={setShowAddService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> Add Service </h3>
           <label> Service Name: </label>
@@ -521,17 +520,37 @@ export default function Services() {
           </div>
         </Modal>
       </>
-    )
-  }
+    );
+  };
+
+  const renderPagination = () => {
+    const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+  
+    return (
+      <div className={styles1.pagination}>
+        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+          <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} color={'#737373'} />
+        </button>
+        {pageNumbers.map((number) => (
+          <button key={number} onClick={() => setCurrentPage(number)} className={currentPage === number ? styles1.active : ''}>
+            {number}
+          </button>
+        ))}
+        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+          <FontAwesomeIcon icon={faChevronRight} width={16} height={16} color={'#737373'} />
+        </button>
+      </div>
+    );
+  };
 
   return (
     <>
       {(status !== 'loading' && session) && (
         <DentistLayout>
           {renderContent()}
+          {/* {renderPagination()} */}
         </DentistLayout>
-      )
-      }
+      )}
     </>
-  )
+  );
 }

@@ -21,7 +21,7 @@ interface Item {
 export default function Navbar({ items = [] }: { items: Item[] }) {
   const { session, status } = useAuthGuard();
   const router = useRouter();
-  const user = session.user;
+  const user = session?.user;
 
   const [showDropdown, setShowDropdown] = useState(false)
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
@@ -220,14 +220,16 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
         <h3>Change Password</h3>
         {!showChangePasswordField ? renderOldPassword() : renderChangePassword()} 
       </Modal>
-      <nav className={styles.navbar}>
+      <nav className={`${styles.navbar} ${!session ? styles.transparentNavbar : ''}`}>
+        {session &&
         <Image 
-          className={styles.navbar__logo}
-          src='/logo.png'
-          alt='logo'
-          width={250}
-          height={0}
-        />
+        className={styles.navbar__logo}
+        src='/logo.png'
+        alt='logo'
+        width={250}
+        height={0}
+      />
+        }
         <div className={styles.navbar__itemContainer}>
           {items.map(item => 
             <a key={item.text} 
@@ -236,15 +238,17 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
               {item.text}
             </a>
           )}
+          {session &&
           <div className={styles.navbar__profileContainer} onClick={() => setShowDropdown(!showDropdown)}>
-            <div className={styles.navbar__profileIcon}></div>
-            <Image 
-              src='/caretdown.svg'
-              alt='caretdown'
-              width={20}
-              height={20}
-            />
-          </div>
+          <div className={styles.navbar__profileIcon}></div>
+          <Image 
+            src='/caretdown.svg'
+            alt='caretdown'
+            width={20}
+            height={20}
+          />
+        </div>
+          }
         </div>
         <div className={styles.navbar__itemContainerMobile}>
           <FontAwesomeIcon icon={faBars} color={'#fff'} width={30} height={30} />

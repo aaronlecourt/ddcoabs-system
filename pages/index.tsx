@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -53,6 +54,7 @@ export default function Home({
   const [appointments, setAppointments] = useState(initialAppointmentData)
   const [showCancelAppointment, setShowCancelAppointment] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null)
+  const router = useRouter();
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
@@ -125,20 +127,6 @@ export default function Home({
   const renderDentistContent = () => {
     return (
       <>
-        <Modal open={showCancelAppointment} setOpen={setShowCancelAppointment} modalWidth={400} modalRadius={10}>
-          <h3 className={styles.cancelTitle}>Cancel Appointment</h3>
-          <div className={styles.cancelText}>
-            <div style={{ width: '54px', height: '54px' }}>
-              <FontAwesomeIcon icon={faCancel} size="3x" width={54} height={54} color={'#F01900'} />
-            </div>
-            <p>Please confirm the cancellation of this appointment.
-              This action is not irreversible.</p>
-          </div>
-          <div className={styles.cancelActions}>
-            <Button type='secondary' onClick={() => setShowCancelAppointment(false)}>No</Button>
-            <Button onClick={cancelAppointment}>Yes</Button>
-          </div>
-        </Modal>
         {session && (
           <main className={styles.main}>
             <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
@@ -159,10 +147,11 @@ export default function Home({
                 </div>
                 <div className={styles.appointments}>
                   <div className={styles.appointments__filters}>
-                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>All</div>
-                    <div className={styles.appointments__filtersItem}>Confirmed</div>
-                    <div className={styles.appointments__filtersItem}>Pending</div>
-                    <div className={styles.appointments__filtersItem}>Today</div>
+                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>Today</div>
+                    <div className={styles.appointments__filtersItem1}>Confirmed</div>
+                    <div className={styles.appointments__filtersItem2}>Pending</div>
+                    <div className={styles.appointments__filtersItem3}>Cancelled</div>
+                    <div className={styles.appointments__filtersItem}>All</div>
                   </div>
                   {appointments && appointments.length > 0 ?
                     <>
@@ -175,13 +164,15 @@ export default function Home({
                   }
                 </div>
               </section>
-              <section>
-                <CustomCalendar
-                  selectable={false}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                />
-              </section>
+              <section className={styles.rightContainer}>
+                  <div className={styles.Calendar}>
+                  <CustomCalendar
+                    selectable={false}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                  />
+                  </div>
+                </section>
             </div>
           </main>
         )}

@@ -211,6 +211,7 @@ export default function Register({
                   name='name'
                   value={formData.name}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                  placeholder='Matt Baker'
                 />
               </div>
             </div>
@@ -225,6 +226,7 @@ export default function Register({
                   name='email'
                   value={formData.email}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                  placeholder='mattbaker@email.com'
                 />
               </div>
             </div>
@@ -239,6 +241,7 @@ export default function Register({
                   name='address'
                   value={formData.address}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                  placeholder='123 Street, City, Province'
                 />
               </div>
             </div>
@@ -253,6 +256,7 @@ export default function Register({
                   name='contactNumber'
                   value={formData.contactNumber}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                  placeholder='09123456789'
                 />
               </div>
             </div>
@@ -293,6 +297,7 @@ export default function Register({
                     name='password'
                     value={formData.password}
                     onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                    placeholder='••••••••'
                   />
                 </div>
                 {errorFormData.password.error && <span className='formLabel__errorMessage'>{errorFormData.password.message}</span>}
@@ -305,6 +310,7 @@ export default function Register({
                     name='confirmPassword'
                     value={formData.confirmPassword}
                     onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                    placeholder='••••••••'
                   />
                 </div>
                 {errorFormData.confirmPassword.error && <span className='formLabel__errorMessage'>{errorFormData.confirmPassword.message}</span>}

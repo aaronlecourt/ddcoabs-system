@@ -1,0 +1,85 @@
+@import '../variables.scss';
+
+.main {
+    padding: 2rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &Container {
+        width: 80%;
+        text-align: justify;
+    }
+
+    &Operating {
+        margin-top: 2rem;
+        display: flex;
+        font-weight: bold;
+        justify-content: space-evenly;
+        flex-direction: row;
+
+        p {
+            border: 3px solid $white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+    }
+
+    h2{
+        text-align: center;
+    }
+}
+
+.logo {
+    width: 450px;
+    height: auto;
+  
+    @media screen and (max-width: 768px) {
+      width: 300px;
+    }
+}
+.landing {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(45deg, $blue, $green);
+    /* Other styles for the landing layout */
+  }
+
+// Define styles for each service card
+.serviceCard {
+    background-color: white; /* White background */
+    border-radius: 15px; /* Rounded corners */
+    padding: 1rem; /* Add padding */
+    margin: 10px; /* Add margin */
+    color: $text;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Box shadow for a subtle effect */
+    /* Define width if needed */
+    width: 350px; /* Adjust as per your requirement */
+
+    &Label {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 0.2rem;
+        color: $green;
+
+        span {
+            text-align: left;
+        }
+    }
+  }
+  
+  // Style the container for the cards
+  .servicesContainer {
+    margin-top: 50px;
+    height: 350px;
+    overflow-y: scroll;
+    display: flex; /* Display as flex */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: space-around; /* Distribute space around items */
+    /* Gap between cards */
+  }

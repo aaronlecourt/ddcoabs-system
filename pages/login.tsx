@@ -71,11 +71,11 @@ export default function Login({
           setErrorFormData(prevValue => ({
             ['email']: {
               error: true,
-              message: 'Invalid username or password.'
+              message: 'Invalid email address.'
             },
             ['password']: {
               error: true,
-              message: 'Invalid username or password.'
+              message: 'Invalid password.'
             }
           }))
         }
@@ -120,6 +120,7 @@ export default function Login({
                   name='email'
                   value={formData.email}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                  placeholder='mattbaker@email.com'
                 />
               </div>
             </div>
@@ -134,6 +135,7 @@ export default function Login({
                   name='password'
                   value={formData.password}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                  placeholder='••••••••'
                 />
               </div>
             </div>

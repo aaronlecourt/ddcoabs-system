@@ -77,7 +77,7 @@ export const authOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/login",
+    signIn: "/home",
   }
 
   // A database is optional, but required to persist accounts in a database
