@@ -111,10 +111,6 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
               </div>
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
-                <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
-                <span>Cancel</span>
-              </div>
               {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
                 <div className={styles.mainAction}>MARK AS DONE</div>
@@ -139,7 +135,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           </>
         }
 
-        {appointment.status == APPOINTMENT_STATUS.canceled && isPatient &&
+        {appointment.status == APPOINTMENT_STATUS.rescheduled && isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>

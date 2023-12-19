@@ -2,5 +2,6 @@ export default {
     confirmed: 'Confirmed',
     pending: 'Pending',
     canceled: 'Canceled',
-    done: 'Done'
+    done: 'Done',
+    rescheduled: 'Rescheduled',
 };

@@ -53,6 +53,9 @@ export default function Home({
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null)
   const router = useRouter();
 
+  const [selectedFilter, setSelectedFilter] = useState('Today'); // Set 'Today' as the default filter for the patient's section
+  const [filteredAppointments, setFilteredAppointments] = useState(initialAppointmentData);
+
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
     setShowCancelAppointment(true);
@@ -120,29 +123,48 @@ export default function Home({
       </>
     )
   }
-// Inside your Home component
-const [selectedFilter, setSelectedFilter] = useState('Today'); // State to track selected filter
 
 const filterAppointmentsByStatus = (status: string) => {
   const currentDate = new Date().toDateString(); // Get today's date
 
-  const filteredAppointments = initialAppointmentData.filter((appointment: IAppointment) => {
-    if (status === 'All') {
-      return true; // Show all appointments when 'All' is selected
-    } else if (status === 'Today') {
+  if (initialAppointmentData) {
+    const filteredAppointments = initialAppointmentData.filter((appointment: IAppointment) => {
       const appointmentDate = new Date(appointment.date).toDateString();
-      return appointmentDate === currentDate; // Show appointments for today's date
-    }
-    return appointment.status === status; // Filter by other statuses
-  });
 
-  setAppointments(filteredAppointments); // Update the appointments state with the filtered list
+      if (status === 'All') {
+        return true; // Show all appointments when 'All' is selected
+      } else if (status === 'Today') {
+        return appointmentDate === currentDate; // Show appointments for today's date
+      }
+
+      return appointment.status === status; // Filter by other statuses
+    });
+
+    setAppointments(filteredAppointments); // Update the appointments state with the filtered list
+  }
 };
 
+
 // UseEffect to filter appointments for 'Today' when the component mounts
-useEffect(() => {
-  filterAppointmentsByStatus('Today');
-}, []);
+  useEffect(() => {
+    filterAppointmentsByStatus('Today');
+  }, []);
+
+  const countAppointmentsByStatus = (status: string) => {
+    if (status === 'All') {
+      return filteredAppointments.length;
+    }
+    return filteredAppointments.filter((appointment:IAppointment) => appointment.status === status).length;
+  };
+
+  const countAppointmentsForToday = () => {
+    const currentDate = new Date().toDateString();
+    return filteredAppointments.filter((appointment: IAppointment) => {
+      const appointmentDate = new Date(appointment.date).toDateString();
+      return appointmentDate === currentDate;
+    }).length;
+  };
+
 
 
   const renderDentistContent = () => {
@@ -169,70 +191,91 @@ useEffect(() => {
                 <div className={styles.appointments}>
                 {/* // Inside your renderDentistContent function, attach onClick handlers to the filter items */}
                 <div className={styles.appointments__filters}>
-  <div
-    className={`${styles.appointments__filtersItemToday} ${selectedFilter === 'Today' ? styles.appointments__filtersItemSelected : ''}`}
-    onClick={() => {
-      setSelectedFilter('Today');
-      filterAppointmentsByStatus('Today');
-    }}
-  >
-    Today
-  </div>
-  <div
-    className={`${styles.appointments__filtersItemPending} ${selectedFilter === 'Pending' ? styles.appointments__filtersItemSelected : ''}`}
-    onClick={() => {
-      setSelectedFilter('Pending');
-      filterAppointmentsByStatus('Pending');
-    }}
-  >
-    Pending
-  </div>
-  <div
-    className={`${styles.appointments__filtersItemConfirmed} ${selectedFilter === 'Confirmed' ? styles.appointments__filtersItemSelected : ''}`}
-    onClick={() => {
-      setSelectedFilter('Confirmed');
-      filterAppointmentsByStatus('Confirmed');
-    }}
-  >
-    Confirmed
-  </div>
-  <div
-    className={`${styles.appointments__filtersItemRescheduled} ${selectedFilter === 'Rescheduled' ? styles.appointments__filtersItemSelected : ''}`}
-    onClick={() => {
-      setSelectedFilter('Rescheduled');
-      filterAppointmentsByStatus('Rescheduled');
-    }}
-  >
-    Rescheduled
-  </div>
-  <div
-    className={`${styles.appointments__filtersItemCanceled} ${selectedFilter === 'Canceled' ? styles.appointments__filtersItemSelected : ''}`}
-    onClick={() => {
-      setSelectedFilter('Canceled');
-      filterAppointmentsByStatus('Canceled');
-    }}
-  >
-    Canceled
-  </div>
-  <div
-    className={`${styles.appointments__filtersItemDone} ${selectedFilter === 'Done' ? styles.appointments__filtersItemSelected : ''}`}
-    onClick={() => {
-      setSelectedFilter('Done');
-      filterAppointmentsByStatus('Done');
-    }}
-  >
-    Done
-  </div>
-  <div
-    className={`${styles.appointments__filtersItemAll} ${selectedFilter === 'All' ? styles.appointments__filtersItemSelected : ''}`}
-    onClick={() => {
-      setSelectedFilter('All');
-      filterAppointmentsByStatus('All');
-    }}
-  >
-    All
-  </div>
-</div>
+                  <div
+                    className={`${styles.appointments__filtersItemToday} ${selectedFilter === 'Today' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Today');
+                      filterAppointmentsByStatus('Today');
+                    }}
+                  >
+                    Today
+                    {countAppointmentsForToday() > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsForToday()}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemPending} ${selectedFilter === 'Pending' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Pending');
+                      filterAppointmentsByStatus('Pending');
+                    }}
+                  >
+                    Pending
+                    {countAppointmentsByStatus('Pending') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Pending')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemConfirmed} ${selectedFilter === 'Confirmed' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Confirmed');
+                      filterAppointmentsByStatus('Confirmed');
+                    }}
+                  >
+                    Confirmed
+                    {countAppointmentsByStatus('Confirmed') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Confirmed')}</div>
+                    )}
+                  </div>
+                  {/* <div
+                    className={`${styles.appointments__filtersItemRescheduled} ${selectedFilter === 'Rescheduled' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Rescheduled');
+                      filterAppointmentsByStatus('Rescheduled');
+                    }}
+                  >
+                    Rescheduled
+                    {countAppointmentsByStatus('Rescheduled') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Rescheduled')}</div>
+                    )}
+                  </div> */}
+                  <div
+                    className={`${styles.appointments__filtersItemCanceled} ${selectedFilter === 'Canceled' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Canceled');
+                      filterAppointmentsByStatus('Canceled');
+                    }}
+                  >
+                    Canceled
+                    {countAppointmentsByStatus('Canceled') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Canceled')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemDone} ${selectedFilter === 'Done' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Done');
+                      filterAppointmentsByStatus('Done');
+                    }}
+                  >
+                    Done
+                    {countAppointmentsByStatus('Done') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Done')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemAll} ${selectedFilter === 'All' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('All');
+                      filterAppointmentsByStatus('All');
+                    }}
+                  >
+                    All
+                    {countAppointmentsByStatus('All') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('All')}</div>
+                    )}
+                  </div>
+                </div>
 
 {/* // Update the appointment list to use the filtered appointments */}
 {appointments && appointments.length > 0 ? (

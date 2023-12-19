@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import connectMongo from '../utils/connectMongo';
 import { getSession } from "next-auth/react"
@@ -13,34 +13,42 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 import Image from 'next/image';
+import { IAppointment } from './interfaces/IAppointment';
+import { IUser } from './interfaces/IUser';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
-
   try {
     await connectMongo();
 
     if (!session) {
       return {
         props: { isConnected: false },
-      }
+      };
     }
 
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/global/appointment`);
     const data = await response.json();
-    console.log('appointments data ', data)
+
+    // Filter appointments for the logged-in user based on their ID
+    const loggedInUserId = (session.user as IUser).id;    console.log('loggedInUserId:', loggedInUserId);
+    const filteredAppointments = data.filter((appointment: IAppointment) => {
+      return appointment.patientId?.toString() === loggedInUserId;
+    });
 
     return {
-      props: { isConnected: true, initialAppointmentData: data || [] },
-    }
-
+      props: {
+        isConnected: true,
+        initialAppointmentData: filteredAppointments || [],
+      },
+    };
   } catch (e) {
-    console.error(e)
+    console.error(e);
     return {
       props: { isConnected: false },
-    }
+    };
   }
-}
+};
 
 export default function Home({
   isConnected,
@@ -55,6 +63,9 @@ export default function Home({
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null)
   const loggedInUserId = session?.user?.id;
 
+  const [selectedFilter, setSelectedFilter] = useState('Today'); // Set 'Today' as the default filter for the patient's section
+  const [filteredAppointments, setFilteredAppointments] = useState(initialAppointmentData);
+  
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
     setShowCancelAppointment(true);
@@ -88,16 +99,48 @@ export default function Home({
     }
   }
 
+  const filterAppointmentsByStatus = (status: string) => {
+    const currentDate = new Date().toDateString(); // Get today's date
+  
+    if (initialAppointmentData) {
+      const filteredAppointments = initialAppointmentData.filter((appointment: IAppointment) => {
+        const appointmentDate = new Date(appointment.date).toDateString();
+  
+        if (status === 'All') {
+          return true; // Show all appointments when 'All' is selected
+        } else if (status === 'Today') {
+          return appointmentDate === currentDate; // Show appointments for today's date
+        }
+  
+        return appointment.status === status; // Filter by other statuses
+      });
+  
+      setAppointments(filteredAppointments); // Update the appointments state with the filtered list
+    }
+  };
+  
+
+  // UseEffect to filter appointments for 'Today' when the component mounts
+    useEffect(() => {
+      filterAppointmentsByStatus('Today');
+    }, []);
+
+    const countAppointmentsByStatus = (status: string) => {
+      if (status === 'All') {
+        return filteredAppointments.length;
+      }
+      return filteredAppointments.filter((appointment:IAppointment) => appointment.status === status).length;
+    };
+
+    const countAppointmentsForToday = () => {
+      const currentDate = new Date().toDateString();
+      return filteredAppointments.filter((appointment: IAppointment) => {
+        const appointmentDate = new Date(appointment.date).toDateString();
+        return appointmentDate === currentDate;
+      }).length;
+    };
+
   const renderContent = () => {
-    // return (
-    //     <>
-    //       {session && (
-    //         <main className={styles.main}>
-    //           appointment PATIENT
-    //         </main>
-    //       )}
-    //     </>
-    //   )
     console.log('Appointments:', appointments);
     return (
         <>
@@ -135,12 +178,92 @@ export default function Home({
                     </div>
                   </div>
                   <div className={styles.appointments}>
-                    {/* <div className={styles.appointments__filters}>
-                      <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>All</div>
-                      <div className={styles.appointments__filtersItem}>Confirmed</div>
-                      <div className={styles.appointments__filtersItem}>Pending</div>
-                      <div className={styles.appointments__filtersItem}>Today</div>
-                    </div> */}
+                <div className={styles.appointments__filters}>
+                  <div
+                    className={`${styles.appointments__filtersItemToday} ${selectedFilter === 'Today' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Today');
+                      filterAppointmentsByStatus('Today');
+                    }}
+                  >
+                    Today
+                    {countAppointmentsForToday() > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsForToday()}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemPending} ${selectedFilter === 'Pending' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Pending');
+                      filterAppointmentsByStatus('Pending');
+                    }}
+                  >
+                    Pending
+                    {countAppointmentsByStatus('Pending') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Pending')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemConfirmed} ${selectedFilter === 'Confirmed' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Confirmed');
+                      filterAppointmentsByStatus('Confirmed');
+                    }}
+                  >
+                    Confirmed
+                    {countAppointmentsByStatus('Confirmed') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Confirmed')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemRescheduled} ${selectedFilter === 'Rescheduled' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Rescheduled');
+                      filterAppointmentsByStatus('Rescheduled');
+                    }}
+                  >
+                    Rescheduled
+                    {countAppointmentsByStatus('Rescheduled') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Rescheduled')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemCanceled} ${selectedFilter === 'Canceled' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Canceled');
+                      filterAppointmentsByStatus('Canceled');
+                    }}
+                  >
+                    Canceled
+                    {countAppointmentsByStatus('Canceled') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Canceled')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemDone} ${selectedFilter === 'Done' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('Done');
+                      filterAppointmentsByStatus('Done');
+                    }}
+                  >
+                    Done
+                    {countAppointmentsByStatus('Done') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Done')}</div>
+                    )}
+                  </div>
+                  <div
+                    className={`${styles.appointments__filtersItemAll} ${selectedFilter === 'All' ? styles.appointments__filtersItemSelected : ''}`}
+                    onClick={() => {
+                      setSelectedFilter('All');
+                      filterAppointmentsByStatus('All');
+                    }}
+                  >
+                    All
+                    {countAppointmentsByStatus('All') > 0 && (
+                      <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('All')}</div>
+                    )}
+                  </div>
+                </div>
                     {appointments && appointments.length > 0 ?
                       <>
                         {appointments
