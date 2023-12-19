@@ -92,7 +92,7 @@
       font-weight: 400;
       cursor: pointer;
 
-      &1 {
+      &Confirmed {
         text-align: center;
         min-width: 52px;
         padding: .2rem .5rem;
@@ -106,7 +106,7 @@
         cursor: pointer;
       }
 
-      &2 {
+      &Pending {
         text-align: center;
         min-width: 52px;
         padding: .2rem .5rem;
@@ -120,7 +120,7 @@
         cursor: pointer;
       }
 
-      &3 {
+      &Canceled {
         text-align: center;
         min-width: 52px;
         padding: .2rem .5rem;
@@ -134,9 +134,50 @@
         cursor: pointer;
       }
 
-      &Selected {
-        background: #8A8A8A;
+      &Rescheduled {
+        text-align: center;
+        min-width: 52px;
+        padding: .2rem .5rem;
+        border-radius: 10px;
+        border: 1px solid $grey;
+        background: $blue;
         color: $white;
+        margin: 0 .3rem;
+        font-size: 20px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      &Today {
+        text-align: center;
+        min-width: 52px;
+        padding: .2rem .5rem;
+        border-radius: 10px;
+        border: 1px solid $grey;
+        background: $white;
+        color: $text;
+        margin: 0 .3rem;
+        font-size: 20px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      &All {
+        text-align: center;
+        min-width: 52px;
+        padding: .2rem .5rem;
+        border-radius: 10px;
+        border: 1px solid $grey;
+        // background: $text;
+        color: $text;
+        margin: 0 .3rem;
+        font-size: 20px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      &Selected {
+        border: 3px solid rgba($color: $text, $alpha: 0.2);
       }
     }
   }

@@ -1,19 +1,18 @@
-import { useState } from 'react';
-import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import { useState, useEffect } from 'react';
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next';
 import connectMongo from '../utils/connectMongo';
-import { getSession } from "next-auth/react"
-import styles from '../styles/pages/home.module.scss'
+import { getSession } from 'next-auth/react';
+import styles from '../styles/pages/home.module.scss';
 import PatientLayout from '../layouts/PatientLayout';
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import CustomCalendar from '../components/CustomCalendar';
 import Appointment from '../components/Appointment';
-import Modal from '../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
-import Button from '../components/Button';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { IAppointment } from './interfaces/IAppointment';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -24,31 +23,29 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     if (!session) {
       return {
         props: { isConnected: false },
-      }
+      };
     }
 
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/global/appointment`);
     const data = await response.json();
-    console.log('appointments data ', data)
+    console.log('appointments data ', data);
 
     return {
       props: { isConnected: true, initialAppointmentData: data || [] },
-    }
-
+    };
   } catch (e) {
-    console.error(e)
+    console.error(e);
     return {
       props: { isConnected: false },
-    }
+    };
   }
-}
+};
 
 export default function Home({
   isConnected,
-  initialAppointmentData
+  initialAppointmentData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-
-  console.log(' ehhehehe ', initialAppointmentData)
+  console.log(' ehhehehe ', initialAppointmentData);
   const { session, status } = useAuthGuard();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState(initialAppointmentData)
@@ -123,6 +120,30 @@ export default function Home({
       </>
     )
   }
+// Inside your Home component
+const [selectedFilter, setSelectedFilter] = useState('Today'); // State to track selected filter
+
+const filterAppointmentsByStatus = (status: string) => {
+  const currentDate = new Date().toDateString(); // Get today's date
+
+  const filteredAppointments = initialAppointmentData.filter((appointment: IAppointment) => {
+    if (status === 'All') {
+      return true; // Show all appointments when 'All' is selected
+    } else if (status === 'Today') {
+      const appointmentDate = new Date(appointment.date).toDateString();
+      return appointmentDate === currentDate; // Show appointments for today's date
+    }
+    return appointment.status === status; // Filter by other statuses
+  });
+
+  setAppointments(filteredAppointments); // Update the appointments state with the filtered list
+};
+
+// UseEffect to filter appointments for 'Today' when the component mounts
+useEffect(() => {
+  filterAppointmentsByStatus('Today');
+}, []);
+
 
   const renderDentistContent = () => {
     return (
@@ -146,22 +167,75 @@ export default function Home({
                   </div>
                 </div>
                 <div className={styles.appointments}>
-                  <div className={styles.appointments__filters}>
-                    <div className={`${styles.appointments__filtersItem} ${styles.appointments__filtersItemSelected}`}>Today</div>
-                    <div className={styles.appointments__filtersItem1}>Confirmed</div>
-                    <div className={styles.appointments__filtersItem2}>Pending</div>
-                    <div className={styles.appointments__filtersItem3}>Cancelled</div>
-                    <div className={styles.appointments__filtersItem}>All</div>
-                  </div>
-                  {appointments && appointments.length > 0 ?
-                    <>
-                      {appointments.map((appointment: any, index: number) =>
-                        <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
-                      )}
-                    </>
-                    :
-                    <div className={styles.appointments__empty}>There are no appointments</div>
-                  }
+                {/* // Inside your renderDentistContent function, attach onClick handlers to the filter items */}
+                <div className={styles.appointments__filters}>
+  <div
+    className={`${styles.appointments__filtersItemToday} ${selectedFilter === 'Today' ? styles.appointments__filtersItemSelected : ''}`}
+    onClick={() => {
+      setSelectedFilter('Today');
+      filterAppointmentsByStatus('Today');
+    }}
+  >
+    Today
+  </div>
+  <div
+    className={`${styles.appointments__filtersItemPending} ${selectedFilter === 'Pending' ? styles.appointments__filtersItemSelected : ''}`}
+    onClick={() => {
+      setSelectedFilter('Pending');
+      filterAppointmentsByStatus('Pending');
+    }}
+  >
+    Pending
+  </div>
+  <div
+    className={`${styles.appointments__filtersItemConfirmed} ${selectedFilter === 'Confirmed' ? styles.appointments__filtersItemSelected : ''}`}
+    onClick={() => {
+      setSelectedFilter('Confirmed');
+      filterAppointmentsByStatus('Confirmed');
+    }}
+  >
+    Confirmed
+  </div>
+  <div
+    className={`${styles.appointments__filtersItemRescheduled} ${selectedFilter === 'Rescheduled' ? styles.appointments__filtersItemSelected : ''}`}
+    onClick={() => {
+      setSelectedFilter('Rescheduled');
+      filterAppointmentsByStatus('Rescheduled');
+    }}
+  >
+    Rescheduled
+  </div>
+  <div
+    className={`${styles.appointments__filtersItemCanceled} ${selectedFilter === 'Canceled' ? styles.appointments__filtersItemSelected : ''}`}
+    onClick={() => {
+      setSelectedFilter('Canceled');
+      filterAppointmentsByStatus('Canceled');
+    }}
+  >
+    Canceled
+  </div>
+  <div
+    className={`${styles.appointments__filtersItemAll} ${selectedFilter === 'All' ? styles.appointments__filtersItemSelected : ''}`}
+    onClick={() => {
+      setSelectedFilter('All');
+      filterAppointmentsByStatus('All');
+    }}
+  >
+    All
+  </div>
+</div>
+
+{/* // Update the appointment list to use the filtered appointments */}
+{appointments && appointments.length > 0 ? (
+  <>
+    {appointments.map((appointment: any, index: number) => (
+      <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+    ))}
+  </>
+) : (
+  <div className={styles.appointments__empty}>There are no appointments</div>
+)}
+
                 </div>
               </section>
               <section className={styles.rightContainer}>
