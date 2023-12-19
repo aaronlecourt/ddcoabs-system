@@ -215,6 +215,15 @@ useEffect(() => {
     Canceled
   </div>
   <div
+    className={`${styles.appointments__filtersItemDone} ${selectedFilter === 'Done' ? styles.appointments__filtersItemSelected : ''}`}
+    onClick={() => {
+      setSelectedFilter('Done');
+      filterAppointmentsByStatus('Done');
+    }}
+  >
+    Done
+  </div>
+  <div
     className={`${styles.appointments__filtersItemAll} ${selectedFilter === 'All' ? styles.appointments__filtersItemSelected : ''}`}
     onClick={() => {
       setSelectedFilter('All');
