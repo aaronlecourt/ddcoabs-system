@@ -61,6 +61,7 @@ export default function Home({
     setShowCancelAppointment(true);
   }
 
+  
   const cancelAppointment = () => {
     const user = session.user
 
@@ -164,8 +165,6 @@ const filterAppointmentsByStatus = (status: string) => {
       return appointmentDate === currentDate;
     }).length;
   };
-
-
 
   const renderDentistContent = () => {
     return (
