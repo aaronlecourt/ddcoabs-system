@@ -351,6 +351,55 @@ export default function Services() {
     const endIndex = startIndex + itemsPerPage;
     const pageItems = searchedServices.slice(startIndex, endIndex);
 
+    let content;
+    if (searchedServices.length === 0) {
+      content = (
+        <>
+        <table className={styles.table}>
+                    <tbody>
+                      <td>No services were found.</td>
+                    </tbody>
+                  </table>
+                  <div>{renderPagination()}</div>
+        </>
+      )
+    } else {
+      content = (
+        <>
+        <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Service Name</th>
+                        <th>Base Charge</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {pageItems.map((service, index) => (
+                        <tr key={service._id}>
+                          <td>{startIndex + index + 1}</td>
+                          <td>{service.name}</td>
+                          <td>₱{service.price}</td>
+                          <td>{service.description}</td>
+                          <td className={styles1.tableAction}>
+                            <EditButton onClick={() => onUpdateService(service, 'update')}>
+                              <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
+                            </EditButton>
+                            <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
+                              <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                            </ArchiveButton>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    
+                  </table>
+                  <div>{renderPagination()}</div>
+        </>
+      )
+    }
     return (
       <>
         <section className={styles.main}>
@@ -360,7 +409,7 @@ export default function Services() {
                 <input
                   type='text'
                   className={styles1.filters__searchInput}
-                  placeholder='Search Service Name or Base Charge...'
+                  placeholder='Search name of service...'
                   value={searchQuery}
                   onChange={handleSearchChange}
                 />
@@ -388,37 +437,7 @@ export default function Services() {
             </div>
             {session && (
               <main>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Service Name</th>
-                      <th>Base Charge</th>
-                      <th>Description</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {pageItems.map((service, index) => (
-                      <tr key={service._id}>
-                        <td>{startIndex + index + 1}</td>
-                        <td>{service.name}</td>
-                        <td>₱{service.price}</td>
-                        <td>{service.description}</td>
-                        <td className={styles1.tableAction}>
-                          <EditButton onClick={() => onUpdateService(service, 'update')}>
-                            <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
-                          </EditButton>
-                          <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
-                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                          </ArchiveButton>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  
-                </table>
-                <div>{renderPagination()}</div>
+                {content}
               </main>
             )}
           </div>

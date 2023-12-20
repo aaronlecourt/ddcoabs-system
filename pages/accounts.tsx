@@ -332,7 +332,7 @@ export default function Accounts() {
         <div>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
-            <input type='text' className={styles1.filters__searchInput} placeholder='Search account...'
+            <input type='text' className={styles1.filters__searchInput} placeholder='Search account name...'
             value={searchQuery}
             onChange={handleSearchChange}/>
             <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />

@@ -88,7 +88,7 @@
       background: #FAFAFA;
       color: $text;
       margin: 0 .3rem;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 400;
       cursor: pointer;
       position:relative;
@@ -102,7 +102,7 @@
         background: $green;
         color: $white;
         margin: 0 .3rem;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
         cursor: pointer;
         position:relative;
@@ -117,7 +117,7 @@
         background: $yellow;
         color: $text;
         margin: 0 .3rem;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
         cursor: pointer;
         position:relative;
@@ -132,7 +132,7 @@
         background: $red;
         color: $white;
         margin: 0 .3rem;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
         cursor: pointer;
         position:relative;
@@ -147,7 +147,7 @@
         background: $orange;
         color: $white;
         margin: 0 .3rem;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
         cursor: pointer;
         position:relative;
@@ -162,7 +162,7 @@
         background: $white;
         color: $text;
         margin: 0 .3rem;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
         cursor: pointer;
         position:relative;
@@ -177,7 +177,7 @@
         background: $blue;
         color: $white;
         margin: 0 .3rem;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
         cursor: pointer;
         position:relative;
@@ -192,7 +192,7 @@
         // background: $text;
         color: $text;
         margin: 0 .3rem;
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 400;
         cursor: pointer;
         position:relative;
@@ -212,15 +212,16 @@
   transform: translate(50%, -50%);
   background-color: $red; /* Set the background color */
   color: white; /* Set the text color */
-  height: 23px;
-  width: 23px;
+  height: 19px;
+  width: 19px;
   border: 3px solid #FAFAFA;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 100px; /* Make it round */
-  font-size: 12px; /* Define the font size */
+  font-size: 10px; /* Define the font size */
   margin-left: 8px; /* Add some space from the text */
+  font-weight: 500;
 }
 
 .cancelTitle {
@@ -283,16 +284,15 @@
   }
 
   &__search {
-    flex: 0.9;
-    border-radius: 10px;
-    border: 1px solid $grey;
-    background-color: #FAFAFA;
+    flex: 1;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     padding-right: 1rem;
     font-size: 18px;
+    font-family: 'Poppins';
+    border-radius: 10px;
+    border: 1px solid $grey;
+    background-color: #FAFAFA;
   
     &:focus-within {
       outline: none;
@@ -300,13 +300,15 @@
     }
   
     &Input {
+      flex: 1;
       background: transparent !important;
       border-radius: 0 !important;
       color: $text;
-      width: 100%;
-      height: 100%;
       font-weight: 400;
-      padding: 1rem;
+      padding: 0.5rem;
+      font-family: 'Poppins';
+      border: none;
+      margin-left: 0.7rem;
     }
   
     svg {
@@ -314,7 +316,7 @@
     }
   }
   
-
+  
   &__sort {
     margin-left: 1rem;
     flex: 1;
@@ -334,10 +336,10 @@
 
       select {
         appearance: none;
+        font-family: 'Poppins';
         -webkit-appearance: none;
         -moz-appearance: none;
         width: 110%;
-        padding: 10px;
         font-size: 14px;
         border: 1px solid $grey;
         border-radius: 10px;
@@ -349,7 +351,7 @@
         background-size: 5px 5px, 5px 5px;
         background-repeat: no-repeat;
         margin: 0;
-        padding: 1rem;
+        padding: 0.5rem;
         color: $text;
         font-size: 16px;
     
@@ -365,7 +367,7 @@
   &__add {
     background-color: $green;
     color: white;
-    padding: 1rem;
+    padding: 0.5rem;
     width: 150px;
     text-align: center;
     border-radius: 10px;
@@ -466,7 +468,7 @@
 
     &:not(:last-child) {
       // Add line after each button except the last one
-      border-right: 1px solid $divider;
+      border-right: 1px solid $grey;
     }
 
     &:hover {
@@ -481,7 +483,7 @@
 }
 
 .Calendar{
-  width: 700px;
+  width: 50%;
   cursor: default;
   // background-color: red;
 }

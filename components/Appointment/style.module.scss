@@ -3,7 +3,7 @@
 .appointments {
   &__itemContainer {
     margin: 1rem 0;
-    padding: 1rem;
+    padding: 0.8rem 1.2rem;
     border-radius: 10px;
     border: 1px solid $grey;
     background: #fff;
@@ -18,7 +18,7 @@
   }
 
   &__title {
-    font-size: 20px;
+    font-size: 16px;
     color: $text;
     font-weight: 400;
     flex: 1;
@@ -30,7 +30,7 @@
     align-items: center;
     padding: 0 1rem;
     flex: 1;
-    font-size: 18px;
+    font-size: 16px;
 
     span {
       margin-left: .5rem;
@@ -46,12 +46,12 @@
 
 
   &__status {
-    font-size: 13px;
+    font-size: 12px;
     color: $text;
     font-weight: 400;
     border-radius: 19px;
     background-color: $yellow;
-    padding: .3rem;
+    padding: 0.2rem 0.4rem;
     margin-right: 2rem;
 
     &Confirmed {
@@ -66,13 +66,13 @@
   }
 
   &__details {
-    margin: 1rem 0;
+    margin-top: 1rem;
     width: 100%;
     display: flex;
     flex-direction: column;
 
     &__separator {
-      margin: 1rem 0;
+      margin: 0.6rem 0;
       border: 1px dashed $grey;
     }
 
@@ -83,7 +83,7 @@
       align-items: center;
       color: $text; 
       gap: 3rem;
-      font-size: 18px;
+      font-size: 16px;
       margin-right: 1rem;
       margin-left: 1rem;
     }
@@ -95,17 +95,18 @@
       align-items: center;
       color: $text; 
       gap: 3rem;
-      font-size: 18px;
+      font-size: 16px;
       margin-right: 1rem;
     }
 
     &__row {
       display: flex;
       flex-direction: row;
-      justify-content: space-evenly;
+      justify-content: flex-start;
       align-items: center;
+      gap: 5rem;
       color: $text;
-      font-size: 18px;
+      font-size: 16px;
 
       &Item {
         display: flex;
@@ -127,10 +128,9 @@
 .mainAction {
   font-size: 15px;
   font-family: 'Poppins-Bold';
-  font-family: 'Poppins-Bold';
   font-weight: 700;
   border-radius: 19px;
   color: $white;
   background-color: $green;
-  padding: .5rem 2rem;
+  padding: .3rem 2rem;
 }

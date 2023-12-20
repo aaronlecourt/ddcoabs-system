@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import styles from './style.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronCircleDown, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 import Modal from '../Modal';
@@ -241,12 +241,13 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
           {session &&
           <div className={styles.navbar__profileContainer} onClick={() => setShowDropdown(!showDropdown)}>
           <div className={styles.navbar__profileIcon}></div>
-          <Image 
+          {/* <Image 
             src='/caretdown.svg'
             alt='caretdown'
             width={20}
             height={20}
-          />
+          /> */}
+          <FontAwesomeIcon icon={faChevronDown} color={'#fff'} width={20} height={20} />
         </div>
           }
         </div>

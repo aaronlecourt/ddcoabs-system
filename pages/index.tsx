@@ -277,16 +277,16 @@ const filterAppointmentsByStatus = (status: string) => {
                   </div>
                 </div>
 
-{/* // Update the appointment list to use the filtered appointments */}
-{appointments && appointments.length > 0 ? (
-  <>
-    {appointments.map((appointment: any, index: number) => (
-      <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
-    ))}
-  </>
-) : (
-  <div className={styles.appointments__empty}>There are no appointments</div>
-)}
+                {/* // Update the appointment list to use the filtered appointments */}
+                {appointments && appointments.length > 0 ? (
+                  <>
+                    {appointments.map((appointment: any, index: number) => (
+                      <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+                    ))}
+                  </>
+                ) : (
+                  <div className={styles.appointments__empty}>There are no appointments</div>
+                )}
 
                 </div>
               </section>

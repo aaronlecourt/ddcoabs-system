@@ -103,7 +103,7 @@ input {
 
 label {
   color: $text;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
@@ -116,7 +116,7 @@ input[type="date"] {
   border: 0;
   border-radius: 10px;
   outline: none;
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 input[type="file"] {
@@ -188,17 +188,18 @@ a {
     justify-content: space-between;
 
     &__title {
-      font-size: 25px;
+      font-size: 23px;
       color: $text;
       font-family: 'Poppins-Bold';
       font-weight: 700;
     }
 
     &__nav {
-      cursor: pointer;
+      cursor: default;
+      color: $text;
 
       &>svg:first-child {
-        margin-right: 2rem;
+        margin-right: 1rem;
       }
     }
   }
@@ -217,7 +218,7 @@ a {
   }
 
   .rbc-header span {
-    font-size: 20px;
+    font-size: 18px;
     color: $green;
     font-family: 'Poppins-Bold';
     font-weight: 700;
@@ -250,7 +251,7 @@ a {
 
   .rbc-button-link {
     color: $text;
-    font-size: 20px;
+    font-size: 16px;
     pointer-events: none;
   }
 
@@ -264,7 +265,7 @@ a {
 
   .rbc-current {
     background-color: $green;
-
+    
     .rbc-button-link {
       color: $white;
     }
@@ -280,8 +281,6 @@ a {
     }
   }
 }
-
-/* Add this style at the end of your SCSS file */
 
 /* Define scrollbar styles */
 ::-webkit-scrollbar {
