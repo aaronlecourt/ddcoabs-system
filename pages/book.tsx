@@ -9,13 +9,17 @@ import {
   BookServicesForm,
   BookScheduleForm,
   BookPaymentForm,
-  BookConfirmationForm
+  BookConfirmationForm,
+  BookWalkInForm,
 } from '../forms';
 import { PatientErrorFormData, PatientFormCheckbox, PatientFormData, ServicesErrorFormData, ServicesFormData } from '../types/book';
+import { PatientErrorFormDataDentist, PatientFormDataDentist} from '../types/emergencyBook';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
+import { ErrorPatientFormObjectDentist, PatientWalkIn } from '../forms/walk-in';
 import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
 
 export const BookingFormContext = createContext({})
+
 
 export default function Book() {
   const { session, status } = useAuthGuard();
@@ -75,6 +79,8 @@ export default function Book() {
     }
   }
 
+
+
   const [steps, setSteps] = useState<any>([
     {
       label: 'Patient Form',
@@ -107,8 +113,24 @@ export default function Book() {
       current: false
     }
   ])
+
+  useEffect(() => {
+    if (session?.user?.role === 'dentist') {
+      setSteps((prevSteps: any) => {
+        const updatedSteps = [...prevSteps];
+        const patientFormStepIndex = updatedSteps.findIndex(step => step.label === 'Patient Form');
+        if (patientFormStepIndex !== -1) {
+          updatedSteps[patientFormStepIndex].component = () => <BookWalkInForm ref={formRef} />;
+        }
+        return updatedSteps;
+      });
+    }
+  }, [session?.user?.role]);
+
   const [currentStep, setCurrentStep] = useState(steps[currentStepIndex])
+  const [patientFormDentist, setPatientFormDentist] = useState<PatientFormDataDentist>(PatientWalkIn)
   const [patientForm, setPatientForm] = useState<PatientFormData>(PatientFormObject)
+  const [patientErrorFormDataDentist, setPatientErrorFormDentist] = useState<PatientErrorFormDataDentist>(ErrorPatientFormObjectDentist)
   const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
   const [patientFormCheckbox, setPatientFormCheckbox] = useState<Array<PatientFormCheckbox[]>>(PatientFormCheckboxList)
   const [servicesForm, setServicesForm] = useState<ServicesFormData>(ServicesFormObject);
@@ -128,7 +150,10 @@ export default function Book() {
     selectedDate, setSelectedDate,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,
-    onStepNext, onStepBack
+    onStepNext, onStepBack,
+
+    patientFormDentist, setPatientFormDentist,
+    patientErrorFormDataDentist, setPatientErrorFormDentist
   }
 
   const renderContent = () => {

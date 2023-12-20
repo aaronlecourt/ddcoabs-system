@@ -27,7 +27,7 @@ export default function useAuthGuard() {
     '/accounts',
     '/archives',
     '/appointments',
-    '/emergency-booking'
+    '/book'
   ]
 
   const [userProfile, setUserProfile] = useState<any>({})

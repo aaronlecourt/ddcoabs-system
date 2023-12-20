@@ -377,34 +377,6 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
     }
   ])
 
-  // useEffect(() => {
-  //   if (formData['others'].length > 0) {
-  //     const symptoms = checkboxList.flatMap(row => row).map(i => i.textValue || i.text);
-
-  //     setCheckboxList(prevValue => {
-  //       const updatedValues = prevValue.map(row => {
-  //         const updatedRow = row.map(cell => {
-  //           if (formData['others'].includes(cell.text)) {
-  //             return { ...cell, value: true }
-  //           } else {
-  //             if (!cell.textbox) return { ...cell }
-  //             else {
-  //               const text = formData['others'][formData['others'].length - 1];
-  //               if (!symptoms.includes(text)) {
-  //                 return { ...cell, textValue: formData['others'][formData['others'].length - 1] }
-  //               } else {
-  //                 return { ...cell }
-  //               }
-  //             }
-  //           }
-  //         })
-  //         return updatedRow;
-  //       })
-  //       return updatedValues;
-  //     })
-  //   }
-  // }, [])
-
   useEffect(() => {
     // for question 10
     const symptoms = checkboxList.flatMap(row =>
