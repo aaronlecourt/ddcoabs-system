@@ -13,6 +13,7 @@ import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-i
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { IAppointment } from './interfaces/IAppointment';
+import { IUser } from './interfaces/IUser';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -54,14 +55,15 @@ export default function Home({
   const router = useRouter();
 
   const [selectedFilter, setSelectedFilter] = useState('Today'); // Set 'Today' as the default filter for the patient's section
-  const [filteredAppointments, setFilteredAppointments] = useState(initialAppointmentData);
+  const [filteredAppointments, setFilteredAppointments] = useState<IAppointment[]>(initialAppointmentData);
+  const [searchResults, setSearchResults] = useState<IAppointment[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
     setShowCancelAppointment(true);
   }
 
-  
   const cancelAppointment = () => {
     const user = session.user
 
@@ -89,6 +91,94 @@ export default function Home({
     }
   }
 
+  const filterAppointmentsByStatus = (status: string) => {
+    const currentDate = new Date().toDateString(); // Get today's date
+  
+    if (initialAppointmentData) {
+      const filteredAppointments = initialAppointmentData.filter((appointment: IAppointment) => {
+        const appointmentDate = new Date(appointment.date).toDateString();
+  
+        if (status === 'All') {
+          return true; // Show all appointments when 'All' is selected
+        } else if (status === 'Today') {
+          return appointmentDate === currentDate; // Show appointments for today's date
+        }
+  
+        return appointment.status === status; // Filter by other statuses
+      });
+  
+      setFilteredAppointments(filteredAppointments); // Update the filteredAppointments state with the filtered list
+    }
+  };
+
+  // UseEffect to filter appointments for 'Today' when the component mounts
+    useEffect(() => {
+      filterAppointmentsByStatus('Today');
+    }, []);
+
+    const countAppointmentsByStatus = (status: string) => {
+      if (status === 'All') {
+        return initialAppointmentData.length;
+      }
+      return initialAppointmentData.filter((appointment:IAppointment) => appointment.status === status).length;
+    };
+    
+    const countAppointmentsForToday = () => {
+      const currentDate = new Date().toDateString();
+      return initialAppointmentData.filter((appointment: IAppointment) => {
+        const appointmentDate = new Date(appointment.date).toDateString();
+        return appointmentDate === currentDate;
+      }).length;
+    };
+
+    const handleSearch = async (term: string) => {
+      setSearchTerm(term);
+      
+      if (term.trim() !== '') {
+        const appointmentsToSearch = filteredAppointments.length > 0 ? filteredAppointments : initialAppointmentData;
+    
+        const fetchedAppointments = await Promise.all(appointmentsToSearch.map(async (appointment: IAppointment) => {
+          if (appointment.patientId) {
+            const response = await fetch(`/api/global/user/${appointment.patientId}`);
+            const patient = await response.json();
+    
+            return {
+              ...appointment,
+              patientName: patient ? patient.name || '' : '',
+            };
+          }
+          return appointment;
+        }));
+    
+        const filteredResults = fetchedAppointments.filter((appointment: IAppointment) => {
+          // Assuming the patient's name field is 'patientName'
+          const matchesPatientName = appointment.patientName?.toLowerCase().includes(term.toLowerCase());
+          
+          // Check if the service name matches the search term
+          const matchesServiceName = appointment.dentistService.toLowerCase().includes(term.toLowerCase());
+    
+          return matchesPatientName || matchesServiceName;
+        });
+    
+        setSearchResults(filteredResults as IAppointment[]);
+      } else {
+        setSearchResults([]);
+      }
+    };
+
+    const handleFilterChange = (newFilter: string) => {
+      if (newFilter !== selectedFilter) {
+        // Reset search results and term only when the filter changes
+        setSearchResults([]);
+        setSearchTerm('');
+      }
+    
+      setSelectedFilter(newFilter);
+      filterAppointmentsByStatus(newFilter);
+    };
+    
+    
+
   const renderContent = () => {
     return (
       <>
@@ -106,7 +196,7 @@ export default function Home({
             <div className={styles.sub}>
             <h2 className={styles.subHeader}>About the Clinic</h2>
             <p>
-              The DentalFix Dental Clinic is a family-owned and newly founded business in the fourth week of January 2023. It is established through thorough planning, hard work, and with the help of Dr. Sheela Mae De Jesus’ parents. Considering the factors such as the population in the area, central business district, and the location of their laboratory, they have decided to establish and rent a space for their dental clinic in a building near the University of Baguio where Dr. De Jesus graduated Doctor of Medicine in Dentistry (DMD) last 2019. 
+              The DentalFix Dental Clinic is a family-owned and newly founded business in the fourth week of January 2023. It is established through thorough planning, hard work, and with the help of Dr. Sheela Mae De Jesus’ parents. Considering the factors such as the population in the area, central business district, and the location of their laboratory, they have decided to establish and rent a space for their dental clinic in a building near the University of Baguio where Dr. De Jesus graduated Doctor of Medicine in Dentistry (DMD) last 2019. 
             </p>
             <br />
             <div>
@@ -125,47 +215,6 @@ export default function Home({
     )
   }
 
-const filterAppointmentsByStatus = (status: string) => {
-  const currentDate = new Date().toDateString(); // Get today's date
-
-  if (initialAppointmentData) {
-    const filteredAppointments = initialAppointmentData.filter((appointment: IAppointment) => {
-      const appointmentDate = new Date(appointment.date).toDateString();
-
-      if (status === 'All') {
-        return true; // Show all appointments when 'All' is selected
-      } else if (status === 'Today') {
-        return appointmentDate === currentDate; // Show appointments for today's date
-      }
-
-      return appointment.status === status; // Filter by other statuses
-    });
-
-    setAppointments(filteredAppointments); // Update the appointments state with the filtered list
-  }
-};
-
-
-// UseEffect to filter appointments for 'Today' when the component mounts
-  useEffect(() => {
-    filterAppointmentsByStatus('Today');
-  }, []);
-
-  const countAppointmentsByStatus = (status: string) => {
-    if (status === 'All') {
-      return filteredAppointments.length;
-    }
-    return filteredAppointments.filter((appointment:IAppointment) => appointment.status === status).length;
-  };
-
-  const countAppointmentsForToday = () => {
-    const currentDate = new Date().toDateString();
-    return filteredAppointments.filter((appointment: IAppointment) => {
-      const appointmentDate = new Date(appointment.date).toDateString();
-      return appointmentDate === currentDate;
-    }).length;
-  };
-
   const renderDentistContent = () => {
     return (
       <>
@@ -176,7 +225,12 @@ const filterAppointmentsByStatus = (status: string) => {
               <section>
                 <div className={styles.filters}>
                   <div className={styles.filters__search}>
-                    <input type='text' className={styles.filters__searchInput} placeholder='Search appointment...' />
+                    <input  type='text' 
+                            className={styles.filters__searchInput} 
+                            placeholder='Search appointment...' 
+                            value={searchTerm}
+                            onChange={(e) => handleSearch(e.target.value)}
+                    />
                     <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
                   </div>
                   <div className={styles.filters__sort}>
@@ -194,7 +248,7 @@ const filterAppointmentsByStatus = (status: string) => {
                     className={`${styles.appointments__filtersItemToday} ${selectedFilter === 'Today' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('Today');
-                      filterAppointmentsByStatus('Today');
+                      handleFilterChange('Today');
                     }}
                   >
                     Today
@@ -206,7 +260,7 @@ const filterAppointmentsByStatus = (status: string) => {
                     className={`${styles.appointments__filtersItemPending} ${selectedFilter === 'Pending' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('Pending');
-                      filterAppointmentsByStatus('Pending');
+                      handleFilterChange('Pending');
                     }}
                   >
                     Pending
@@ -218,7 +272,7 @@ const filterAppointmentsByStatus = (status: string) => {
                     className={`${styles.appointments__filtersItemConfirmed} ${selectedFilter === 'Confirmed' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('Confirmed');
-                      filterAppointmentsByStatus('Confirmed');
+                      handleFilterChange('Confirmed');
                     }}
                   >
                     Confirmed
@@ -230,7 +284,7 @@ const filterAppointmentsByStatus = (status: string) => {
                     className={`${styles.appointments__filtersItemRescheduled} ${selectedFilter === 'Rescheduled' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('Rescheduled');
-                      filterAppointmentsByStatus('Rescheduled');
+                      handleFilterChange('Rescheduled');
                     }}
                   >
                     Rescheduled
@@ -242,7 +296,7 @@ const filterAppointmentsByStatus = (status: string) => {
                     className={`${styles.appointments__filtersItemCanceled} ${selectedFilter === 'Canceled' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('Canceled');
-                      filterAppointmentsByStatus('Canceled');
+                      handleFilterChange('Canceled');
                     }}
                   >
                     Canceled
@@ -254,7 +308,7 @@ const filterAppointmentsByStatus = (status: string) => {
                     className={`${styles.appointments__filtersItemDone} ${selectedFilter === 'Done' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('Done');
-                      filterAppointmentsByStatus('Done');
+                      handleFilterChange('Done');
                     }}
                   >
                     Done
@@ -266,7 +320,7 @@ const filterAppointmentsByStatus = (status: string) => {
                     className={`${styles.appointments__filtersItemAll} ${selectedFilter === 'All' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('All');
-                      filterAppointmentsByStatus('All');
+                      handleFilterChange('All');
                     }}
                   >
                     All
@@ -276,16 +330,19 @@ const filterAppointmentsByStatus = (status: string) => {
                   </div>
                 </div>
 
-                {/* // Update the appointment list to use the filtered appointments */}
-                {appointments && appointments.length > 0 ? (
-                  <>
-                    {appointments.map((appointment: any, index: number) => (
-                      <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
-                    ))}
-                  </>
-                ) : (
-                  <div className={styles.appointments__empty}>There are no appointments</div>
-                )}
+                {searchResults.length > 0 ? (
+  searchResults.map((appointment: IAppointment, index: number) => (
+    <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+  ))
+) : (
+  filteredAppointments.length > 0 ? (
+    filteredAppointments.map((appointment: IAppointment, index: number) => (
+      <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+    ))
+  ) : (
+    <div className={styles.appointments__empty}>No matching appointments found</div>
+  )
+)}
 
                 </div>
               </section>
@@ -322,3 +379,5 @@ const filterAppointmentsByStatus = (status: string) => {
     </>
   )
 }
+
+
