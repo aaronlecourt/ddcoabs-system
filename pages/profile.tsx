@@ -271,19 +271,26 @@ export default function Profile({
                     <div className={`formLabel ${styles.form__row__field__label}`}>
                       <label>Blood Type: </label>
                     </div>
+                    <div className={`${styles.CustomSelect} ${errorFormData.bloodType.error ? styles.errorSelectContainer : ''}`}>
                     <div className={`formInput ${errorFormData.bloodType.error ? 'formInput--error' : ''}`}>
-                      {errorFormData.bloodType.error && <span className='formInput__errorMessage'>{errorFormData.bloodType.message}</span>}
+                      {errorFormData.bloodType.error && (
+                        <span className='formInput__errorMessage'>{errorFormData.bloodType.message}</span>
+                      )}
                       <select
                         value={formData.bloodType}
                         onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                         name='bloodType'
-                        >
-                          {bloodType.map(type => (
-                            <option key={type} value={type}>
-                              {type}
-                            </option>
-                          ))}
+                      >
+                        {bloodType.map(type => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
                       </select>
+                    </div>
+
+
+
                       
                       {/* <input type='text'
                         onKeyDown={e => handleFormEnter(e, updateProfile)}
@@ -358,7 +365,7 @@ export default function Profile({
                     </div>
                   </div>
                   <div className={styles.form__row}>
-                    <div className={styles.form__row__field} style={{ flex: 0.4, justifyContent: 'flex-end' }}>
+                    <div className={styles.form__row__field} style={{ flex: 1, justifyContent: 'flex-end' }}>
                       <Button onClick={updateProfile}>Update Profile</Button>
                     </div>
                   </div>

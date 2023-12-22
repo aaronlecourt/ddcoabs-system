@@ -118,7 +118,6 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             </div>
           </>
         }
-
         {appointment.status == APPOINTMENT_STATUS.canceled && !isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>
@@ -134,7 +133,6 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             </div>
           </>
         }
-
         {appointment.status == APPOINTMENT_STATUS.rescheduled && isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>

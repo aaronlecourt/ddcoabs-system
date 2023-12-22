@@ -249,6 +249,7 @@ export default function Home({
                 key={index}
                 appointment={appointment}
                 onCancelAppointment={onCancelAppointment}
+                isPatient={true}
               />
             )
           )
@@ -421,7 +422,7 @@ export default function Home({
                         </div>
                       )}
                     </div>
-                    <div
+                    {/* <div
                       className={`${styles.appointments__filtersItemCanceled} ${
                         selectedFilter === "Canceled"
                           ? styles.appointments__filtersItemSelected
@@ -438,7 +439,7 @@ export default function Home({
                           {countAppointmentsByStatus("Canceled")}
                         </div>
                       )}
-                    </div>
+                    </div> */}
                     <div
                       className={`${styles.appointments__filtersItemDone} ${
                         selectedFilter === "Done"
