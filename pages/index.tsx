@@ -62,7 +62,7 @@ export default function Home({
   const sortBy = ['Latest to Oldest', 'Oldest to Latest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)', 'Pending First'];
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(3);
+  const [itemsPerPage] = useState(5);
   const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
 
   const onCancelAppointment = (appointment: any) => {
