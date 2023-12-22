@@ -59,7 +59,7 @@ export default function Home({
   const [filteredAppointments, setFilteredAppointments] = useState<IAppointment[]>(initialAppointmentData);
   const [searchResults, setSearchResults] = useState<IAppointment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const sortBy = ['Latest to Oldest', 'Oldest to Latest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)', 'Pending First', 'Confirmed First'];
+  const sortBy = ['Latest to Oldest', 'Oldest to Latest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)', 'Pending First'];
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
