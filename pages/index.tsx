@@ -46,7 +46,7 @@ export default function Home({
   isConnected,
   initialAppointmentData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(' ehhehehe ', initialAppointmentData);
+  // console.log(' ehhehehe ', initialAppointmentData);
   const { session, status } = useAuthGuard();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState(initialAppointmentData)
@@ -133,7 +133,7 @@ export default function Home({
 
     const handleSearch = async (term: string) => {
       setSearchTerm(term);
-      
+    
       if (term.trim() !== '') {
         const appointmentsToSearch = filteredAppointments.length > 0 ? filteredAppointments : initialAppointmentData;
     
@@ -151,10 +151,7 @@ export default function Home({
         }));
     
         const filteredResults = fetchedAppointments.filter((appointment: IAppointment) => {
-          // Assuming the patient's name field is 'patientName'
           const matchesPatientName = appointment.patientName?.toLowerCase().includes(term.toLowerCase());
-          
-          // Check if the service name matches the search term
           const matchesServiceName = appointment.dentistService.toLowerCase().includes(term.toLowerCase());
     
           return matchesPatientName || matchesServiceName;
@@ -162,21 +159,62 @@ export default function Home({
     
         setSearchResults(filteredResults as IAppointment[]);
       } else {
-        setSearchResults([]);
+        setSearchResults([]); // Reset searchResults to an empty array when the search term is empty
       }
+      
+    };
+    
+    const renderAppointmentsByStatus = (appointmentsToMap: IAppointment[], status: string, searchTerm: string) => {
+      let filteredAppointments = appointmentsToMap;
+    
+      if (status !== 'All') {
+        filteredAppointments = appointmentsToMap.filter(
+          (appointment) => appointment.status === status
+        );
+      }
+    
+      if (status === 'Today') {
+        const currentDate = new Date().toDateString();
+        filteredAppointments = appointmentsToMap.filter((appointment: IAppointment) => {
+          const appointmentDate = new Date(appointment.date).toDateString();
+          return appointmentDate === currentDate;
+        });
+      }
+    
+      if (searchTerm.trim() !== '') {
+        const searchResults = filteredAppointments.filter((appointment: IAppointment) => {
+          const matchesPatientName = appointment.patientName?.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesServiceName = appointment.dentistService.toLowerCase().includes(searchTerm.toLowerCase());
+    
+          return matchesPatientName || matchesServiceName;
+        });
+    
+        if (searchResults.length > 0) {
+          filteredAppointments = searchResults;
+        } else {
+          filteredAppointments = []; // Empty array when no search results found within the filter
+        }
+      }
+    
+      return (
+        <>
+          {filteredAppointments.length > 0 ? (
+            filteredAppointments.map((appointment: IAppointment, index: number) => (
+              <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+            ))
+          ) : (
+            <div className={styles.appointments__empty}>No matching appointments found</div>
+          )}
+        </>
+      );
     };
 
     const handleFilterChange = (newFilter: string) => {
       if (newFilter !== selectedFilter) {
-        // Reset search results and term only when the filter changes
-        setSearchResults([]);
-        setSearchTerm('');
+        setSelectedFilter(newFilter);
+        filterAppointmentsByStatus(newFilter);
       }
-    
-      setSelectedFilter(newFilter);
-      filterAppointmentsByStatus(newFilter);
     };
-    
     
 
   const renderContent = () => {
@@ -280,7 +318,7 @@ export default function Home({
                       <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Confirmed')}</div>
                     )}
                   </div>
-                  {/* <div
+                  <div
                     className={`${styles.appointments__filtersItemRescheduled} ${selectedFilter === 'Rescheduled' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
                       setSelectedFilter('Rescheduled');
@@ -291,7 +329,7 @@ export default function Home({
                     {countAppointmentsByStatus('Rescheduled') > 0 && (
                       <div className={`badge ${styles.badge}`}>{countAppointmentsByStatus('Rescheduled')}</div>
                     )}
-                  </div> */}
+                  </div>
                   <div
                     className={`${styles.appointments__filtersItemCanceled} ${selectedFilter === 'Canceled' ? styles.appointments__filtersItemSelected : ''}`}
                     onClick={() => {
@@ -329,21 +367,7 @@ export default function Home({
                     )}
                   </div>
                 </div>
-
-                {searchResults.length > 0 ? (
-  searchResults.map((appointment: IAppointment, index: number) => (
-    <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
-  ))
-) : (
-  filteredAppointments.length > 0 ? (
-    filteredAppointments.map((appointment: IAppointment, index: number) => (
-      <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
-    ))
-  ) : (
-    <div className={styles.appointments__empty}>No matching appointments found</div>
-  )
-)}
-
+                {renderAppointmentsByStatus(filteredAppointments, selectedFilter, searchTerm)}
                 </div>
               </section>
               <section className={styles.rightContainer}>
