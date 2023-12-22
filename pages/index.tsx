@@ -310,8 +310,9 @@ export default function Home({
                     />
                     <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
                   </div>
-                  <div className={styles.filters__sortDropdown}>
-                    <span>Sort By:</span>
+                  <div className={styles.filters__sort}>
+                    <span className={styles.filters__sortTitle}>Sort By:</span>
+                    <div className={styles.filters__sortDropdown}>
                     <select onChange={(e) => handleSortChange(e.target.value)}>
                       {sortBy.map((option, index) => (
                         <option key={index} value={option}>
@@ -319,6 +320,7 @@ export default function Home({
                         </option>
                       ))}
                     </select>
+                    </div>
                   </div>
                 </div>
                 <div className={styles.appointments}>
