@@ -9,7 +9,7 @@ import useAuthGuard from '../guards/auth.guard';
 import CustomCalendar from '../components/CustomCalendar';
 import Appointment from '../components/Appointment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { IAppointment } from './interfaces/IAppointment';
@@ -60,6 +60,10 @@ export default function Home({
   const [searchResults, setSearchResults] = useState<IAppointment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const sortBy = ['Latest to Oldest', 'Oldest to Latest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)', 'Pending First'];
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(3);
+  const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
@@ -171,9 +175,7 @@ export default function Home({
       let filteredAppointments = appointmentsToMap;
     
       if (status !== 'All') {
-        filteredAppointments = appointmentsToMap.filter(
-          (appointment) => appointment.status === status
-        );
+        filteredAppointments = appointmentsToMap.filter((appointment) => appointment.status === status);
       }
     
       if (status === 'Today') {
@@ -195,22 +197,42 @@ export default function Home({
         if (searchResults.length > 0) {
           filteredAppointments = searchResults;
         } else {
-          filteredAppointments = []; // Empty array when no search results found within the filter
+          filteredAppointments = [];
         }
       }
     
+      // Pagination calculation
+      const totalCount = filteredAppointments.length; // Total count after filtering
+      const searchCount = searchResults.length; // Count of search results
+    
+      const totalCountForPagination = searchTerm.trim() !== '' ? searchCount : totalCount;
+      const totalPages = Math.max(Math.ceil(totalCountForPagination / itemsPerPage), 1);
+    
+      const validatedCurrentPage = Math.min(currentPage, totalPages);
+    
+      const indexOfLastItem = validatedCurrentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentAppointments = filteredAppointments.slice(indexOfFirstItem, indexOfLastItem);
+    
       return (
         <>
-          {filteredAppointments.length > 0 ? (
-            filteredAppointments.map((appointment: IAppointment, index: number) => (
-              <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
-            ))
+          {currentAppointments.length > 0 ? (
+            <>
+              {currentAppointments.map((appointment: IAppointment, index: number) => (
+                <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+              ))}
+              {renderPagination(totalPages, validatedCurrentPage)}
+            </>
           ) : (
             <div className={styles.appointments__empty}>No matching appointments found</div>
           )}
+
         </>
       );
     };
+    
+    
+    
 
     const handleFilterChange = (newFilter: string) => {
       if (newFilter !== selectedFilter) {
@@ -256,6 +278,30 @@ export default function Home({
       setFilteredAppointments(sortedAppointments); // Update the state with the sorted array
     };
 
+    const renderPagination = (totalPages: number, currentPage: number) => {
+      const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+    
+      return (
+        <div className={styles.pagination}>
+          <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+            <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} color={'#737373'} />
+          </button>
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => setCurrentPage(number)}
+              className={currentPage === number ? styles.active : ''}
+            >
+              {number}
+            </button>
+          ))}
+          <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+            <FontAwesomeIcon icon={faChevronRight} width={16} height={16} color={'#737373'} />
+          </button>
+        </div>
+      );
+    };
+    
   const renderContent = () => {
     return (
       <>
