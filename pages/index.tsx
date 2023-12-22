@@ -55,9 +55,11 @@ export default function Home({
   const router = useRouter();
 
   const [selectedFilter, setSelectedFilter] = useState('Today'); // Set 'Today' as the default filter for the patient's section
+  const [selectedSorting, setSelectedSorting] = useState('');
   const [filteredAppointments, setFilteredAppointments] = useState<IAppointment[]>(initialAppointmentData);
   const [searchResults, setSearchResults] = useState<IAppointment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const sortBy = ['Latest to Oldest', 'Oldest to Latest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)', 'Pending First', 'Confirmed First'];
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
@@ -114,6 +116,7 @@ export default function Home({
   // UseEffect to filter appointments for 'Today' when the component mounts
     useEffect(() => {
       filterAppointmentsByStatus('Today');
+      handleSortChange('Latest to Oldest');
     }, []);
 
     const countAppointmentsByStatus = (status: string) => {
@@ -214,8 +217,44 @@ export default function Home({
         setSelectedFilter(newFilter);
         filterAppointmentsByStatus(newFilter);
       }
+
+      if (selectedSorting) {
+        handleSortChange(selectedSorting);
+      }
     };
     
+    const handleSortChange = (sortOption: string) => {
+      setSelectedSorting(sortOption);
+      let sortedAppointments = [...filteredAppointments]; // Create a copy of filteredAppointments
+    
+      switch (sortOption) {
+        case 'Oldest to Latest':
+          sortedAppointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          break;
+        case 'Latest to Oldest':
+          sortedAppointments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          break;
+        case 'Alphabetical (A-Z)':
+          sortedAppointments.sort((a, b) => a.dentistService.localeCompare(b.dentistService));
+          break;
+        case 'Alphabetical (Z-A)':
+          sortedAppointments.sort((a, b) => b.dentistService.localeCompare(a.dentistService));
+          break;
+        case 'Pending First':
+          const pendingAppointments = sortedAppointments.filter(appointment => appointment.status === 'Pending');
+          const otherAppointments = sortedAppointments.filter(appointment => appointment.status !== 'Pending');
+    
+          pendingAppointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          otherAppointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+          sortedAppointments = [...pendingAppointments, ...otherAppointments];
+          break;
+        default:
+          break;
+      }
+    
+      setFilteredAppointments(sortedAppointments); // Update the state with the sorted array
+    };
 
   const renderContent = () => {
     return (
@@ -271,12 +310,15 @@ export default function Home({
                     />
                     <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
                   </div>
-                  <div className={styles.filters__sort}>
-                    <span className={styles.filters__sortTitle}>Sort By:</span>
-                    <div className={styles.filters__sortDropdown}>
-                      <span>Latest</span>
-                      <FontAwesomeIcon icon={faChevronDown} width={24} height={24} color={'#737373'} />
-                    </div>
+                  <div className={styles.filters__sortDropdown}>
+                    <span>Sort By:</span>
+                    <select onChange={(e) => handleSortChange(e.target.value)}>
+                      {sortBy.map((option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div className={styles.appointments}>
