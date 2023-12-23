@@ -1,12 +1,21 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './style.module.scss'
-import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faNoteSticky, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
+import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faEye, faFemale, faMale, faMoneyBill, faNoteSticky, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react';
 import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
+import Modal from '../Modal';
 
 export default function Appointment({ appointment, onCancelAppointment, isPatient }: any) {
   const [collapse, setCollapse] = useState(true);
   const [name, setName] = useState(appointment.patientName || '')
+  const [sex, setSex] = useState(appointment.patientSex || '')
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAppointmentDetails, setSelectedAppointmentDetails] = useState<any>(null);
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+    setSelectedAppointmentDetails(appointment);
+  };
 
   const openAppointment = (e: any) => {
     e.preventDefault();
@@ -41,24 +50,151 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
       : `${startTime == 12 ? 12 : startTime - 12}:00${timeUnit}-${endTime - 12}:00${timeUnit}` 
   }
 
-  useEffect(() => {
-    const getPatientName = async () => {
+  const getPatientName = async () => {
+    if (appointment.patientId) {
+      const response = await fetch(`/api/global/user/${appointment.patientId}`);
+      const patient = await response.json();
+      if (patient)
+        Object.assign(appointment, {
+          patientName: patient.name || ''
+        })
+        setName(patient?.name)
+    }
+  }
+  const getPatientSex = async () => {
+    try {
       if (appointment.patientId) {
         const response = await fetch(`/api/global/user/${appointment.patientId}`);
         const patient = await response.json();
-        if (patient)
-          Object.assign(appointment, {
-            patientName: patient.name || ''
-          })
-          setName(patient?.name)
+        
+        if (patient) {
+          // Set patient's sex if available
+          setSex(patient?.sex || ''); // Assuming a state variable to hold the patient's sex
+        }
       }
+    } catch (error) {
+      // Handle errors when fetching patient details
+      console.error('Error fetching patient sex:', error);
     }
-    
-    getPatientName()
+  };
+  useEffect(() => {
+    getPatientSex();
+    getPatientName();
   }, [])
 
   return (
     <div className={styles.appointments__itemContainer}>
+      {showModal && selectedAppointmentDetails && (
+        <Modal open={toggleModal} setOpen={toggleModal} modalWidth={900} modalRadius={10}>
+          {/* Render appointment details here */}
+          <div className={styles.apptDetails_Header}>
+            <div>
+              <h3>{selectedAppointmentDetails.dentistService}</h3>
+              {selectedAppointmentDetails.concern && <h5>Concern: "{selectedAppointmentDetails.concern}" </h5>}
+            </div>
+            <div className={`${styles.appointments__status} 
+              ${selectedAppointmentDetails.status == APPOINTMENT_STATUS.confirmed ? styles.appointments__statusConfirmed 
+              : selectedAppointmentDetails.status == APPOINTMENT_STATUS.canceled ? styles.appointments__statusCanceled
+              : selectedAppointmentDetails.status == APPOINTMENT_STATUS.done ? styles.appointments__statusDone 
+              : selectedAppointmentDetails.status == APPOINTMENT_STATUS.rescheduled ? styles.appointments__statusRescheduled 
+              : styles.appointments__statusPending}`}>{selectedAppointmentDetails.status}
+            </div>
+            {!isPatient && 
+              <div className={styles.apptDetails_User}>
+              <div>
+                <FontAwesomeIcon icon={faUser} color={'#3AB286'} width={15} />
+                <span> {appointment.patientName || name || ''}</span>
+              </div>
+              {sex === 'M' && (
+                <div className={styles.apptDetails_UserGender}>
+                  <FontAwesomeIcon icon={faMale} color={'#fff'} width={15} />
+                  <span>Male</span>
+                </div>
+              )}
+              {sex === 'F' && (
+                <div className={styles.apptDetails_UserGender}>
+                  <FontAwesomeIcon icon={faFemale} color={'#fff'} width={15} />
+                  <span>Female</span>
+                </div>
+              )}
+            </div>
+            }
+          </div>
+          
+          <div className={styles.apptDetails_Dateprice}>
+            <div className={styles.appointments__details__row}>
+              <div className={styles.appointments__details__rowItem}>
+                <FontAwesomeIcon icon={faCalendar} color={'#3AB286'} width={15}/>
+                <span>{formattedDate(new Date(selectedAppointmentDetails.date))}</span>
+              </div>
+              <div className={styles.appointments__details__rowItem}>
+                <FontAwesomeIcon icon={faClock} color={'#3AB286'} width={15}/>
+                <span>{formattedTime(selectedAppointmentDetails)}</span>
+              </div>
+              <div className={styles.appointments__details__rowItem}>
+                <FontAwesomeIcon icon={faWallet} color={'#3AB286'} width={15}/>
+                <span>{selectedAppointmentDetails.paymentMethod}</span>
+              </div>
+              <div className={styles.appointments__details__rowItem}>
+                <FontAwesomeIcon icon={faMoneyBill} color={'#3AB286'} width={15}/>
+                <span>P{selectedAppointmentDetails.price}</span>
+              </div>
+            </div>
+            
+          </div>
+
+    <hr className={styles.apptDetails_Divide}/>
+          
+          <div className={styles.apptDetails_OtherDetails}>
+          
+
+
+            <p><b>Name of Physician:</b> {selectedAppointmentDetails.details.physicianName}</p>
+            {selectedAppointmentDetails.details.specialty ? (
+              <p><b>Specialty:</b> {selectedAppointmentDetails.details.specialty}</p>
+            ) : (
+              <p><b>Specialty:</b> none</p>
+            )}
+            {selectedAppointmentDetails.details.officeAddress ? (
+              <p><b>Office Address:</b> {selectedAppointmentDetails.details.officeAddress}</p>
+            ) : (
+              <p><b>Office Address:</b> none</p>
+            )}
+          </div>
+
+          <div className={styles.apptDetails_More}>
+            <div>
+              <h3>Medical History</h3>
+              <p>Good Health: {selectedAppointmentDetails.details.goodHealth}</p>
+              <p>Medical Treatment: {selectedAppointmentDetails.details.medicalTreatment}</p>
+                <p>{selectedAppointmentDetails.details.medicalTreatmentValue}</p>
+              <p>Illness: {selectedAppointmentDetails.details.illness}</p>
+                <p>{selectedAppointmentDetails.details.illnessValue}</p>
+              <p>Hospitalized: {selectedAppointmentDetails.details.hospitalized}</p>
+                <p>{selectedAppointmentDetails.details.hospitalizedValue}</p>
+              <p>Medication: {selectedAppointmentDetails.details.medication}</p>
+                <p>{selectedAppointmentDetails.details.medicationValue}</p>
+              <p>Tobacco: {selectedAppointmentDetails.details.tobacco}</p>
+              <p>Alcohol: {selectedAppointmentDetails.details.alchohol}</p>
+              <p>Allergy: {selectedAppointmentDetails.details.allergy}</p>
+                <p>Allergy Value: {selectedAppointmentDetails.details.allergyValue}</p>
+                
+              {/* check if sex is F */}
+              <p>Pregnant: {selectedAppointmentDetails.details.pregnant}</p>
+              <p>Nursing: {selectedAppointmentDetails.details.nursing}</p>
+              <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
+            </div>
+            <div>
+              <h3>Dental History</h3>
+              <p>{selectedAppointmentDetails.concern}</p>
+            </div>
+          </div>
+          
+
+
+          {/* Add more appointment details as needed */}
+        </Modal>
+      )}
       <div className={styles.appointments__item} onClick={openAppointment}>
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
         {!isPatient && <div className={styles.appointments__user}>
@@ -71,7 +207,8 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             : appointment.status == APPOINTMENT_STATUS.canceled ? styles.appointments__statusCanceled
             : appointment.status == APPOINTMENT_STATUS.done ? styles.appointments__statusDone 
             : appointment.status == APPOINTMENT_STATUS.rescheduled ? styles.appointments__statusRescheduled 
-            : styles.appointments__statusPending}`}>{appointment.status}</div>
+            : styles.appointments__statusPending}`}>{appointment.status}
+          </div>
           <FontAwesomeIcon icon={!collapse ? faChevronDown : faChevronRight} width={15} height={16} color={'#737373'} />
         </div>
       </div>
@@ -94,6 +231,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
+              </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
@@ -112,6 +253,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
+              </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
@@ -127,9 +272,28 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row3}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
+              </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
                 <FontAwesomeIcon icon={faNoteSticky} color={'#909090'} width={15} />
                 <span>"I had to attend an emergency meeting."</span>
+              </div>
+              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+                <div className={styles.mainAction}>RESOLVE</div>
+              </div>
+            </div>
+          </>
+        }
+        {appointment.status == APPOINTMENT_STATUS.canceled && isPatient &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row3}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
               </div>
               {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
@@ -142,9 +306,39 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
+              </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
+              </div>
+            </div>
+          </>
+        }
+        {appointment.status == APPOINTMENT_STATUS.rescheduled && !isPatient &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row2}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
+                <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
+                <span>Reschedule</span>
+              </div>
+            </div>
+          </>
+        }
+        {appointment.status == APPOINTMENT_STATUS.done &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row2}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
               </div>
             </div>
           </>
@@ -153,6 +347,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
+              </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
@@ -168,6 +366,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
+              </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>

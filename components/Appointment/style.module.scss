@@ -1,5 +1,68 @@
 @import '../../styles/variables.scss';
 
+.apptDetails {
+
+  &_Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &_User {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    
+    span {
+      font-size: 16px;
+    }
+
+    &Gender {
+      background-color: $green;
+      padding: 0.2rem 0.4rem;
+      border-radius: 10px;
+      
+      span {
+        color: white;
+      }
+    }
+  }
+
+  &_Dateprice {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  &_Divide {
+    border: 1px dashed $grey;
+  }
+
+  &_OtherDetails {
+    display: flex;
+    justify-content: space-between;
+    p {
+      font-size: 16px;
+    }
+  }
+
+  &_More {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    div {
+      flex: 1;
+      border: 1px solid $grey;
+      border-radius: 10px;
+      padding: 0.5rem;
+
+      p, h3{
+        font-size: 15px;
+      }
+    }
+  }
+}
 .appointments {
   &__itemContainer {
     margin: 1rem 0;
