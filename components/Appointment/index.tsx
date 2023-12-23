@@ -66,7 +66,12 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <span>{ appointment.patientName || name || ''}</span>
         </div>}
         <div className={styles.appointments__statusContainer}>
-          <div className={`${styles.appointments__status} ${appointment.status == APPOINTMENT_STATUS.confirmed ? styles.appointments__statusConfirmed : appointment.status == APPOINTMENT_STATUS.canceled ? styles.appointments__statusCanceled : styles.appointments__statusPending}`}>{appointment.status}</div>
+          <div className={`${styles.appointments__status} 
+            ${appointment.status == APPOINTMENT_STATUS.confirmed ? styles.appointments__statusConfirmed 
+            : appointment.status == APPOINTMENT_STATUS.canceled ? styles.appointments__statusCanceled
+            : appointment.status == APPOINTMENT_STATUS.done ? styles.appointments__statusDone 
+            : appointment.status == APPOINTMENT_STATUS.rescheduled ? styles.appointments__statusRescheduled 
+            : styles.appointments__statusPending}`}>{appointment.status}</div>
           <FontAwesomeIcon icon={!collapse ? faChevronDown : faChevronRight} width={15} height={16} color={'#737373'} />
         </div>
       </div>

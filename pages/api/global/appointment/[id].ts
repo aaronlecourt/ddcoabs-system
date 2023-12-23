@@ -1,6 +1,9 @@
 import connectMongo from '../../../../utils/connectMongo';
 import Appointment from '../../../../models/Appointment';
 
+import APPOINTMENT_STATUS from "../../../../constants/appointmentStatus";
+import HTTP_CODES from "../../../../constants/httpCodes";
+
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ObjectId } from "mongodb";
 
@@ -22,6 +25,9 @@ export default async function userHandler (
           res.status(200).json(appointment)
         break
       case 'PUT':
+        // set default values
+        body.status = APPOINTMENT_STATUS.rescheduled;
+
         const updatedAppointment = await Appointment
           .findOneAndUpdate({ _id: id }, body, {
             new: true,
@@ -30,7 +36,7 @@ export default async function userHandler (
             runValidators: true,
             context: 'query'
           }).exec()
-        res.status(200).json(updatedAppointment)
+        res.status(HTTP_CODES.success).json(updatedAppointment)
         break
       default:
         res.setHeader('Allow', ['GET', 'PUT'])

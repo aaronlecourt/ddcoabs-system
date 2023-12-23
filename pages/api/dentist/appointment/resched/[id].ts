@@ -1,6 +1,7 @@
 import connectMongo from '../../../../../utils/connectMongo';
 import Appointment from '../../../../../models/Appointment';
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import APPOINTMENT_STATUS from "../../../../../constants/appointmentStatus";
 import PAYMENT_METHOD from "../../../../../constants/paymentMethod";
 import TIME_UNIT from "../../../../../constants/timeUnit";
 import HTTP_CODES from "../../../../../constants/httpCodes";
@@ -170,7 +171,7 @@ export default async function userHandler (
         for (let i=body.startTime; i<body.endTime; i++) {
           body.timeSlots[i] = true;
         }
-
+        body.status = APPOINTMENT_STATUS.rescheduled;
         const appointmentResched = await Appointment
           .findOneAndUpdate({ _id: id }, body, {
             new: true,

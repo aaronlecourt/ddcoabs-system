@@ -63,6 +63,16 @@
       color: $white;
       background-color: $red;
     }
+
+    &Done {
+      color: $white;
+      background-color: $blue;
+    }
+
+    &Rescheduled {
+      color: $white;
+      background-color: $orange;
+    }
   }
 
   &__details {
