@@ -82,7 +82,7 @@ export default function Login({
         return;
       }
 
-      console.log(res, 'logged in!');
+      console.log(res, 'Logged in!');
       router.replace('/');
     } catch (error) {
       console.log(error)
@@ -104,7 +104,7 @@ export default function Login({
               className={styles.headerLogo}
               src='/logo.png'
               alt='logo'
-              width={350}
+              width={300}
               height={90}
             />
           </div>

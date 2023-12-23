@@ -7,7 +7,8 @@
   justify-content: center;
   align-items: center;
   background: linear-gradient(180deg, #000000 0%, #000000 100%);
-
+  font-size: 16px;
+  
   section {
     z-index: 2;
     flex: 1;
@@ -27,9 +28,9 @@
   background-image: url(/authbg.png);
   background-repeat: no-repeat;
   background-size: cover;
-  filter: blur(5px);
+  filter: blur(8px);
   background-position: center;
-  opacity: 0.5;
+  opacity: 0.35;
   transform: scaleX(-1);
 }
 
@@ -38,6 +39,7 @@
   flex-direction: column;
   justify-content: center;
   color: $white;
+  
 
   &Header {
     padding: 1rem 3rem;
@@ -53,17 +55,19 @@
     display: flex;
     justify-content: space-between;
     border-bottom: 2px dashed rgba(255, 255, 255, 0.50);
-    padding: 1rem 0.5rem;
+    padding: 1rem 0.4rem;
+    font-size: 16px;
   }
 
   &Day {
     text-transform: uppercase;
     font-weight: bold;
     width: 50px;
-    padding: .2rem;
+    padding: .1rem;
     border-radius: 58px;
     background-color: $green;
     text-align: center;
+    font-size: 16px;
 
     &Closed {
       background-color: $blue;
@@ -72,6 +76,6 @@
 
   &Time {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 16px;
   }
 }

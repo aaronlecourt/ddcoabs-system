@@ -7,10 +7,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    font-size: 16px;
 
     &Container {
         width: 80%;
         text-align: justify;
+
+        p {
+            font-size: 16px;
+        }
     }
 
     &Operating {
@@ -24,6 +29,7 @@
             border: 3px solid $white;
             padding: 0.5rem 1rem;
             border-radius: 50px;
+            font-size: 16px;
         }
     }
 
@@ -46,6 +52,7 @@
     justify-content: center;
     min-height: 100vh;
     background: linear-gradient(45deg, $blue, $green);
+    font-size: 16px;
     /* Other styles for the landing layout */
   }
 
