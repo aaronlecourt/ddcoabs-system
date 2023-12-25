@@ -515,7 +515,7 @@ export default function Home() {
         <ToastContainer />
         {session && (
           <main className={styles.main2}>
-            <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
+            <h1 className={styles.title}>Hello Dr. {`${session.user?.firstName} ${session.user?.lastName}`}!</h1>
             <div className={styles.container}>
               <section>
                 <div className={styles.noteContainer}>

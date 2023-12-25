@@ -49,7 +49,8 @@ export default function useAuthGuard() {
     if (!userProfile || Object.keys(userProfile).length == 0) return;
 
     const dentistRequiredFields = {
-      name: null,
+      firstName: null,
+      lastName: null,
       dateOfBirth: null,
       email: null,
       sex: null,
@@ -58,7 +59,8 @@ export default function useAuthGuard() {
     }
 
     const patientRequiredFields: any = {
-      name: null,
+      firstName: null,
+      lastName: null,
       dateOfBirth: null,
       age: null,
       email: null,

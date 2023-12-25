@@ -43,7 +43,8 @@ export default function Register({
   const { session, status } = useAuthGuard();
 
   const [formData, setFormData] = useState<FormData>({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     address: '',
     contactNumber: '',
@@ -54,7 +55,8 @@ export default function Register({
   })
 
   const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
-    name: { error: false, message: null },
+    firstName: { error: false, message: null },
+    lastName: { error: false, message: null },
     email: { error: false, message: null },
     address: { error: false, message: null },
     contactNumber: { error: false, message: null },
@@ -205,16 +207,31 @@ export default function Register({
           <div className={styles.form}>
             <div className={styles.formField}>
               <div className='formLabel'>
-                <label>Full Name</label>
-                {errorFormData.name.error && <span className='formLabel__errorMessage'>{errorFormData.name.message}</span>}
+                <label>First Name</label>
+                {errorFormData.firstName.error && <span className='formLabel__errorMessage'>{errorFormData.firstName.message}</span>}
               </div>
-              <div className={`formInput ${errorFormData.name.error ? 'formInput--error' : ''}`}>
+              <div className={`formInput ${errorFormData.firstName.error ? 'formInput--error' : ''}`}>
                 <input type='text'
                   onKeyDown={e => handleFormEnter(e, proceed)}
-                  name='name'
-                  value={formData.name}
+                  name='firstName'
+                  value={formData.firstName}
                   onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
-                  placeholder='Matt Baker'
+                  placeholder='Matt'
+                />
+              </div>
+            </div>
+            <div className={styles.formField}>
+              <div className='formLabel'>
+                <label>Last Name</label>
+                {errorFormData.lastName.error && <span className='formLabel__errorMessage'>{errorFormData.lastName.message}</span>}
+              </div>
+              <div className={`formInput ${errorFormData.lastName.error ? 'formInput--error' : ''}`}>
+                <input type='text'
+                  onKeyDown={e => handleFormEnter(e, proceed)}
+                  name='lastName'
+                  value={formData.lastName}
+                  onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                  placeholder='Baker'
                 />
               </div>
             </div>

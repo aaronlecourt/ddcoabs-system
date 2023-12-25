@@ -4,7 +4,11 @@ import ROLES from '../constants/roles'
 
 const schema = new Schema<IUser>({
     // id: ObjectId,
-    name: {
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
         type: String,
         required: true,
     },

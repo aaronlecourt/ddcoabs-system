@@ -17,7 +17,8 @@ import CancelButton from '../components/CancelButton';
 
 interface User {
   _id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   contactNumber: number;
   age: number;
@@ -37,7 +38,7 @@ export default function Accounts() {
   const [searchQuery, setSearchQuery] = useState('');
   
   const sortedUser = users.filter((user) =>
-    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
   );
   console.log('Filtered Users:', sortedUser);
 
@@ -67,10 +68,10 @@ export default function Accounts() {
           });
           break;
         case 'Alphabetical (A-Z)':
-          sortedUsers.sort((a, b) => a.name?.localeCompare(b.name));
+          sortedUsers.sort((a, b) => (`${a.firstName} ${a.lastName}`).localeCompare(`${b.firstName} ${b.lastName}`));
           break;
         case 'Alphabetical (Z-A)':
-          sortedUsers.sort((a, b) => b.name?.localeCompare(a.name));
+          sortedUsers.sort((a, b) => (`${b.firstName} ${b.lastName}`).localeCompare(`${a.firstName} ${a.lastName}`));
           break;
         default:
           break;
@@ -152,7 +153,8 @@ export default function Accounts() {
 
   const [updateUserFormData, setUpdateUserFormData] = useState<UpdateProfileFormData>({
     _id: '',
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     contactNumber: 0,
     age: 0,
@@ -412,12 +414,12 @@ export default function Accounts() {
                 {filteredBySelectedFilters.length > 0 ? (
                   filteredBySelectedFilters
                   .filter((user) =>
-                    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
+                    (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
                     )
                     .map((user, index) => (
                       <tr key={user._id}>
                         <td>{index + 1}</td>
-                        <td>{user.name}</td>
+                        <td>{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''}</td>
                         <td>{user.contactNumber}</td>
                         <td>{user.email}</td>
                         <td>{user.age}</td>
@@ -495,7 +497,7 @@ export default function Accounts() {
                   sortedUser.map((user, index) => (
                     <tr key={user._id}>
                       <td>{index + 1}</td>
-                      <td>{user.name}</td>
+                      <td>{`${user.firstName} ${user.lastName}`}</td>
                       <td>{user.contactNumber}</td>
                       <td>{user.email}</td>
                       <td> {user.age }</td>
@@ -571,7 +573,7 @@ export default function Accounts() {
                   users.map((user, index) => (
                     <tr key={user._id}>
                       <td>{index + 1}</td>
-                      <td>{user.name}</td>
+                      <td>{`${user.firstName} ${user.lastName}`}</td>
                       <td>{user.contactNumber}</td>
                       <td>{user.email}</td>
                       <td> {user.age }</td>

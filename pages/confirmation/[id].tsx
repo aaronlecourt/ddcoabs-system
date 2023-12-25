@@ -44,7 +44,8 @@ export default function Confirmation() {
         if (appointment.patientId) {
           const patientResponse = await fetch(`http://localhost:3000/api/global/user/${appointment.patientId}`);
           const patient = await patientResponse.json();
-          Object.assign(appointment, { patientName: patient.name });
+          const patientName = patient && patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : ''
+          Object.assign(appointment, { patientName })
         }
 
         if (!appointment.startTime && !appointment.endTime && appointment.timeUnit === 'PM') {
