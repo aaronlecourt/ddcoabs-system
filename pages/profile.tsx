@@ -10,6 +10,8 @@ import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import Button from '../components/Button';
 import { isProfileFormValid } from '../validations/profile';
 import useAuthGuard from '../guards/auth.guard';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -135,14 +137,14 @@ export default function Profile({
           .then(async (response) => {
             const responseMsg = await response.json()
             if (!response.ok) {
-              alert('Profile Update Failed: ' + JSON.stringify(responseMsg))
+              toast.error('Profile Update Failed: ' + JSON.stringify(responseMsg))
             } else {
-              alert('User Successfully Updated');
+              toast.success('User Successfully Updated');
               console.log('updated user ', responseMsg); // Handle the response from the API
             }
           })
           .catch(error => {
-            alert('User Update Failed');
+            toast.error('User Update Failed');
             console.error('Error updating data:', error);
           });
       }
@@ -156,6 +158,7 @@ export default function Profile({
   const renderContent = () => {
     return (
       <>
+      <ToastContainer />
         {session && (
           <main className={styles.main}>
             <h1 className={styles.title}>Hello {session.user?.name}!</h1>
@@ -380,6 +383,7 @@ export default function Profile({
 
   return (
     <>
+    <ToastContainer />
       {(status !== 'loading' && session) && (
         session.user?.role === 'patient' ? (
           <PatientLayout>

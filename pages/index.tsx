@@ -13,6 +13,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCancel, faChevronDown, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Button from '../components/Button';
 import Image from 'next/image';
+<<<<<<< Updated upstream
+=======
+import { useRouter } from 'next/router';
+import { IAppointment } from './interfaces/IAppointment';
+import { IUser } from './interfaces/IUser';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+>>>>>>> Stashed changes
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -73,22 +81,232 @@ export default function Home({
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            alert('appointment cancel failed: ' + JSON.stringify(responseMsg))
+            toast.error('appointment cancel failed: ' + JSON.stringify(responseMsg))
           } else {
-            alert('Appointment Cancel Successful')
+            toast.success('Appointment Cancel Successful')
             window.location.href = '/'
           }
         })
         .catch(error => {
-          alert('Appointment Cancel Failed');
+          toast.error('Appointment Cancel Failed');
           console.error('Error updating data:', error);
         });
     }
   }
 
+<<<<<<< Updated upstream
+=======
+  const filterAppointmentsByStatus = (status: string) => {
+    const currentDate = new Date().toDateString(); // Get today's date
+  
+    if (initialAppointmentData) {
+      const filteredAppointments = initialAppointmentData.filter((appointment: IAppointment) => {
+        const appointmentDate = new Date(appointment.date).toDateString();
+  
+        if (status === 'All') {
+          return true; // Show all appointments when 'All' is selected
+        } else if (status === 'Today') {
+          return appointmentDate === currentDate; // Show appointments for today's date
+        }
+  
+        return appointment.status === status; // Filter by other statuses
+      });
+  
+      setFilteredAppointments(filteredAppointments); // Update the filteredAppointments state with the filtered list
+    }
+  };
+
+  // UseEffect to filter appointments for 'Today' when the component mounts
+    useEffect(() => {
+      filterAppointmentsByStatus('Today');
+      handleSortChange('Latest to Oldest');
+    }, []);
+
+    const countAppointmentsByStatus = (status: string) => {
+      if (status === 'All') {
+        return initialAppointmentData.length;
+      }
+      return initialAppointmentData.filter((appointment:IAppointment) => appointment.status === status).length;
+    };
+    
+    const countAppointmentsForToday = () => {
+      const currentDate = new Date().toDateString();
+      return initialAppointmentData.filter((appointment: IAppointment) => {
+        const appointmentDate = new Date(appointment.date).toDateString();
+        return appointmentDate === currentDate;
+      }).length;
+    };
+
+    const handleSearch = async (term: string) => {
+      setSearchTerm(term);
+    
+      if (term.trim() !== '') {
+        const appointmentsToSearch = filteredAppointments.length > 0 ? filteredAppointments : initialAppointmentData;
+    
+        const fetchedAppointments = await Promise.all(appointmentsToSearch.map(async (appointment: IAppointment) => {
+          if (appointment.patientId) {
+            const response = await fetch(`/api/global/user/${appointment.patientId}`);
+            const patient = await response.json();
+    
+            return {
+              ...appointment,
+              patientName: patient ? patient.name || '' : '',
+            };
+          }
+          return appointment;
+        }));
+    
+        const filteredResults = fetchedAppointments.filter((appointment: IAppointment) => {
+          const matchesPatientName = appointment.patientName?.toLowerCase().includes(term.toLowerCase());
+          const matchesServiceName = appointment.dentistService.toLowerCase().includes(term.toLowerCase());
+    
+          return matchesPatientName || matchesServiceName;
+        });
+    
+        setSearchResults(filteredResults as IAppointment[]);
+      } else {
+        setSearchResults([]); // Reset searchResults to an empty array when the search term is empty
+      }
+      
+    };
+    
+    const renderAppointmentsByStatus = (appointmentsToMap: IAppointment[], status: string, searchTerm: string) => {
+      let filteredAppointments = appointmentsToMap;
+    
+      if (status !== 'All') {
+        filteredAppointments = appointmentsToMap.filter((appointment) => appointment.status === status);
+      }
+    
+      if (status === 'Today') {
+        const currentDate = new Date().toDateString();
+        filteredAppointments = appointmentsToMap.filter((appointment: IAppointment) => {
+          const appointmentDate = new Date(appointment.date).toDateString();
+          return appointmentDate === currentDate;
+        });
+      }
+    
+      if (searchTerm.trim() !== '') {
+        const searchResults = filteredAppointments.filter((appointment: IAppointment) => {
+          const matchesPatientName = appointment.patientName?.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesServiceName = appointment.dentistService.toLowerCase().includes(searchTerm.toLowerCase());
+    
+          return matchesPatientName || matchesServiceName;
+        });
+    
+        if (searchResults.length > 0) {
+          filteredAppointments = searchResults;
+        } else {
+          filteredAppointments = [];
+        }
+      }
+    
+      // Pagination calculation
+      const totalCount = filteredAppointments.length; // Total count after filtering
+      const searchCount = searchResults.length; // Count of search results
+    
+      const totalCountForPagination = searchTerm.trim() !== '' ? searchCount : totalCount;
+      const totalPages = Math.max(Math.ceil(totalCountForPagination / itemsPerPage), 1);
+    
+      const validatedCurrentPage = Math.min(currentPage, totalPages);
+    
+      const indexOfLastItem = validatedCurrentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentAppointments = filteredAppointments.slice(indexOfFirstItem, indexOfLastItem);
+    
+      return (
+        <>
+        <ToastContainer />
+          {currentAppointments.length > 0 ? (
+            <>
+              {currentAppointments.map((appointment: IAppointment, index: number) => (
+                <Appointment key={index} appointment={appointment} onCancelAppointment={onCancelAppointment} />
+              ))}
+              {renderPagination(totalPages, validatedCurrentPage)}
+            </>
+          ) : (
+            <div className={styles.appointments__empty}>No matching appointments found</div>
+          )}
+
+        </>
+      );
+    };
+    
+    
+    
+
+    const handleFilterChange = (newFilter: string) => {
+      if (newFilter !== selectedFilter) {
+        setSelectedFilter(newFilter);
+        filterAppointmentsByStatus(newFilter);
+      }
+
+      if (selectedSorting) {
+        handleSortChange(selectedSorting);
+      }
+    };
+    
+    const handleSortChange = (sortOption: string) => {
+      setSelectedSorting(sortOption);
+      let sortedAppointments = [...filteredAppointments]; // Create a copy of filteredAppointments
+    
+      switch (sortOption) {
+        case 'Oldest to Latest':
+          sortedAppointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          break;
+        case 'Latest to Oldest':
+          sortedAppointments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          break;
+        case 'Alphabetical (A-Z)':
+          sortedAppointments.sort((a, b) => a.dentistService.localeCompare(b.dentistService));
+          break;
+        case 'Alphabetical (Z-A)':
+          sortedAppointments.sort((a, b) => b.dentistService.localeCompare(a.dentistService));
+          break;
+        case 'Pending First':
+          const pendingAppointments = sortedAppointments.filter(appointment => appointment.status === 'Pending');
+          const otherAppointments = sortedAppointments.filter(appointment => appointment.status !== 'Pending');
+    
+          pendingAppointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          otherAppointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+          sortedAppointments = [...pendingAppointments, ...otherAppointments];
+          break;
+        default:
+          break;
+      }
+    
+      setFilteredAppointments(sortedAppointments); // Update the state with the sorted array
+    };
+
+    const renderPagination = (totalPages: number, currentPage: number) => {
+      const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+    
+      return (
+        <div className={styles.pagination}>
+          <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+            <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} color={'#737373'} />
+          </button>
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => setCurrentPage(number)}
+              className={currentPage === number ? styles.active : ''}
+            >
+              {number}
+            </button>
+          ))}
+          <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+            <FontAwesomeIcon icon={faChevronRight} width={16} height={16} color={'#737373'} />
+          </button>
+        </div>
+      );
+    };
+    
+>>>>>>> Stashed changes
   const renderContent = () => {
     return (
       <>
+      <ToastContainer />
         {session && (
           <main className={`${styles.main} ${styles.mainLandingPage}`}>
             <Image
@@ -107,6 +325,7 @@ export default function Home({
   const renderDentistContent = () => {
     return (
       <>
+<<<<<<< Updated upstream
         <Modal open={showCancelAppointment} setOpen={setShowCancelAppointment} modalWidth={400} modalRadius={10}>
           <h3 className={styles.cancelTitle}>Cancel Appointment</h3>
           <div className={styles.cancelText}>
@@ -121,6 +340,9 @@ export default function Home({
             <Button onClick={cancelAppointment}>Yes</Button>
           </div>
         </Modal>
+=======
+      <ToastContainer />
+>>>>>>> Stashed changes
         {session && (
           <main className={styles.main}>
             <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
@@ -173,6 +395,7 @@ export default function Home({
 
   return (
     <>
+     <ToastContainer />
       {(status !== 'loading' && session) && (
         session.user?.role === 'patient' ? (
           <PatientLayout>
