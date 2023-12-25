@@ -1,3 +1,11 @@
+export const isFirstNameValid = (firstName: string): boolean => {
+  return firstName.length >= 2
+}
+
+export const isLastNameValid = (lastName: string): boolean => {
+  return lastName.length >= 2
+}
+
 export const isEmailValid = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
