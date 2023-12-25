@@ -18,7 +18,11 @@ export const isMobileNumberValid = (mobileNumber: string): boolean => {
 
 export const isDateOfBirthValid = (dateOfBirth: string): boolean => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  return dateRegex.test(dateOfBirth);
+
+  const currentDate = new Date().setHours(0,0,0,0)
+  const birthDate = new Date(dateOfBirth).setHours(0,0,0,0)
+
+  return dateRegex.test(dateOfBirth) && birthDate < currentDate;
 };
 
 export const isPasswordValid = (password: string): boolean => {
