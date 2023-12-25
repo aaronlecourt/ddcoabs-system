@@ -68,6 +68,7 @@ export const authOptions = {
           firstName: user.firstName || '',
           lastName: user.lastName || '',
           role: user.role,
+          isArchived: user.isArchived
           // jwt: true
         },
       }
