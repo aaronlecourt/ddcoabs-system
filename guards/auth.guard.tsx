@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react"
+import { signOut } from 'next-auth/react';
 
 export default function useAuthGuard() {
   const { data: session, status }: any = useSession();
@@ -47,6 +48,10 @@ export default function useAuthGuard() {
 
   useEffect(() => {
     if (!userProfile || Object.keys(userProfile).length == 0) return;
+    if (userProfile.isArchived) {
+      signOut()
+      alert('Sorry. You cannot log in an archived account.')
+    }
 
     const dentistRequiredFields = {
       firstName: null,
