@@ -52,6 +52,15 @@ export default async function userHandler (
         }
         });
 
+        // dateOfBirth validation
+        if (body.dateOfBirth) {
+          const currentDate = new Date().setHours(0,0,0,0)
+          const birthDate = new Date(body.dateOfBirth).setHours(0,0,0,0)
+          
+          if (birthDate >= currentDate)
+              errorMessages.push('dateOfBirth should be before current date.')
+        }
+
         // validation of duplicate email
         const emailDuplicate = await User.findOne({ '_id': {$ne: id}, email: body.email });
         if (emailDuplicate) errorMessages.push('email already exists');

@@ -42,8 +42,8 @@ export const validateRegistrationRequest = async (body: any) => {
         const currentDate = new Date().setHours(0,0,0,0)
         const birthDate = new Date(body.dateOfBirth).setHours(0,0,0,0)
         
-        if (birthDate == currentDate)
-            errorMessages.push('dateOfBirth should not be equal to current date.')
+        if (birthDate >= currentDate)
+            errorMessages.push('dateOfBirth should be before current date.')
     }
     
     // validation of duplicate email

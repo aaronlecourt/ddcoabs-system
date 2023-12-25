@@ -57,6 +57,15 @@ export default async function userHandler (
           if (!body[v]) errorMessages.push(`${v} is required.`);
         });
 
+        // dateOfBirth validation
+        if (body.dateOfBirth) {
+          const currentDate = new Date().setHours(0,0,0,0)
+          const birthDate = new Date(body.dateOfBirth).setHours(0,0,0,0)
+          
+          if (birthDate >= currentDate)
+              errorMessages.push('dateOfBirth should not be before current date.')
+        }
+
         // validation of required fields for minors
         if (body.age && body.age < 18) {
           if (!body.guardianName) errorMessages.push('guardianName is required.');
