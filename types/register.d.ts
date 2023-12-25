@@ -1,7 +1,8 @@
 import { ErrorFormDataField } from "./error";
 
 export interface FormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   address: string;
   contactNumber: string;
@@ -12,7 +13,8 @@ export interface FormData {
 }
 
 export interface ErrorFormData {
-  name: ErrorFormDataField;
+  firstName: ErrorFormDataField;
+  lastName: ErrorFormDataField;
   email: ErrorFormDataField;
   address: ErrorFormDataField;
   contactNumber: ErrorFormDataField;

@@ -40,7 +40,8 @@ export default function Reschedule() {
       if (appointment.patientId) {
         const response = await fetch(`/api/global/user/${appointment.patientId}`);
         const patient = await response.json();
-        Object.assign(appointment, { patientName: patient.name });
+        const patientName = patient && patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : '';
+        Object.assign(appointment, { patientName })
       }
 
       if (!appointment.startTime && !appointment.endTime && appointment.timeUnit == 'PM') {

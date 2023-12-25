@@ -32,7 +32,8 @@ export default async function userHandler (
       case 'PUT':
         let errorMessages: string[] = [];
         const requiredRegistrationFields: string[] = [
-          'name',
+          'firstName',
+          'lastName',
           'email',
           'address',
           'contactNumber',
@@ -44,6 +45,11 @@ export default async function userHandler (
         // validation of required registration fields
         requiredRegistrationFields.map(v => {
           if (!body[v]) errorMessages.push(`${v} is required.`);
+
+          if (['firstName', 'lastName'].find(key => key == v)) {
+            if (body[v] && body[v].length < 2)
+                errorMessages.push(`${v} should be at least 2 characters.`);
+        }
         });
 
         // validation of duplicate email

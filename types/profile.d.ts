@@ -1,7 +1,8 @@
 import { ErrorFormDataField } from "./error";
 
 export type ProfileKeys = 
-  'name' |
+  'fistName' |
+  'lastName' |
   'dateOfBirth' |
   'age'
   'email' |
@@ -17,7 +18,8 @@ export type ProfileKeys =
 
 
 export interface ProfileFormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   dateOfBirth: string;
   age: string|number;
   email: string;
@@ -33,7 +35,8 @@ export interface ProfileFormData {
 }
 
 export interface ProfileErrorFormData {
-  name: ErrorFormDataField;
+  firstName: ErrorFormDataField;
+  lastName: ErrorFormDataField;
   dateOfBirth: ErrorFormDataField;
   age: ErrorFormDataField;
   email: ErrorFormDataField;
@@ -51,7 +54,8 @@ export interface ProfileErrorFormData {
 
 export interface UpdateProfileFormData {
   _id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   contactNumber: number;
   age: number;
@@ -63,7 +67,8 @@ export interface UpdateProfileFormData {
 
 export interface ArchiveProfileFormData {
   _id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   contactNumber: number;
   sex: string;

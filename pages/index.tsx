@@ -33,8 +33,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     }
 
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/global/appointment`);
-    const data = await response.json();
-    console.log('appointments data ', data);
+    let data = await response.json();
 
     return {
       props: { isConnected: true, initialAppointmentData: data || [] },
@@ -71,7 +70,7 @@ export default function Home({
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  // const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
+  // const totalPages = Math.max(Math.ceil((filteredAppointments || []).length / itemsPerPage), 1);
 
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -181,7 +180,7 @@ export default function Home({
     
             return {
               ...appointment,
-              patientName: patient ? patient.name || '' : '',
+              patientName: patient && patient.firstName && patient.lastName ? `${patient.firstName} ${patient.lastName}` : '',
             };
           }
           return appointment;
@@ -203,7 +202,8 @@ export default function Home({
     
     const renderAppointmentsByStatus = (appointmentsToMap: IAppointment[], status: string, searchTerm: string) => {
       let filteredAppointments = appointmentsToMap;
-    
+      console.log('filtered ', filteredAppointments)
+      
       if (status !== 'All') {
         filteredAppointments = appointmentsToMap.filter((appointment) => appointment.status === status);
       }
@@ -275,7 +275,7 @@ export default function Home({
     
     const handleSortChange = (sortOption: string) => {
       setSelectedSorting(sortOption);
-      let sortedAppointments = [...filteredAppointments]; // Create a copy of filteredAppointments
+      let sortedAppointments = [...(filteredAppointments || [])]; // Create a copy of filteredAppointments
     
       switch (sortOption) {
         case 'Oldest to Latest':
@@ -428,7 +428,7 @@ export default function Home({
       <ToastContainer />
         {session && (
           <main className={styles.main2}>
-            <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
+            <h1 className={styles.title}>Hello Dr. {`${session.user?.firstName} ${session.user?.lastName}`}!</h1>
             <div className={styles.container}>
               <section>
               <div className={styles.noteContainer}>

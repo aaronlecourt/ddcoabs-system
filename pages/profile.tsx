@@ -34,7 +34,8 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       console.log('data ', user)
 
       initialFormData = {
-        name: data.name || '',
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
         dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().substring(0, 10) : '',
         age: data.age || '',
         email: data.email || '',
@@ -69,7 +70,8 @@ export default function Profile({
 
   const bloodType = ['O', 'O+', 'O-', 'A', 'A+', 'A-', 'B', 'B+', 'B-', 'AB', 'AB+', 'AB-']
   const [formData, setFormData] = useState<ProfileFormData>({
-    name: '',
+    firstName: '',
+    lastName: '',
     dateOfBirth: '',
     age: '',
     email: '',
@@ -86,7 +88,8 @@ export default function Profile({
   })
 
   const [errorFormData, setErrorFormData] = useState<ProfileErrorFormData>({
-    name: { error: false, message: null },
+    firstName: { error: false, message: null },
+    lastName: { error: false, message: null },
     dateOfBirth: { error: false, message: null },
     age: { error: false, message: null },
     email: { error: false, message: null },
@@ -104,7 +107,8 @@ export default function Profile({
   useEffect(() => {
     if (session) {
       setErrorFormData({
-        name: { error: false, message: null },
+        firstName: { error: false, message: null },
+        lastName: { error: false, message: null },
         dateOfBirth: { error: false, message: null },
         age: { optional: session.user?.role == 'dentist', error: false, message: null },
         email: { error: false, message: null },
@@ -162,7 +166,7 @@ export default function Profile({
       <ToastContainer />
         {session && (
           <main className={styles.main}>
-            <h1 className={styles.title}>Hello {session.user?.name}!</h1>
+            <h1 className={styles.title}>Hello {`${session.user?.firstName} ${session.user?.lastName}`}!</h1>
             <p className={styles.subtitle}>You can edit your profile information, change your password, and update your patient record here.</p>
             <div className={styles.information}>
               <div className={styles.information__title}>{session.user?.role == 'patient' ? 'Patient Information Record' : 'Edit Profile Information'}</div>
@@ -170,14 +174,28 @@ export default function Profile({
                 <div className={styles.form__row}>
                   <div className={styles.form__row__field}>
                     <div className={`formLabel ${styles.form__row__field__label}`}>
-                      <label>Name: </label>
+                      <label>First Name: </label>
                     </div>
-                    <div className={`formInput ${errorFormData.name.error ? 'formInput--error' : ''}`}>
-                      {errorFormData.name.error && <span className='formInput__errorMessage'>{errorFormData.name.message}</span>}
+                    <div className={`formInput ${errorFormData.firstName.error ? 'formInput--error' : ''}`}>
+                      {errorFormData.firstName.error && <span className='formInput__errorMessage'>{errorFormData.firstName.message}</span>}
                       <input type='text'
                         onKeyDown={e => handleFormEnter(e, updateProfile)}
-                        name='name'
-                        value={formData.name}
+                        name='firstName'
+                        value={formData.firstName}
+                        onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.form__row__field}>
+                    <div className={`formLabel ${styles.form__row__field__label}`}>
+                      <label>Last Name: </label>
+                    </div>
+                    <div className={`formInput ${errorFormData.lastName.error ? 'formInput--error' : ''}`}>
+                      {errorFormData.lastName.error && <span className='formInput__errorMessage'>{errorFormData.lastName.message}</span>}
+                      <input type='text'
+                        onKeyDown={e => handleFormEnter(e, updateProfile)}
+                        name='lastName'
+                        value={formData.lastName}
                         onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                       />
                     </div>

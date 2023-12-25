@@ -65,6 +65,8 @@ export const authOptions = {
         user: {
           ...session.user,
           id: token.sub,
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
           role: user.role,
           // jwt: true
         },

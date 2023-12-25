@@ -33,7 +33,8 @@ export default async function userHandler (
       case 'PUT':
         let errorMessages: string[] = [];
         const requiredRegistrationFields: string[] = [
-          'name',
+          'firstName',
+          'lastName',
           'email',
           'address',
           'contactNumber',

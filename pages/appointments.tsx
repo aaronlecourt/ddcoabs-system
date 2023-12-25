@@ -84,7 +84,7 @@ export default function Home({
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  // const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
+  // const totalPages = Math.max(Math.ceil((filteredAppointments || []).length / itemsPerPage), 1);
 
   const handleCancelReasonChange = (e:any) => {
     const value = e.target.value;
@@ -194,7 +194,7 @@ export default function Home({
     
             return {
               ...appointment,
-              patientName: patient ? patient.name || '' : '',
+              patientName: patient && patient.firstName && patient.lastName ? `${patient.firstName } ${patient.lastName}` : '',
             };
           }
           return appointment;
@@ -290,7 +290,7 @@ export default function Home({
     
     const handleSortChange = (sortOption: string) => {
       setSelectedSorting(sortOption);
-      let sortedAppointments = [...filteredAppointments]; // Create a copy of filteredAppointments
+      let sortedAppointments = [...(filteredAppointments || [])]; // Create a copy of filteredAppointments
     
       switch (sortOption) {
         case 'Oldest to Latest':
@@ -404,7 +404,7 @@ export default function Home({
         </Modal>
         {session && (
           <main className={styles.main2}>
-            <h1 className={styles.title}>Hello {session.user?.name}!</h1>
+            <h1 className={styles.title}>Hello {`${session.user?.firstName} ${session.user?.lastName}`}!</h1>
             <div className={styles.container}>
               <section>
                 <div className={styles.filters}>
