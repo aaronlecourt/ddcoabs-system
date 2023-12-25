@@ -36,6 +36,15 @@ export const validateRegistrationRequest = async (body: any) => {
         }
     });
 
+    // date validation
+    if (body.dateOfBirth) {
+        const currentDate = new Date().setHours(0,0,0,0)
+        const birthDate = new Date(body.dateOfBirth).setHours(0,0,0,0)
+        
+        if (birthDate == currentDate)
+            errorMessages.push('dateOfBirth should not be equal to current date.')
+    }
+    
     // validation of duplicate email
     const emailDuplicate = await User.findOne({ email: body.email });
     if (emailDuplicate) errorMessages.push('Email address already exists');

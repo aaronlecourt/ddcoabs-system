@@ -1,4 +1,6 @@
 import {
+  isFirstNameValid,
+  isLastNameValid,
   isEmailValid,
   isMobileNumberValid,
   isDateOfBirthValid,
@@ -22,6 +24,32 @@ export const isProfileFormValid = (formData: FormData, errorFormData: ErrorFormD
 
       result = false;
     }
+  }
+
+  // First Name Validation
+  if (formData.firstName && !isFirstNameValid(formData.firstName)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['firstName']: {
+        error: true,
+        message: 'Must be minimum of 2 characters.'
+      }
+    }))
+
+    result = false;
+  }
+
+  // Last Name Validation
+  if (formData.lastName && !isFirstNameValid(formData.lastName)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['lastName']: {
+        error: true,
+        message: 'Must be minimum of 2 characters.'
+      }
+    }))
+
+    result = false;
   }
 
   // Date of Birth Validation
