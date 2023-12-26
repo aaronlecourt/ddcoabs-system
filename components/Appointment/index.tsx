@@ -1,10 +1,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './style.module.scss'
-import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faEye, faFemale, faMale, faMoneyBill, faNoteSticky, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
+import styles1 from "../../styles/pages/home.module.scss";
+import { faCalendar, faCancel, faCheckCircle, faCheckDouble, faChevronDown, faChevronRight, faClock, faEye, faFemale, faMale, faMoneyBill, faNoteSticky, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react';
 import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
 import { IAppointment } from '../../pages/interfaces/IAppointment';
 import Modal from '../Modal';
+import Button from '../Button';
 
 export default function Appointment({ appointment, onCancelAppointment, isPatient }: any) {
   const [collapse, setCollapse] = useState(true);
@@ -249,10 +251,6 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               <p>Last Dental Visit: {selectedAppointmentDetails.details.lastDentalVisit || 'N/A'}</p>
             </div>
           </div>
-          
-
-
-          {/* Add more appointment details as needed */}
         </Modal>
       )}
 
@@ -260,14 +258,32 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
         <Modal
           open={toggleConfirmationModal}
           setOpen={toggleConfirmationModal}
-          // Add modal props (e.g., modalWidth, modalRadius, etc.)
+          modalWidth={400} modalRadius={10}
         >
-          {/* Modal content for confirmation */}
-          <div>
-            <h3>Confirm Mark As Done</h3>
-            <p>Are you sure you want to mark this appointment as done?</p>
-            <button onClick={confirmDone}>Yes, Mark As Done</button>
-            <button onClick={toggleConfirmationModal}>Cancel</button>
+          <h3 className={styles1.cancelTitle}>Mark as Done</h3>
+          <div className={styles1.cancelText}>
+            <div style={{ width: "54px", height: "54px" }}>
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                size="3x"
+                width={54}
+                height={54}
+                color={"#90EE90"}
+              />
+            </div>
+            <p>
+              Do you want to mark this appointment as done? This action
+              is not irreversible.
+            </p>
+          </div>
+          <div className={styles1.cancelActions}>
+            <Button
+              type="secondary"
+              onClick={toggleConfirmationModal}
+            >
+              No
+            </Button>
+            <Button onClick={confirmDone}>Yes</Button>
           </div>
         </Modal>
       )}
