@@ -163,30 +163,44 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           </div>
 
           <div className={styles.apptDetails_More}>
-            <div>
+            <div className={styles.apptDetails_Sub}>
               <h3>Medical History</h3>
               <p>Good Health: {selectedAppointmentDetails.details.goodHealth}</p>
               <p>Medical Treatment: {selectedAppointmentDetails.details.medicalTreatment}</p>
-                <p>{selectedAppointmentDetails.details.medicalTreatmentValue}</p>
+                {selectedAppointmentDetails.details.medicalTreatment === 'yes' && (
+                  <span>{selectedAppointmentDetails.details.medicalTreatmentValue}</span>
+                )}
               <p>Illness: {selectedAppointmentDetails.details.illness}</p>
-                <p>{selectedAppointmentDetails.details.illnessValue}</p>
+                {selectedAppointmentDetails.details.illness === 'yes' && (
+                  <span>{selectedAppointmentDetails.details.illnessValue}</span>
+                )}
               <p>Hospitalized: {selectedAppointmentDetails.details.hospitalized}</p>
-                <p>{selectedAppointmentDetails.details.hospitalizedValue}</p>
+                {selectedAppointmentDetails.details.hospitalized === 'yes' && (
+                  <span>{selectedAppointmentDetails.details.hospitalizedValue}</span>
+                )}
               <p>Medication: {selectedAppointmentDetails.details.medication}</p>
-                <p>{selectedAppointmentDetails.details.medicationValue}</p>
+                {selectedAppointmentDetails.details.medication === 'yes' && (
+                  <span>{selectedAppointmentDetails.details.medicationValue}</span>
+                )}
               <p>Tobacco: {selectedAppointmentDetails.details.tobacco}</p>
               <p>Alcohol: {selectedAppointmentDetails.details.alchohol}</p>
               <p>Allergy: {selectedAppointmentDetails.details.allergy}</p>
-                <p>Allergy Value: {selectedAppointmentDetails.details.allergyValue}</p>
-                
-              {/* check if sex is F */}
-              <p>Pregnant: {selectedAppointmentDetails.details.pregnant}</p>
-              <p>Nursing: {selectedAppointmentDetails.details.nursing}</p>
-              <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
+                {selectedAppointmentDetails.details.allergy === 'yes' && (
+                  <span>{selectedAppointmentDetails.details.allergyValue}</span>
+                )}                
+              {sex === 'F' && (
+                <>
+                <p>Pregnant: {selectedAppointmentDetails.details.pregnant}</p>
+                <p>Nursing: {selectedAppointmentDetails.details.nursing}</p>
+                <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
+                </>
+              )}
             </div>
-            <div>
+            <div className={styles.apptDetails_Sub}>
               <h3>Dental History</h3>
-              <p>{selectedAppointmentDetails.concern}</p>
+              <p>Previous Dentist: {selectedAppointmentDetails.details.others.previousDentist || 'N/A'}</p>
+              <p>Previous Treatment: {selectedAppointmentDetails.details.others.previousTreatment || 'N/A'}</p>
+              <p>Last Dental Visit: {selectedAppointmentDetails.details.others.lastDentalVisit || 'N/A'}</p>
             </div>
           </div>
           
@@ -302,7 +316,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             </div>
           </>
         }
-        {appointment.status == APPOINTMENT_STATUS.rescheduled && isPatient &&
+        {appointment.status == APPOINTMENT_STATUS.rescheduled && !isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
@@ -317,7 +331,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             </div>
           </>
         }
-        {appointment.status == APPOINTMENT_STATUS.rescheduled && !isPatient &&
+        {appointment.status == APPOINTMENT_STATUS.rescheduled && isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
@@ -328,6 +342,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
+                <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
+                <span>Cancel</span>
               </div>
             </div>
           </>

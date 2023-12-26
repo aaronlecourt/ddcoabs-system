@@ -33,7 +33,7 @@ export default function Accounts() {
   const [searchQuery, setSearchQuery] = useState('');
   
   const sortedUser = users.filter((user) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
   console.log('Filtered Users:', sortedUser);
 
@@ -394,7 +394,7 @@ export default function Accounts() {
                 {filteredBySelectedFilters.length > 0 ? (
                   filteredBySelectedFilters
                   .filter((user) =>
-                    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+                    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
                     )
                     .map((user, index) => (
                       <tr key={user._id}>

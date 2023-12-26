@@ -462,6 +462,7 @@ export default function Services() {
           <div className={styles1.cancelText}>
             <div className={styles1.filters__search}>
               <select onChange={(e: any) => setServiceFormData({ ...serviceFormData, type: e.target.value })} value={serviceFormData.type}>
+                <option selected disabled>Choose a type</option>
                 {types.map((type, index) => (
                   <option key={index} value={type}>
                     {type}
@@ -507,6 +508,7 @@ export default function Services() {
             <div className={styles1.filters__type}>
               <select onChange={(e: any) => setUpdateServiceFormData({ ...updateServiceFormData, type: e.target.value })}
                 value={updateServiceFormData.type}>
+                <option selected disabled>Choose a type</option>
                 {types.map((type, index) => (
                   <option key={index} value={type}>
                     {type}
