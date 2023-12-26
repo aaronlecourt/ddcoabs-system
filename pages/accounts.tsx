@@ -396,126 +396,138 @@ export default function Accounts() {
                 </tr>
               </thead>
               <tbody>
-              {users.map((user, index) => {
-                if (filteredBySelectedFilters.length > 0) {
-                  return (
+               {/* THIS IS FOR FILTER */}
+                {filteredBySelectedFilters.length > 0 ? (
+                  filteredBySelectedFilters
+                  .filter((user) =>
+                    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map((user, index) => (
+                      <tr key={user._id}>
+                        <td>{index + 1}</td>
+                        <td>{user.name}</td>
+                        <td>{user.contactNumber}</td>
+                        <td>{user.email}</td>
+                        <td>{user.age}</td>
+                        <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
+                        <td>
+                          <select
+                            value={user.role}
+                            onChange={(e) => handleRoleChange(e, index)}
+                          >
+                            {roles.map((role) => (
+                              <option key={role} value={role}>
+                                {role}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <Button> Show More </Button>
+                        </td>
+                        <td className={styles1.tableAction}>
+                          {/* Existing buttons */}
+                          {user.DropDownRole !== 'dentist' && (
+                            <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                              <FontAwesomeIcon
+                                icon={faFileArchive}
+                                width={24}
+                                height={24}
+                                color={'#ffffff'}
+                              />
+                            </ArchiveButton>
+                          )}
+                          <Button
+                            onClick={(e: any) => {
+                              if (user.role === 'dentist' || user.role === 'employee') {
+                                setShowValiUser(true);
+                                onUpdateUser(user, 'updateRole');
+                                // Show the modal for admin or employee users
+                              } else {
+                                onUpdateUser(user, 'updateRolePatient');
+                              }
+                            }}
+                          >
+                            Update Role
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                ) : 
+                // THIS IS FOR SEARCHING - just named it sort
+                sortedUser.length > 0 ? (
+                  sortedUser.map((user, index) => (
                     <tr key={user._id}>
-                      <td>{index + 1}</td>
-                      <td>{user.name}</td>
-                      <td>{user.contactNumber}</td>
-                      <td>{user.email}</td>
-                      <td>{user.age}</td>
-                      <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
-                      <td>
-                        <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
-                        {roles.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                        </select>
-                      </td>
-                      <td>
-                        <Button> Show More </Button>
-                      </td>
-                      <td className={styles1.tableAction}>
-                        {user.role !== 'dentist' && (
-                          <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                          </ArchiveButton>
-                        )}
-                        <Button onClick={(e: any) => {
-                          if (user.role === 'dentist' || user.role === 'employee') {
-                            setShowValiUser(true);
-                            onUpdateUser(user, 'updateRole');
-                            // Show the modal for admin or employee users
-                          } else {
-                            onUpdateUser(user, 'updateRolePatient');
-                          }
-                        }}> Update Role </Button>
-                      </td>
-                    </tr>
-                  );
-                } else if (sortedUser.length > 0) {
-                  return (
-                    <tr key={user._id}>
-                      <td>{index + 1}</td>
-                      <td>{user.name}</td>
-                      <td>{user.contactNumber}</td>
-                      <td>{user.email}</td>
-                      <td>{user.age}</td>
-                      <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
-                      <td>
-                        <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
-                        {roles.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                        </select>
-                      </td>
-                      <td>
-                        <Button> Show More </Button>
-                      </td>
-                      <td className={styles1.tableAction}>
-                        {user.role !== 'dentist' && (
-                          <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                          </ArchiveButton>
-                        )}
-                        <Button onClick={(e: any) => {
-                          if (user.role === 'dentist' || user.role === 'employee') {
-                            setShowValiUser(true);
-                            onUpdateUser(user, 'updateRole');
-                            // Show the modal for admin or employee users
-                          } else {
-                            onUpdateUser(user, 'updateRolePatient');
-                          }
-                        }}> Update Role </Button>
-                      </td>
-                    </tr>
-                  );
-                } else {
-                  return (
-                    <tr key={user._id}>
-                      <td>{index + 1}</td>
-                      <td>{user.name}</td>
-                      <td>{user.contactNumber}</td>
-                      <td>{user.email}</td>
-                      <td>{user.age}</td>
-                      <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
-                      <td>
-                        <select value = {user.role && user.DropDownRole} onChange = {(e) => handleRoleChange(e, index)}>
-                        {roles.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                        </select>
-                      </td>
-                      <td>
-                        <Button> Show More </Button>
-                      </td>
-                      <td className={styles1.tableAction}>
-                        {user.role !== 'dentist' && (
-                          <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                          </ArchiveButton>
-                        )}
-                        <Button onClick={(e: any) => {
-                          if (user.role === 'dentist' || user.role === 'employee') {
-                            setShowValiUser(true);
-                            onUpdateUser(user, 'updateRole');
-                            // Show the modal for admin or employee users
-                          } else {
-                            onUpdateUser(user, 'updateRolePatient');
-                          }
-                        }}> Update Role </Button>
-                      </td>
-                    </tr>
-                  );
-                }
-              })}
+                    <td>{index + 1}</td>
+                    <td>{user.name}</td>
+                    <td>{user.contactNumber}</td>
+                    <td>{user.email}</td>
+                    <td> {user.age }</td>
+                    <td> {user.sex}</td>
+                    <td>
+                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
+                      {roles.map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
+                      </select>
+                    </td>
+                    <td> <Button> Show More </Button></td>
+                    <td className={styles1.tableAction}> 
+                      {user.DropDownRole !== 'dentist' && (
+                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                        </ArchiveButton>
+                      )}
+                      <Button onClick={(e: any) => {
+                        if (user.role === 'dentist' || user.role === 'employee') {
+                          setShowValiUser(true);
+                          onUpdateUser(user, 'updateRole');
+                          // Show the modal for admin or employee users
+                        } else {
+                          onUpdateUser(user, 'updateRolePatient');
+                        }
+                      }}> Update Role </Button>
+                    </td>
+                  </tr>
+                   )) 
+                ) : (
+                  // GENERAL VIEWING
+                users.map((user, index) => (
+                  <tr key={user._id}>
+                    <td>{index + 1}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.contactNumber}</td>
+                    <td>
+                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
+                      {roles.map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
+                      </select>
+                    </td>
+                    <td className={styles1.tableAction}> 
+                      {user.DropDownRole !== 'dentist' &&  (
+                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                        </ArchiveButton>
+                      )}
+                      <Button onClick={(e: any) => {
+                        if (user.role === 'dentist' || user.role === 'employee') {
+                          setShowValiUser(true);
+                          onUpdateUser(user, 'updateRole');
+                          // Show the modal for admin or employee users
+                        } else {
+                          onUpdateUser(user, 'updateRolePatient');
+                        }
+                      }}> Update Role </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
               </tbody>
             </table>
           </main>
