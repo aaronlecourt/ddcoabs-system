@@ -195,12 +195,27 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
                 </>
               )}
+              <br />
+              {selectedAppointmentDetails.details.others && (
+                <>
+                  <h3>Have or has had:</h3>
+                  {selectedAppointmentDetails.details.others ? (
+                    selectedAppointmentDetails.details.others.map((item: string, index: number) => (
+                      <li key={index}>{item}</li>
+                    ))
+                  ) : (
+                    <li>N/A</li>
+                  )}
+                </>
+              )}
+              
+                  
             </div>
             <div className={styles.apptDetails_Sub}>
               <h3>Dental History</h3>
-              <p>Previous Dentist: {selectedAppointmentDetails.details.others.previousDentist || 'N/A'}</p>
-              <p>Previous Treatment: {selectedAppointmentDetails.details.others.previousTreatment || 'N/A'}</p>
-              <p>Last Dental Visit: {selectedAppointmentDetails.details.others.lastDentalVisit || 'N/A'}</p>
+              <p>Previous Dentist: {selectedAppointmentDetails.details.previousDentist || 'N/A'}</p>
+              <p>Previous Treatment: {selectedAppointmentDetails.details.previousTreatment || 'N/A'}</p>
+              <p>Last Dental Visit: {selectedAppointmentDetails.details.lastDentalVisit || 'N/A'}</p>
             </div>
           </div>
           
