@@ -52,16 +52,22 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
   }
 
   const getPatientName = async () => {
-    if (appointment.patientId) {
-      const response = await fetch(`/api/global/user/${appointment.patientId}`);
-      const patient = await response.json();
-      if (patient)
-        Object.assign(appointment, {
-          patientName: patient.name || ''
-        })
-        setName(patient?.name)
+    try {
+      if (appointment.patientId && !appointment.patientName) {
+        const response = await fetch(`/api/global/user/${appointment.patientId}`);
+        const patient = await response.json();
+        if (patient && patient.name) {
+          // Update the appointment's patientName property
+          appointment.patientName = patient.name;
+          setName(patient.name);
+        }
+      }
+    } catch (error) {
+      // Handle errors when fetching patient details
+      console.error('Error fetching patient name:', error);
     }
-  }
+  };
+  
 
   const getPatientSex = async () => {
     try {
