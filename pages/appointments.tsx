@@ -165,7 +165,7 @@ export default function Home({
   // UseEffect to filter appointments for 'Today' when the component mounts
     useEffect(() => {
       filterAppointmentsByStatus('Today');
-      handleSortChange('Latest to Oldest');
+      // handleSortChange('Latest to Oldest');
     }, []);
 
     const countAppointmentsByStatus = (status: string) => {
