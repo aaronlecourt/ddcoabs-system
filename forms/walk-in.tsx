@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, forwardRef, useContext, useEffect, useImperat
 import { handleFormEnter, handleFormDataChange } from '../utils/form-handles'
 import styles from '../styles/forms/patient.module.scss'
 import { isPatientFormValid } from '../validations/patientform'
-import { BookingFormContext } from '../pages/book'
+import { BookingFormContextDentist } from '../pages/book'
 import Button from '../components/ArchiveButton'
 
 export const PatientWalkIn = {
@@ -25,18 +25,18 @@ export const ErrorPatientFormObjectDentist = {
     guardianNumber: { optional: true, error: false, message: null },
 }
 
-const BookPatientForm = forwardRef(({ }: any, ref) => {
+const BookPatientFormDentist = forwardRef(({ }: any, ref) => {
   const {
-    patientForm,
-    setPatientForm,
-    patientErrorForm,
-    setPatientErrorForm,
+    patientFormDentist,
+    setPatientFormDentist,
+    patientErrorFormDataDentist,
+    setPatientErrorFormDentist,
     onStepNext
-  }: any = useContext(BookingFormContext);
-  const formData = patientForm;
-  const setFormData = setPatientForm;
-  const errorFormData = patientErrorForm;
-  const setErrorFormData = setPatientErrorForm;
+  }: any = useContext(BookingFormContextDentist);
+  const formData = patientFormDentist;
+  const setFormData = setPatientFormDentist;
+  const errorFormData = patientErrorFormDataDentist;
+  const setErrorFormData = setPatientErrorFormDentist;
   
   useEffect(() => {
     
@@ -110,4 +110,4 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
     </div>
   )
 })
-export default BookPatientForm;
+export default BookPatientFormDentist;

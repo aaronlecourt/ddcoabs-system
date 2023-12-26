@@ -46,7 +46,7 @@ export default function useAuthGuard() {
   }, [status]);
 
   useEffect(() => {
-    if (Object.keys(userProfile).length == 0) return;
+    if (!userProfile || Object.keys(userProfile).length == 0) return;
 
     const dentistRequiredFields = {
       name: null,
