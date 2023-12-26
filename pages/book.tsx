@@ -19,6 +19,7 @@ import { ErrorPatientFormObjectDentist, PatientWalkIn } from '../forms/walk-in';
 import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
 
 export const BookingFormContext = createContext({})
+export const BookingFormContextDentist = createContext({})
 
 
 export default function Book() {
@@ -120,24 +121,38 @@ export default function Book() {
         const updatedSteps = [...prevSteps];
         const patientFormStepIndex = updatedSteps.findIndex(step => step.label === 'Patient Form');
         if (patientFormStepIndex !== -1) {
+          updatedSteps[patientFormStepIndex].label = "Walk In Patient Form";
           updatedSteps[patientFormStepIndex].component = () => <BookWalkInForm ref={formRef} />;
         }
         return updatedSteps;
       });
+  
+      // Update context values for the dentist
+      setPatientFormDentist(PatientWalkIn);
+      setPatientErrorFormDentist(ErrorPatientFormObjectDentist);
     }
   }, [session?.user?.role]);
 
   const [currentStep, setCurrentStep] = useState(steps[currentStepIndex])
+  // FOR DENTIST
   const [patientFormDentist, setPatientFormDentist] = useState<PatientFormDataDentist>(PatientWalkIn)
-  const [patientForm, setPatientForm] = useState<PatientFormData>(PatientFormObject)
   const [patientErrorFormDataDentist, setPatientErrorFormDentist] = useState<PatientErrorFormDataDentist>(ErrorPatientFormObjectDentist)
+
+  // FOR PATIENT
+  const [patientForm, setPatientForm] = useState<PatientFormData>(PatientFormObject)
   const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
   const [patientFormCheckbox, setPatientFormCheckbox] = useState<Array<PatientFormCheckbox[]>>(PatientFormCheckboxList)
+
+  // FOR SERCVICES
   const [servicesForm, setServicesForm] = useState<ServicesFormData>(ServicesFormObject);
   const [servicesErrorForm, setServicesErrorForm] = useState<ServicesErrorFormData>(ErrorServicesFormObject);
   const [services, setServices] = useState([]);
+
+  // FOR DATE N TIME
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
+
+  // FOR PAYMENT FORM
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Pay in Cash');
 
   const bookingFormContextValues = {
@@ -150,13 +165,23 @@ export default function Book() {
     selectedDate, setSelectedDate,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,
-    onStepNext, onStepBack,
+    onStepNext, onStepBack
+  }
 
+  const bookingFormContextValuesDentist = {
     patientFormDentist, setPatientFormDentist,
-    patientErrorFormDataDentist, setPatientErrorFormDentist
+    patientErrorFormDataDentist, setPatientErrorFormDentist,
+    servicesForm, setServicesForm,
+    servicesErrorForm, setServicesErrorForm,
+    services, setServices,
+    selectedDate, setSelectedDate,
+    selectedTimeUnit, setSelectedTimeUnit,
+    selectedPaymentMethod, setSelectedPaymentMethod,
+    onStepNext, onStepBack,
   }
 
   const renderContent = () => {
+    console.log('User Role:', session?.user?.role);
     return (
       <>
         {session && (
@@ -172,10 +197,16 @@ export default function Book() {
               onStepNext={onStepNext}
             />
             <section className={styles.component}>
+              {session.user?.role === 'dentist' ? (
+              <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
+                {currentStep && currentStep.component && <currentStep.component />}
+              </BookingFormContextDentist.Provider>
+            ) : (
               <BookingFormContext.Provider value={bookingFormContextValues}>
                 {currentStep && currentStep.component && <currentStep.component />}
               </BookingFormContext.Provider>
-            </section>
+            )}
+          </section>
           </main>
         )}
       </>

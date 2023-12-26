@@ -109,13 +109,19 @@ export default function Services() {
         const data: Service[] = await response.json();
         setServices(data);
         setSortedServices(data);
+
+        const totalPages = Math.max(Math.ceil(data.length / itemsPerPage), 1);
+        if (currentPage > totalPages) {
+          setCurrentPage(totalPages);
+        }
+
       } catch (error) {
         console.error('Error fetching services:', error);
       }
     };
 
     fetchServices();
-  },[]);
+  }, []);
 
   useEffect(() => {
     const updateServices = () => {
@@ -197,10 +203,12 @@ export default function Services() {
     });
   };
 
+  // FOR ADD SERVICE
   const addService = async (e: any) => {
     e.preventDefault();
 
     try {
+    
       const apiUrl = '/api/dentist/dentist-service';
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -219,9 +227,32 @@ export default function Services() {
 
       setShowAddService(false);
 
-      setServices([...services, responseData]);
+      // Check if the service is added to the services state
+      setServices(prevServices => {
+        const updatedServices = [...prevServices, responseData];
+        console.log('Updated Services:', updatedServices);
+        return updatedServices;
+      });
+
+      // Calculate the total number of pages based on the updated services
+      const updatedTotalPages = Math.max(Math.ceil((services.length + 1) / itemsPerPage), 1);
+
+      // Update the sortedServices array with the new service data
+      setSortedServices(prevSortedServices => {
+        const updatedSortedServices = [...prevSortedServices, responseData];
+        console.log('Updated Sorted Services:', updatedSortedServices);
+        return updatedSortedServices;
+      });
+
+      // Update the current page to display the new service if it's on the last page
+      setCurrentPage(updatedTotalPages);
+
+      // Inside addService after updating states
+      console.log('Updated Services:', services);
+      console.log('Updated Sorted Services:', sortedServices);
 
       clearModal();
+      
     } catch (error) {
       alert('Service failed');
       console.error('Error adding service:', error);
@@ -307,6 +338,8 @@ export default function Services() {
     'Price (Lowest to Highest)',
     'Price (Highest to Lowest)',
   ];
+
+  // FOR ARCHIVE
   
   const archiveService = async (e: any) => {
     try {
@@ -326,15 +359,15 @@ export default function Services() {
         console.log('Service updated: ', updatedService);
   
         setShowArchiveService(false);
-  
-        setServices((prevServices) =>
-          prevServices.map((prevService) =>
-            prevService._id === updatedService._id ? updatedService : prevService
-          )
+
+        // Remove the archived service from services
+        setServices(prevServices =>
+          prevServices.filter(service => service._id !== updatedService._id)
         );
-  
-        setServices((prevServices) =>
-          prevServices.filter((service) => service._id !== updatedService._id)
+
+        // Remove the archived service from sortedServices
+        setSortedServices(prevSortedServices =>
+          prevSortedServices.filter(service => service._id !== updatedService._id)
         );
   
         clearModal();
@@ -398,7 +431,7 @@ export default function Services() {
                   </table>
                   <div>{renderPagination()}</div>
         </>
-      )
+      );
     }
     return (
       <>
@@ -546,18 +579,22 @@ export default function Services() {
 
   const renderPagination = () => {
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+    const handlePageChange = (pageNumber: any) => {
+      setCurrentPage(pageNumber);
+    };
   
     return (
       <div className={styles1.pagination}>
-        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
           <FontAwesomeIcon icon={faChevronLeft} width={16} height={16} color={'#737373'} />
         </button>
         {pageNumbers.map((number) => (
-          <button key={number} onClick={() => setCurrentPage(number)} className={currentPage === number ? styles1.active : ''}>
+          <button key={number} onClick={() => handlePageChange(number)} className={currentPage === number ? styles1.active : ''}>
             {number}
           </button>
         ))}
-        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
           <FontAwesomeIcon icon={faChevronRight} width={16} height={16} color={'#737373'} />
         </button>
       </div>
