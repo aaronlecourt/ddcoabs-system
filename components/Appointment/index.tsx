@@ -10,6 +10,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
   const [name, setName] = useState(appointment.patientName || '')
   const [sex, setSex] = useState(appointment.patientSex || '')
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedAppointmentDetails, setSelectedAppointmentDetails] = useState<any>(null);
 
   const toggleModal = () => {
@@ -61,6 +62,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
         setName(patient?.name)
     }
   }
+
   const getPatientSex = async () => {
     try {
       if (appointment.patientId) {
@@ -81,6 +83,21 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
     getPatientSex();
     getPatientName();
   }, [])
+
+  const toggleConfirmationModal = () => {
+    setShowConfirmationModal(!showConfirmationModal);
+  };
+
+  const confirmDone = () => {
+    // Logic to mark appointment as done
+    // This could involve an API call or updating the status locally
+    // For now, let's assume you update the appointment status to 'done'
+    // const updatedAppointment = { appointment, status: APPOINTMENT_STATUS.done };
+    // appointment = updatedAppointment;
+    alert('Appointment marked as done!');
+    // After marking as done, close the modal
+    toggleConfirmationModal();
+  };
 
   return (
     <div className={styles.appointments__itemContainer}>
@@ -143,12 +160,9 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             
           </div>
 
-    <hr className={styles.apptDetails_Divide}/>
+        <hr className={styles.apptDetails_Divide}/>
           
           <div className={styles.apptDetails_OtherDetails}>
-          
-
-
             <p><b>Name of Physician:</b> {selectedAppointmentDetails.details.physicianName}</p>
             {selectedAppointmentDetails.details.specialty ? (
               <p><b>Specialty:</b> {selectedAppointmentDetails.details.specialty}</p>
@@ -195,9 +209,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
                 </>
               )}
-              <br />
-              {selectedAppointmentDetails.details.others && (
+              
+              {selectedAppointmentDetails.details.others && !isPatient && (
                 <>
+                <br />
                   <h3>Have or has had:</h3>
                   {selectedAppointmentDetails.details.others ? (
                     selectedAppointmentDetails.details.others.map((item: string, index: number) => (
@@ -222,6 +237,22 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
 
 
           {/* Add more appointment details as needed */}
+        </Modal>
+      )}
+
+      {showConfirmationModal && (
+        <Modal
+          open={toggleConfirmationModal}
+          setOpen={toggleConfirmationModal}
+          // Add modal props (e.g., modalWidth, modalRadius, etc.)
+        >
+          {/* Modal content for confirmation */}
+          <div>
+            <h3>Confirm Mark As Done</h3>
+            <p>Are you sure you want to mark this appointment as done?</p>
+            <button onClick={confirmDone}>Yes, Mark As Done</button>
+            <button onClick={toggleConfirmationModal}>Cancel</button>
+          </div>
         </Modal>
       )}
       <div className={styles.appointments__item} onClick={openAppointment}>
@@ -292,7 +323,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               </div>
               {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
-                <div className={styles.mainAction}>MARK AS DONE</div>
+                <div className={styles.mainAction} onClick={toggleConfirmationModal}>MARK AS DONE</div>
               </div>
             </div>
           </>
