@@ -3,6 +3,7 @@ import styles from './style.module.scss'
 import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faEye, faFemale, faMale, faMoneyBill, faNoteSticky, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react';
 import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
+import { IAppointment } from '../../pages/interfaces/IAppointment';
 import Modal from '../Modal';
 
 export default function Appointment({ appointment, onCancelAppointment, isPatient }: any) {
@@ -94,15 +95,24 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
     setShowConfirmationModal(!showConfirmationModal);
   };
 
-  const confirmDone = () => {
-    // Logic to mark appointment as done
-    // This could involve an API call or updating the status locally
-    // For now, let's assume you update the appointment status to 'done'
-    // const updatedAppointment = { appointment, status: APPOINTMENT_STATUS.done };
-    // appointment = updatedAppointment;
-    alert('Appointment marked as done!');
-    // After marking as done, close the modal
-    toggleConfirmationModal();
+  const confirmDone = async () => {
+    try {
+      const response = await fetch(`/api/dentist/appointment/done/${appointment._id}`, {
+        method: 'PUT',
+      });
+  
+      if (response.ok) {
+        alert('Appointment marked as done!');
+        // Optionally, you can update the UI to reflect the change to 'done'
+      } else {
+        alert('Failed to mark appointment as done');
+      }
+    } catch (error) {
+      console.error('Error marking appointment as done:', error);
+      alert('Failed to mark appointment as done');
+    } finally {
+      toggleConfirmationModal();
+    }
   };
 
   return (
