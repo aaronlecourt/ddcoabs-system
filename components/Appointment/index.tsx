@@ -268,7 +268,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 size="3x"
                 width={54}
                 height={54}
-                color={"#90EE90"}
+                color={'#3AB286'}
               />
             </div>
             <p>
