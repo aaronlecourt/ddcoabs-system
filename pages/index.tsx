@@ -54,6 +54,9 @@ export default function Home({
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null)
   const router = useRouter();
 
+
+  
+
   const [selectedFilter, setSelectedFilter] = useState('Today'); // Set 'Today' as the default filter for the patient's section
   const [selectedSorting, setSelectedSorting] = useState('');
   const [filteredAppointments, setFilteredAppointments] = useState<IAppointment[]>(initialAppointmentData);
@@ -63,7 +66,7 @@ export default function Home({
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
+  // const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
 
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);

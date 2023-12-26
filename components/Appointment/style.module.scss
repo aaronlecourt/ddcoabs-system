@@ -28,6 +28,21 @@
     }
   }
 
+  &_Sub {
+    
+    p {
+      margin-left: 1rem;
+    }
+
+    span{
+      padding: 0 0.3rem;
+      border-radius: 4px;
+      margin-left: 2rem;
+      font-size: 12px;
+      border: 1px solid $grey;
+    }
+  }
+
   &_Dateprice {
     justify-content: center;
     margin-top: 1rem;
@@ -57,8 +72,9 @@
       border-radius: 10px;
       padding: 0.5rem;
 
-      p, h3{
+      p, h3, li{
         font-size: 15px;
+        list-style-type: circle;
       }
     }
   }
