@@ -14,11 +14,16 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
   const [sex, setSex] = useState(appointment.patientSex || '')
   const [showModal, setShowModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showAgreeModal, setShowAgreeModal] = useState(false);
   const [selectedAppointmentDetails, setSelectedAppointmentDetails] = useState<any>(null);
 
   const toggleModal = () => {
     setShowModal(!showModal);
     setSelectedAppointmentDetails(appointment);
+  };
+
+  const toggleAgreeModal = () => {
+    setShowAgreeModal(!showAgreeModal);
   };
 
   const openAppointment = (e: any) => {
@@ -288,6 +293,38 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
         </Modal>
       )}
 
+      {showAgreeModal && (
+        <Modal
+          open={toggleAgreeModal}
+          setOpen={toggleAgreeModal}
+          modalWidth={400} modalRadius={10}
+        >
+          <h3 className={styles1.cancelTitle}>Rescheduled Appointment Confirmation</h3>
+          <div className={styles1.cancelText}>
+            <div style={{ width: "54px", height: "54px" }}>
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                size="3x"
+                width={54}
+                height={54}
+                color={'#3AB286'}
+              />
+            </div>
+            <p>
+              Do you agree to the dentist's set date and time? This action will confirm this appointment.
+            </p>
+          </div>
+          <div className={styles1.cancelActions}>
+            <Button
+              type="secondary"
+              onClick={toggleAgreeModal}
+            >
+              No
+            </Button>
+            <Button onClick={confirmDone}>Yes</Button>
+          </div>
+        </Modal>
+      )}
       <div className={styles.appointments__item} onClick={openAppointment}>
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
         {!isPatient && <div className={styles.appointments__user}>
@@ -421,6 +458,9 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
                 <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
                 <span>Cancel</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+                <div className={styles.mainAction} onClick={toggleAgreeModal}>CONFIRM</div>
               </div>
             </div>
           </>
