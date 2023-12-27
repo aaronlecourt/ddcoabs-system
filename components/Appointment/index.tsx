@@ -467,10 +467,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
               </div>
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
+              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
                 <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
                 <span>Cancel</span>
-              </div>
+              </div> */}
             </div>
           </>
         }
