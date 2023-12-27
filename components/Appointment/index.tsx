@@ -383,7 +383,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
         {appointment.status == APPOINTMENT_STATUS.canceled && isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>
-            <div className={styles.appointments__details__row3}>
+            <div className={styles.appointments__details__row2}>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
                 <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
                 <span>Show Details</span>
