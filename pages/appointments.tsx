@@ -74,14 +74,28 @@ export default function Home({
   const [selectedSorting, setSelectedSorting] = useState('');
   const [filteredAppointments, setFilteredAppointments] = useState<IAppointment[]>(initialAppointmentData);
   const [searchResults, setSearchResults] = useState<IAppointment[]>([]);
-  const [cancelReasonValue, setCancelReasonValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const sortBy = ['Latest to Oldest', 'Oldest to Latest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)', 'Pending First'];
+
+  const [cancelReasonValue, setCancelReasonValue] = useState('');
+  const [cancelReasonError, setCancelReasonError] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   // const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
 
+  const handleCancelReasonChange = (e:any) => {
+    const value = e.target.value;
+    if (!value.trim()) {
+      setCancelReasonError('Reason is required.');
+    } else {
+      setCancelReasonError('');
+    }
+    setCancelReasonValue(value);
+  };
+  
+
+  
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
     setShowCancelAppointment(true);
@@ -89,33 +103,38 @@ export default function Home({
 
   const cancelAppointment = () => {
     const user = session.user;
-
+  
     if (user) {
       const reason = cancelReasonValue;
-
-      fetch(`/api/dentist/appointment/cancel/${selectedAppointment._id}`, {
-        // fetch(`/api/${user.role}/appointment/cancel/${selectedAppointment._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({cancelReason: reason}),
-      })
-        .then(async (response) => {
-          const responseMsg = await response.json();
-          if (!response.ok) {
-            alert("appointment cancel failed: " + JSON.stringify(responseMsg));
-          } else {
-            alert("Appointment Cancel Successful");
-            window.location.href = "/";
-          }
+  
+      if (!reason.trim()) {
+        setCancelReasonError('Reason for cancellation is required.');
+      } else {
+        // Perform cancellation if reason is provided
+        fetch(`/api/dentist/appointment/cancel/${selectedAppointment._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ cancelReason: reason }),
         })
-        .catch((error) => {
-          alert("Appointment Cancel Failed");
-          console.error("Error updating data:", error);
-        });
+          .then(async (response) => {
+            const responseMsg = await response.json();
+            if (!response.ok) {
+              alert("appointment cancel failed: " + JSON.stringify(responseMsg));
+            } else {
+              alert("Appointment Cancel Successful");
+              window.location.href = "/";
+            }
+          })
+          .catch((error) => {
+            alert("Appointment Cancel Failed");
+            console.error("Error updating data:", error);
+          });
+      }
     }
   };
+  
 
   const filterAppointmentsByStatus = (status: string) => {
     const currentDate = new Date().toDateString(); // Get today's date
@@ -348,14 +367,25 @@ export default function Home({
               is not irreversible.
             </p>
           </div>
-          <input
-            type="text"
-            name="cancelReason"
-            className={styles.cancelReason}
-            value={cancelReasonValue}
-            onChange={e => setCancelReasonValue(e.target.value)}
-            placeholder="Enter your reason for cancelling..."
-          />
+          <div>
+            <div className={`${styles.cancelReason} ${cancelReasonError ? styles.error : ''}`}>
+              <input
+                type="text"
+                name="cancelReason"
+                value={cancelReasonValue}
+                onChange={handleCancelReasonChange}
+                placeholder="Enter your reason for cancelling..."
+              />
+            </div>
+            {cancelReasonError && (
+              <span className={`${styles.errorMessage}`} style={{ flex: 1 }}>
+                {cancelReasonError}
+              </span>
+            )}
+          </div>
+
+
+
 
           <div className={styles.cancelActions}>
             <Button

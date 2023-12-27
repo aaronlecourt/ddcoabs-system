@@ -233,9 +233,47 @@
 }
 
 .cancelReason {
-  border: 1px solid $grey;
-  padding: 0.5rem;
+  // width: 100%; /* Set the width as needed */
+  padding: 8px; /* Adjust the padding */
+  font-size: 16px; /* Define the font size */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 10px; /* Apply border-radius for rounded corners */
+  
+
+  /* Add any additional styles based on your design */
+  input {
+    font-family: 'Poppins';
+    color: $text;
+  }
+
+  &::placeholder {
+    color: #999; /* Define placeholder text color */
+    font-family: 'Poppins';
+  }
+  
+  &:focus {
+    font-family: 'Poppins';
+
+    outline: none; /* Remove default focus outline */
+    border-color: #86b7fe; /* Change border color on focus */
+    /* Add other styles for focus state if needed */
+  }
+  
+  
+  /* Add more specific styles or modifications as required */
 }
+.error {
+  border-color: red;
+}
+
+.errorMessage {
+  display: flex;
+  justify-content: flex-end;
+  color: red; /* Define error message color */
+  font-size: 14px; /* Adjust error message font size */
+  // margin-top: 4px; /* Add space below the input for error message */
+}
+
 
 .cancelText {
   margin: 1rem 0;
