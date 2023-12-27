@@ -178,18 +178,17 @@ export default function Reschedule() {
           </main>
         )}
       </>
-    )
+    );
   
 
-  const renderDentistContent = () => {
-    return (
+  const renderDentistContent = () => (
       <>
         {session && (
           <main className={styles.main}>
             <h1 className={styles.title}>Reschedule</h1>
             <p className={styles.subtitle}>Reschedule the appointment by selecting a different start time and/or date.</p>
             {loading && <div>Loading...</div>}
-            {!loading && 
+            {!loading && (
               <div className={styles.container}>
                 <div className={styles.container__row}>
                   <strong>Select Date</strong>
@@ -233,6 +232,7 @@ export default function Reschedule() {
                   </div>
                 </div>
               </div>
+            )}
               <div className={styles.container__row}>
                 <strong>Select Time</strong>
                 {errors && errors.length > 0 && errors.map((error, index) => 
@@ -254,7 +254,7 @@ export default function Reschedule() {
                     </div>
                   </div>
                 </div>
-              </div>}
+              </div>
         </main>
       )}
       <ToastContainer />
