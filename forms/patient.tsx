@@ -114,7 +114,7 @@ export const PatientFormCheckboxList = [
   [
     {
       id: '10',
-      text: 'Asthma',
+      text: 'Cancer/Tumors',
       value: false,
     },
     {
@@ -238,11 +238,6 @@ export const PatientFormCheckboxList = [
     },
     {
       id: '32',
-      text: 'Cancer/Tumors',
-      value: false,
-    },
-    {
-      id: '33',
       text: 'Others',
       value: true,
       textbox: true,

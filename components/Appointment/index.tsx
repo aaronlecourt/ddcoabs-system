@@ -1,9 +1,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './style.module.scss'
-import { faCalendar, faCancel, faChevronDown, faChevronRight, faClock, faEye, faFemale, faMale, faMoneyBill, faNoteSticky, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
+import styles1 from "../../styles/pages/home.module.scss";
+import { faCalendar, faCancel, faCheckCircle, faCheckDouble, faChevronDown, faChevronRight, faClock, faEye, faFemale, faMale, faMoneyBill, faNoteSticky, faPencil, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react';
 import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
+import { IAppointment } from '../../pages/interfaces/IAppointment';
 import Modal from '../Modal';
+import Button from '../Button';
 
 export default function Appointment({ appointment, onCancelAppointment, isPatient }: any) {
   const [collapse, setCollapse] = useState(true);
@@ -11,10 +14,16 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
   const [sex, setSex] = useState(appointment.patientSex || '')
   const [showModal, setShowModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showAgreeModal, setShowAgreeModal] = useState(false);
   const [selectedAppointmentDetails, setSelectedAppointmentDetails] = useState<any>(null);
 
   const toggleModal = () => {
     setShowModal(!showModal);
+    setSelectedAppointmentDetails(appointment);
+  };
+
+  const toggleAgreeModal = () => {
+    setShowAgreeModal(!showAgreeModal);
     setSelectedAppointmentDetails(appointment);
   };
 
@@ -94,15 +103,43 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
     setShowConfirmationModal(!showConfirmationModal);
   };
 
-  const confirmDone = () => {
-    // Logic to mark appointment as done
-    // This could involve an API call or updating the status locally
-    // For now, let's assume you update the appointment status to 'done'
-    // const updatedAppointment = { appointment, status: APPOINTMENT_STATUS.done };
-    // appointment = updatedAppointment;
-    alert('Appointment marked as done!');
-    // After marking as done, close the modal
-    toggleConfirmationModal();
+  const confirmDone = async () => {
+    try {
+      const response = await fetch(`/api/dentist/appointment/done/${appointment._id}`, {
+        method: 'PUT',
+      });
+  
+      if (response.ok) {
+        alert('Appointment marked as done!');
+        // Optionally, you can update the UI to reflect the change to 'done'
+      } else {
+        alert('Failed to mark appointment as done');
+      }
+    } catch (error) {
+      console.error('Error marking appointment as done:', error);
+      alert('Failed to mark appointment as done');
+    } finally {
+      toggleConfirmationModal();
+    }
+  };
+
+  const confirmAgree = async () => {
+    try {
+      const response = await fetch(`/api/dentist/appointment/agree/${appointment._id}`, {
+        method: 'PUT',
+      });
+  
+      if (response.ok) {
+        alert('Appointment confirmed!');
+      } else {
+        alert('Failed to confirm appointment');
+      }
+    } catch (error) {
+      console.error('Error marking appointment as cofirmed:', error);
+      alert('Failed to mark appointment as cofirmed');
+    } finally {
+      toggleAgreeModal();
+    }
   };
 
   return (
@@ -239,10 +276,6 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               <p>Last Dental Visit: {selectedAppointmentDetails.details.lastDentalVisit || 'N/A'}</p>
             </div>
           </div>
-          
-
-
-          {/* Add more appointment details as needed */}
         </Modal>
       )}
 
@@ -250,14 +283,65 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
         <Modal
           open={toggleConfirmationModal}
           setOpen={toggleConfirmationModal}
-          // Add modal props (e.g., modalWidth, modalRadius, etc.)
+          modalWidth={400} modalRadius={10}
         >
-          {/* Modal content for confirmation */}
-          <div>
-            <h3>Confirm Mark As Done</h3>
-            <p>Are you sure you want to mark this appointment as done?</p>
-            <button onClick={confirmDone}>Yes, Mark As Done</button>
-            <button onClick={toggleConfirmationModal}>Cancel</button>
+          <h3 className={styles1.cancelTitle}>Mark as Done</h3>
+          <div className={styles1.cancelText}>
+            <div style={{ width: "54px", height: "54px" }}>
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                size="3x"
+                width={54}
+                height={54}
+                color={'#3AB286'}
+              />
+            </div>
+            <p>
+              Do you want to mark this appointment as done? This action
+              is not irreversible.
+            </p>
+          </div>
+          <div className={styles1.cancelActions}>
+            <Button
+              type="secondary"
+              onClick={toggleConfirmationModal}
+            >
+              No
+            </Button>
+            <Button onClick={confirmDone}>Yes</Button>
+          </div>
+        </Modal>
+      )}
+
+      {showAgreeModal && (
+        <Modal
+          open={toggleAgreeModal}
+          setOpen={toggleAgreeModal}
+          modalWidth={400} modalRadius={10}
+        >
+          <h3 className={styles1.cancelTitle}>Rescheduled Appointment Confirmation</h3>
+          <div className={styles1.cancelText}>
+            <div style={{ width: "54px", height: "54px" }}>
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                size="3x"
+                width={54}
+                height={54}
+                color={'#3AB286'}
+              />
+            </div>
+            <p>
+              Do you agree to the dentist's set date and time? This action will confirm this appointment.
+            </p>
+          </div>
+          <div className={styles1.cancelActions}>
+            <Button
+              type="secondary"
+              onClick={toggleAgreeModal}
+            >
+              No
+            </Button>
+            <Button onClick={confirmAgree}>Yes</Button>
           </div>
         </Modal>
       )}
@@ -338,32 +422,28 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row3}>
-            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
-                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
-                <span>Show Details</span>
-              </div>
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
                 <FontAwesomeIcon icon={faNoteSticky} color={'#909090'} width={15} />
-                <span>"I had to attend an emergency meeting."</span>
+                <span><b>Reason:</b> <i>"{appointment.cancelReason}"</i></span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick=  {toggleModal}>
+                  <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                  <span>Show Details</span>
               </div>
               {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
                 <div className={styles.mainAction}>RESOLVE</div>
-              </div>
+              </div> */}
             </div>
           </>
         }
         {appointment.status == APPOINTMENT_STATUS.canceled && isPatient &&
           <>
             <div className={styles.appointments__details__separator}></div>
-            <div className={styles.appointments__details__row3}>
+            <div className={styles.appointments__details__row2}>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
                 <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
                 <span>Show Details</span>
-              </div>
-              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
-                <div className={styles.mainAction}>RESOLVE</div>
               </div>
             </div>
           </>
@@ -398,6 +478,9 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
                 <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
                 <span>Cancel</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+                <div className={styles.mainAction} onClick={toggleAgreeModal}>AGREE</div>
               </div>
             </div>
           </>
@@ -444,10 +527,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
               </div>
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
+              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={cancel}>
                 <FontAwesomeIcon icon={faCancel} color={'#F01900'} width={15} />
                 <span>Cancel</span>
-              </div>
+              </div> */}
             </div>
           </>
         }

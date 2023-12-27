@@ -281,6 +281,7 @@ export default function Profile({
                         onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
                         name='bloodType'
                       >
+                        <option selected disabled>Select Blood Type:</option>
                         {bloodType.map(type => (
                           <option key={type} value={type}>
                             {type}
