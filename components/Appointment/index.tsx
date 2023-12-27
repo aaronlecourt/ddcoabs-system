@@ -24,6 +24,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
 
   const toggleAgreeModal = () => {
     setShowAgreeModal(!showAgreeModal);
+    setSelectedAppointmentDetails(appointment);
   };
 
   const openAppointment = (e: any) => {
@@ -119,6 +120,25 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
       alert('Failed to mark appointment as done');
     } finally {
       toggleConfirmationModal();
+    }
+  };
+
+  const confirmAgree = async () => {
+    try {
+      const response = await fetch(`/api/dentist/appointment/agree/${appointment._id}`, {
+        method: 'PUT',
+      });
+  
+      if (response.ok) {
+        alert('Appointment confirmed!');
+      } else {
+        alert('Failed to confirm appointment');
+      }
+    } catch (error) {
+      console.error('Error marking appointment as cofirmed:', error);
+      alert('Failed to mark appointment as cofirmed');
+    } finally {
+      toggleAgreeModal();
     }
   };
 
@@ -321,7 +341,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             >
               No
             </Button>
-            <Button onClick={confirmDone}>Yes</Button>
+            <Button onClick={confirmAgree}>Yes</Button>
           </div>
         </Modal>
       )}
@@ -460,7 +480,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 <span>Cancel</span>
               </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
-                <div className={styles.mainAction} onClick={toggleAgreeModal}>CONFIRM</div>
+                <div className={styles.mainAction} onClick={toggleAgreeModal}>AGREE</div>
               </div>
             </div>
           </>
