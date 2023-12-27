@@ -367,16 +367,16 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             <div className={styles.appointments__details__row3}>
             <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
                 <FontAwesomeIcon icon={faNoteSticky} color={'#909090'} width={15} />
-                <span>"{appointment.cancelReason}"</span>
+                <span><b>Reason:</b> <i>"{appointment.cancelReason}"</i></span>
               </div>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick=  {toggleModal}>
                   <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
                   <span>Show Details</span>
               </div>
               {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
                 <div className={styles.mainAction}>RESOLVE</div>
-              </div>
+              </div> */}
             </div>
           </>
         }
@@ -428,7 +428,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
         {appointment.status == APPOINTMENT_STATUS.done &&
           <>
             <div className={styles.appointments__details__separator}></div>
-            <div className={styles.appointments__details__row3}>
+            <div className={styles.appointments__details__row2}>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
                 <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
                 <span>Show Details</span>
