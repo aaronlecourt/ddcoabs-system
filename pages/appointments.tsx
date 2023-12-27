@@ -94,7 +94,9 @@ export default function Home({
     setCancelReasonValue(value);
   };
   
-
+  const clearCancelReason = () => {
+    setCancelReasonValue('');
+  };
   
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
@@ -350,6 +352,7 @@ export default function Home({
           setOpen={setShowCancelAppointment}
           modalWidth={400}
           modalRadius={10}
+          onClose={clearCancelReason}
         >
           <h3 className={styles.cancelTitle}>Cancel Appointment</h3>
           <div className={styles.cancelText}>
