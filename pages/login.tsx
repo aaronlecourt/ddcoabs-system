@@ -12,6 +12,8 @@ import { FormData, ErrorFormData } from '../types/login';
 import { isLoginFormValid } from '../validations/login';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import useAuthGuard from '../guards/auth.guard';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -81,11 +83,13 @@ export default function Login({
         }
         return;
       }
-
+      
       console.log(res, 'Logged in!');
       router.replace('/');
+      toast.success('Login successful!');
     } catch (error) {
       console.log(error)
+      toast.error('Login failed!');
     }
   }
 
@@ -97,6 +101,7 @@ export default function Login({
 
   return (
     <>
+    <ToastContainer />
       {(status !== 'loading' && !session) && <AuthLayout>
         <div className={styles.container}>
           <div className={styles.header} style={{ marginBottom: '5rem' }}>

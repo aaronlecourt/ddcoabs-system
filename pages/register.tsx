@@ -13,6 +13,8 @@ import useAuthGuard from '../guards/auth.guard';
 import Modal from '../components/Modal';
 import CheckBox from '../components/CheckBox';
 import { useRouter } from 'next/router';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -89,7 +91,7 @@ export default function Register({
       .then(async (response) => {
         const responseMsg = await response.json()
         if (!response.ok) {
-          alert('Registration failed: ' + JSON.stringify(responseMsg))
+          toast.error('Registration failed: ' + JSON.stringify(responseMsg))
         } else {
           const data = responseMsg
           setIsTermsModalVisible(false)
@@ -107,13 +109,13 @@ export default function Register({
               }))
             }
           } else {
-            alert('Registered Successfully!');
+            toast.success('Registered Successfully!');
             window.location.href = '/login';
           }
         }
       })
       .catch(error => {
-        alert('user register failed');
+        toast.error('user register failed');
         setIsTermsModalVisible(false)
         console.error('Error register data:', error);
       });
@@ -121,6 +123,7 @@ export default function Register({
 
   return (
     <>
+      <ToastContainer />
       <Modal title='Terms & Conditions' open={isTermsModalVisible} setOpen={setIsTermsModalVisible}>
         <div className={styles.termsScrollable}>
         <div>

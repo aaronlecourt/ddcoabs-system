@@ -9,11 +9,15 @@ import useAuthGuard from '../guards/auth.guard';
 import CustomCalendar from '../components/CustomCalendar';
 import Appointment from '../components/Appointment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faCancel, faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { IAppointment } from './interfaces/IAppointment';
 import { IUser } from './interfaces/IUser';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Modal from '../components/Modal';
+import Button from '../components/ArchiveButton';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -87,19 +91,19 @@ export default function Home({
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            alert('appointment cancel failed: ' + JSON.stringify(responseMsg))
+            toast.error('appointment cancel failed: ' + JSON.stringify(responseMsg))
           } else {
-            alert('Appointment Cancel Successful')
+            toast.success('Appointment Cancel Successful')
             window.location.href = '/'
           }
         })
         .catch(error => {
-          alert('Appointment Cancel Failed');
+          toast.error('Appointment Cancel Failed');
           console.error('Error updating data:', error);
         });
     }
   }
-
+  
   const filterAppointmentsByStatus = (status: string) => {
     const currentDate = new Date().toDateString(); // Get today's date
   
@@ -219,6 +223,7 @@ export default function Home({
     
       return (
         <>
+        <ToastContainer />
           {currentAppointments.length > 0 ? (
             <>
               {currentAppointments.map((appointment: IAppointment, index: number) => (
@@ -304,10 +309,11 @@ export default function Home({
         </div>
       );
     };
-    
+
   const renderContent = () => {
     return (
       <>
+      <ToastContainer />
         {session && (
           <main className={`${styles.main} ${styles.mainLandingPage}`}>
             {/* separate into 2 services scroll 1 side */}
@@ -344,6 +350,22 @@ export default function Home({
   const renderDentistContent = () => {
     return (
       <>
+        <Modal open={showCancelAppointment} setOpen={setShowCancelAppointment} modalWidth={400} modalRadius={10}>
+          <h3 className={styles.cancelTitle}>Cancel Appointment</h3>
+          <div className={styles.cancelText}>
+            <div style={{ width: '54px', height: '54px' }}>
+              <FontAwesomeIcon icon={faCancel} size="3x" width={54} height={54} color={'#F01900'} />
+            </div>
+            <p>Please confirm the cancellation of this appointment.
+              This action is not irreversible.</p>
+          </div>
+          <div className={styles.cancelActions}>
+            <Button type='secondary' onClick={() => setShowCancelAppointment(false)}>No</Button>
+            <Button onClick={cancelAppointment}>Yes</Button>
+          </div>
+        </Modal>
+
+      <ToastContainer />
         {session && (
           <main className={styles.main}>
             <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
@@ -481,6 +503,7 @@ export default function Home({
 
   return (
     <>
+     <ToastContainer />
       {(status !== 'loading' && session) && (
         session.user?.role === 'patient' ? (
           <PatientLayout>

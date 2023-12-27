@@ -11,6 +11,8 @@ import EditButton from '../components/EditButton';
 import ArchiveButton from '../components/ArchiveButton';
 import Button from '../components/Button';
 import { AddServicesFormData, ErrorAddServicesFormData, UpdateServicesFormData } from '../types/services';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Service {
   _id: string;
@@ -208,7 +210,6 @@ export default function Services() {
     e.preventDefault();
 
     try {
-    
       const apiUrl = '/api/dentist/dentist-service';
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -252,9 +253,11 @@ export default function Services() {
       console.log('Updated Sorted Services:', sortedServices);
 
       clearModal();
+
+      setServices([...services, responseData]);
       
     } catch (error) {
-      alert('Service failed');
+      toast.error('Adding Service failed');
       console.error('Error adding service:', error);
     }
   };
@@ -273,7 +276,7 @@ export default function Services() {
   
       if (!response.ok) {
         const error = await response.json();
-        alert('Update failed: ' + JSON.stringify(error));
+        toast.error('Update failed: ' + JSON.stringify(error));
       } else {
         const updatedService = await response.json();
         console.log('Service updated: ', updatedService);
@@ -320,11 +323,10 @@ export default function Services() {
   
         clearModal();
   
-        // Add alert here
-        window.alert('Service updated successfully!');
+        toast.success('Service updated successfully!');
       }
     } catch (error) {
-      alert('Update failed');
+      toast.error('Updating service failed');
       console.error('Error updating service:', error);
     }
   };
@@ -339,8 +341,6 @@ export default function Services() {
     'Price (Highest to Lowest)',
   ];
 
-  // FOR ARCHIVE
-  
   const archiveService = async (e: any) => {
     try {
       const response = await fetch(`/api/dentist/dentist-service`, {
@@ -353,7 +353,8 @@ export default function Services() {
   
       if (!response.ok) {
         const error = await response.json();
-        alert('Update failed: ' + JSON.stringify(error));
+        toast.error('Archive service failed: ' + JSON.stringify(error));
+
       } else {
         const updatedService = await response.json();
         console.log('Service updated: ', updatedService);
@@ -373,11 +374,10 @@ export default function Services() {
         clearModal();
       }
     } catch (error) {
-      alert('Update failed');
+      toast.error('Updating service failed');
       console.error('Error updating service:', error);
     }
   };
-  
   
   const renderContent = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -414,7 +414,7 @@ export default function Services() {
                         <tr key={service._id}>
                           <td>{startIndex + index + 1}</td>
                           <td>{service.name}</td>
-                          <td>₱{service.price}</td>
+                          <td>₱ {Number(service.price).toFixed(2)}</td>
                           <td>{service.description}</td>
                           <td className={styles1.tableAction}>
                             <EditButton onClick={() => onUpdateService(service, 'update')}>
@@ -435,6 +435,31 @@ export default function Services() {
     }
     return (
       <>
+        {session && (
+          <main className={styles.main}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Service Name</th>
+                  <th>Base Charge</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {services.map((service, index) => 
+                  <tr key={index}>
+                    <td>{index+1}</td>
+                    <td>{service.name}</td>
+                    <td>₱ {Number(service.price).toFixed(2)}</td>
+                    <td>{service.description}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </main>
+        )}
+      <ToastContainer/>
         <section className={styles.main}>
           <div className={styles1.servicecrud}>
             <div className={styles1.filters}>
@@ -603,6 +628,7 @@ export default function Services() {
 
   return (
     <>
+    <ToastContainer />
       {(status !== 'loading' && session) && (
         <DentistLayout>
           {renderContent()}

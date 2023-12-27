@@ -1,76 +1,73 @@
-import { forwardRef, useContext, useImperativeHandle, useState } from "react";
+import { forwardRef, useContext, useImperativeHandle } from "react";
 import styles from '../styles/forms/confirmation.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import { BookingFormContext } from "../pages/book";
 import useAuthGuard from '../guards/auth.guard';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const BookConfirmationForm = forwardRef(({ }: any, ref) => {
-  const { session, status } = useAuthGuard();
-
-  const { onStepBack,
+const BookConfirmationForm = forwardRef(({ }, ref) => {
+  const { session } = useAuthGuard();
+  const {
+    onStepBack,
     selectedPaymentMethod,
     selectedDate,
     selectedTimeUnit,
     patientForm,
-    servicesForm
-  }: any = useContext(BookingFormContext);
+    servicesForm,
+  }:any = useContext(BookingFormContext);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-  const back = (e: any) => {
+  const back = (e :any) => {
     e.preventDefault();
     onStepBack(e);
-  }
+  };
 
   useImperativeHandle(ref, () => ({
-    checkValidForm: () => {
-      return true;
-    }
-  }))
+    checkValidForm: () => true,
+  }));
 
   const confirmBooking = async () => {
-    if (!session) return
-    const user = session.user
+    if (!session) return;
+
+    const user = session.user;
 
     const payload = {
       dentistService: servicesForm.service.name || 'Consultation',
-      date: selectedDate, //new Date(selectedDate).toISOString().substring(0, 10),
+      date: selectedDate,
       timeUnit: selectedTimeUnit,
       price: servicesForm.service.price || 500,
       paymentMethod: selectedPaymentMethod,
       concern: servicesForm.concern,
-      details: patientForm
-    }
+      details: patientForm,
+      [`${user.role}Id`]: user.id,
+    };
 
-    Object.assign(payload, { [`${user.role}Id`]: user.id })
-
-    console.log(payload);
-
-    // Confirm Booking API Call Here
-    fetch(`/api/${user.role}/appointment/book`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-    .then(async (response) => {
-      const responseMsg = await response.json()
+    try {
+      const response = await fetch(`/api/${user.role}/appointment/book`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
       if (!response.ok) {
-        alert('Booking failed: ' + JSON.stringify(responseMsg))
+        const responseMsg = await response.json();
+        toast.error('Booking failed: ' + JSON.stringify(responseMsg), { autoClose: false });
       } else {
-        alert('Appointment Booked Successfully!');
-        console.log('appointment booked ', responseMsg);
+        toast.success('Appointment Booked Successfully!', { autoClose: false });
+        console.log('appointment booked ', await response.json());
         window.location.href = '/book';
       }
-    })
-    .catch(error => {
-      alert('appointment booking failed');
+    } catch (error) {
+      toast.error('Appointment booking failed', { autoClose: false });
       console.error('Error data:', error);
-    });
-  }
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -113,8 +110,9 @@ const BookConfirmationForm = forwardRef(({ }: any, ref) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
-  )
-})
+  );
+});
 
 export default BookConfirmationForm;

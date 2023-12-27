@@ -20,6 +20,8 @@ import {
 import Button from "../components/Button";
 import { IAppointment } from "./interfaces/IAppointment";
 import { IUser } from "./interfaces/IUser";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -616,6 +618,7 @@ export default function Home({
 
   return (
     <>
+    <ToastContainer />
       {status !== "loading" &&
         session &&
         (session.user?.role === "patient" ? (

@@ -7,6 +7,8 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import { UpdateServicesFormData } from '../types/services';
 import { ArchiveProfileFormData } from '../types/profile';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Service {
   _id: string;
@@ -24,7 +26,7 @@ interface Accounts {
   name: string;
   email: string;
   contactNumber: number;
-  gender: string;
+  sex: string;
   dateOfBirth: string;
   address: string;
   role: string;
@@ -123,7 +125,7 @@ export default function ServiceRecords() {
     name: '',
     email: '',
     contactNumber: 0,
-    gender: '',
+    sex: '',
     dateOfBirth: '',
     address: '',
     role: '',
@@ -171,7 +173,7 @@ export default function ServiceRecords() {
         name: account.name,
         email: account.email,
         contactNumber: account.contactNumber,
-        gender: account.gender,
+        sex: account.sex,
         dateOfBirth: account.dateOfBirth,
         address: account.address,
         role: account.role,
@@ -185,7 +187,7 @@ export default function ServiceRecords() {
         name: account.name,
         email: account.email,
         contactNumber: account.contactNumber,
-        gender: account.gender,
+        sex: account.sex,
         dateOfBirth: account.dateOfBirth,
         address: account.address,
         role: account.role,
@@ -269,7 +271,7 @@ const deleteAccount = async (userId: string) => {
     }else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      alert("SUCCESSFULLY DELETED ACCOUNT")
+      toast.success("SUCCESSFULLY DELETED ACCOUNT")
       // If deletion is successful, update the services state by removing the deleted service
       setShowDeleteAccount(false);
       setAccounts((prevAccount) =>
@@ -297,7 +299,7 @@ const restoreAccount = async (userId: string) => {
     } else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      alert("SUCCESSFULLY RESTORED ACCOUNT")
+      toast.success("SUCCESSFULLY RESTORED ACCOUNT")
       // If deletion is successful, update the services state by removing the deleted service
       setShowRestoreAccount(false);
       setAccounts((prevAccount) =>
@@ -325,7 +327,7 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to delete service');
       } else {
-        alert("SUCCESSFULLY DELETED THE SERVICE")
+        toast.success("SUCCESSFULLY DELETED THE SERVICE")
 
         // If deletion is successful, update the services state by removing the deleted service
         setShowDeleteService(false);
@@ -353,7 +355,7 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to restore service');
       } else {
-        alert("SUCCESSFULLY RESTORED SERVICE")
+        toast.success("SUCCESSFULLY RESTORED SERVICE")
         // If deletion is successful, update the services state by removing the deleted service
         setShowRestoreService(false);
         setServices((prevServices) =>
@@ -448,7 +450,7 @@ const renderContent = () => {
                   <th> Full Name </th>
                   <th> Email Address </th>
                   <th> Mobile Number </th>
-                  <th> Gender </th>
+                  <th> Sex </th>
                   <th> Date OF Birth </th>
                   <th> Address </th>
                   <th> Action </th>
@@ -462,7 +464,7 @@ const renderContent = () => {
                       <td> {account.name} </td>
                       <td> {account.email} </td>
                       <td> {account.contactNumber} </td>
-                      <td> {account.gender} </td>
+                      <td> {account.sex} </td>
                       <td> {renderDateOfBirth(account.dateOfBirth)} </td>
                       <td> {account.address} </td>
                       <td> 
@@ -518,6 +520,7 @@ const renderContent = () => {
 
   return (
     <>
+    <ToastContainer />
       {(status !== 'loading' && session) && (
         <DentistLayout>
           {renderContent()}

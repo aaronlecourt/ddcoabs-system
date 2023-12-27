@@ -10,6 +10,9 @@ import { UpdateProfileFormData } from '../types/profile';
 import Modal from '../components/Modal';
 import ArchiveButton from '../components/ArchiveButton';
 import { fileURLToPath } from 'url';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import User from '../models/User';
 
 interface User {
   _id: string;
@@ -200,7 +203,7 @@ export default function Accounts() {
   // ROLE UPDATE
   const [tempRoles, setTempRoles] = useState<Record<string, string>>({});
 
-  const handleRoleChange = (selectedRole: string, userId: string, index: number) => {
+  const handleRoleChange = (selectedRole: string, userId: string) => {
     setTempRoles((prevRoles) => ({
       ...prevRoles,
       [userId]: selectedRole, 
@@ -209,9 +212,8 @@ export default function Accounts() {
     console.log('Temp roles after selection:', selectedRole);
     console.log('ID after update:', userId);
     console.log('Updated Temp Roles:', tempRoles);
-
-    const updatedUsers = [...users]; 
-    updatedUsers[index].role = selectedRole;
+    // const updatedUsers = [...users]; 
+    // updatedUsers[index].role = selectedRole ;
   };
 
   //UPDATE USER ROLE
@@ -411,7 +413,7 @@ export default function Accounts() {
                                 : user.role 
                             }
                             // onChange={(e) => handleRoleChange(e, user._id)}
-                            onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                            onChange={(e) => handleRoleChange(e.target.value, user._id)}
                             onBlur={() => {
                               setTempRoles((prevRoles) => {
                                 const updatedRoles = { ...prevRoles };
@@ -485,7 +487,7 @@ export default function Accounts() {
                             : user.role // Otherwise use the original user's role
                         }
                         onChange={(e) => 
-                          {handleRoleChange(e.target.value, user._id, index)
+                          {handleRoleChange(e.target.value, user._id)
                           }}
                         onBlur={() => {
                           setTempRoles((prevRoles) => {
@@ -546,7 +548,7 @@ export default function Accounts() {
                                 ? tempRoles[user._id] // Use temp role if set
                                 : user.role // Otherwise use the original user's role
                             }
-                            onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                            onChange={(e) => handleRoleChange(e.target.value, user._id)}
                             onBlur={() => {
                               setTempRoles((prevRoles) => {
                                 const updatedRoles = { ...prevRoles };
@@ -601,8 +603,9 @@ export default function Accounts() {
     )
   }
 
-return (
+  return (
     <>
+     <ToastContainer />
       {(status !== 'loading' && session) && (
         <DentistLayout>
           {renderContent()}
