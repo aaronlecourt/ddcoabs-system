@@ -18,8 +18,8 @@ interface User {
   contactNumber: number;
   age: number;
   sex: string;
+  tempRole: string;
   role: string;
-  DropDownRole: string;
   createdAt: string;
   isArchived: boolean;
 }
@@ -163,38 +163,28 @@ export default function Accounts() {
 
   // UPDATE USER ROLE BUTTONS
   const onUpdateUser = (user: User, buttonName: string) => {
-
+    
       if (buttonName === 'updateRole') {
+        const userId = user._id;
+        const selectedRole = tempRoles[userId] || user.role;
+        console.log("UPDATED ROLE: ", selectedRole)
+        
+        setUpdateUserFormData({
+          ...user,
+          role: selectedRole,
+          isArchived: user.isArchived,
+        }); 
 
         setShowValiUser(true);
 
-        setUpdateUserFormData({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          contactNumber: user.contactNumber,
-          age: user.age,
-          sex: user.sex,
-          role: user.role,
-          createdAt: user.createdAt,
-          isArchived: user.isArchived,
-        }); // Set the data for the update form fields
-
       } else if (buttonName === 'archiveUser') {
+
         setShowArchiveUser(true);
 
         setUpdateUserFormData({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          contactNumber: user.contactNumber,
-          age: user.age,
-          sex: user.sex,
-          role: user.role,
-          createdAt: user.createdAt,
+          ...user,
           isArchived: true
         });
-         // Set the data for the update form fields
 
       } else if (buttonName === 'updateRolePatient') {
         setUpdateUserFormData({
@@ -208,18 +198,20 @@ export default function Accounts() {
   };
 
   // ROLE UPDATE
-  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>, index: any) => {
-    const selectedRole = e.target.value;
-    const updatedUsers = [...users]; // Create a copy of the users array
-    updatedUsers[index].role = selectedRole ;
-    
-    if (selectedRole === 'dentist') {
-      updatedUsers[index].DropDownRole = 'dentist';
-    } else {
-      // Set DropDownRole to the selected value for other roles
-      updatedUsers[index].DropDownRole = selectedRole;
-    }
-    setUsers(updatedUsers); 
+  const [tempRoles, setTempRoles] = useState<Record<string, string>>({});
+
+  const handleRoleChange = (selectedRole: string, userId: string, index: number) => {
+    setTempRoles((prevRoles) => ({
+      ...prevRoles,
+      [userId]: selectedRole, 
+    }));
+
+    console.log('Temp roles after selection:', selectedRole);
+    console.log('ID after update:', userId);
+    console.log('Updated Temp Roles:', tempRoles);
+
+    const updatedUsers = [...users]; 
+    updatedUsers[index].role = selectedRole;
   };
 
   //UPDATE USER ROLE
@@ -228,35 +220,35 @@ export default function Accounts() {
       e.preventDefault();
     }
 
-    const updatedData = { ...updateUserFormData, _id: userId }; // Include userId in the request body
+    const updatedData = { ...updateUserFormData, _id: userId }; 
 
-    fetch(`/api/dentist/accounts/role`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const error = await response.json();
-          alert('Update ROLE failed: ' + JSON.stringify(error));
-        } else {
-          const updatedUser = await response.json();
-          console.log('User role updated: ', updatedUser);
-          setShowValiUser(false); // Close the modal after successful 
-
-          setUsers(prevServices =>
-            prevServices.map(prevService =>
-              prevService._id === updatedUser._id ? updatedUser : prevService
-            )
-          );
-        }
-      })
-      .catch(error => {
-        alert('Update failed');
-        console.error('Error updating service:', error);
+    try {
+      const response = await fetch(`/api/dentist/accounts/role`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
       });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        alert('Update failed: ' + JSON.stringify(error));
+      } else {
+        const updatedUser = await response.json();
+        console.log('User role updated: ', updatedUser);
+        setShowValiUser(false);
+  
+        setUsers((prevServices) =>
+          prevServices.map((prevService) =>
+            prevService._id === updatedUser._id ? updatedUser : prevService
+          )
+        );
+      }
+    } catch (error) {
+      alert('Update failed');
+      console.error('Error updating service:', error);
+    }
 
   };
 
@@ -316,7 +308,7 @@ export default function Accounts() {
       <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want to archive this user?</p>
-          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
+          <input type='text' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
             <Button onClick={archiveUser} type = "submit">Yes</Button>
@@ -327,7 +319,7 @@ export default function Accounts() {
         <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want this user to be an admin or employee?</p>
-          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
+          <input type='text' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
             <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type = "submit">Yes</Button>
@@ -412,8 +404,21 @@ export default function Accounts() {
                         <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
                         <td>
                           <select
-                            value={user.role}
-                            onChange={(e) => handleRoleChange(e, index)}
+                            // value={user.role}
+                            value={
+                              tempRoles[user._id] !== undefined 
+                                ? tempRoles[user._id]
+                                : user.role 
+                            }
+                            // onChange={(e) => handleRoleChange(e, user._id)}
+                            onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                            onBlur={() => {
+                              setTempRoles((prevRoles) => {
+                                const updatedRoles = { ...prevRoles };
+                                delete updatedRoles[user._id]; 
+                                return updatedRoles;
+                              });
+                            }}
                           >
                             {roles.map((role) => (
                               <option key={role} value={role}>
@@ -427,8 +432,10 @@ export default function Accounts() {
                         </td>
                         <td className={styles1.tableAction}>
                           {/* Existing buttons */}
-                          {user.DropDownRole !== 'dentist' && (
-                            <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <ArchiveButton onClick={(e: any) => {
+                              const selectedRole = e.target.value;
+                              onUpdateUser(user, 'archiveUser')}}>
                               <FontAwesomeIcon
                                 icon={faFileArchive}
                                 width={24}
@@ -439,10 +446,16 @@ export default function Accounts() {
                           )}
                           <Button
                             onClick={(e: any) => {
-                              if (user.role === 'dentist' || user.role === 'employee') {
+                              const userId = user._id; 
+                              const selectedRole = tempRoles[userId] || user.role;; 
+                              console.log("userId: ", userId)
+                              console.log("selectedRole: ", selectedRole)
+                              console.log("Temp role: ", tempRoles[userId])
+
+                              if (selectedRole === 'dentist' || selectedRole === 'employee') {
+                                console.log('Showing modal for admin or employee users');
                                 setShowValiUser(true);
                                 onUpdateUser(user, 'updateRole');
-                                // Show the modal for admin or employee users
                               } else {
                                 onUpdateUser(user, 'updateRolePatient');
                               }
@@ -458,76 +471,125 @@ export default function Accounts() {
                 sortedUser.length > 0 ? (
                   sortedUser.map((user, index) => (
                     <tr key={user._id}>
-                    <td>{index + 1}</td>
-                    <td>{user.name}</td>
-                    <td>{user.contactNumber}</td>
-                    <td>{user.email}</td>
-                    <td> {user.age }</td>
-                    <td> {user.sex}</td>
-                    <td>
-                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
-                      {roles.map((role) => (
-                        <option key={role} value={role}>
-                          {role}
-                        </option>
-                      ))}
-                      </select>
-                    </td>
-                    <td> <Button> Show More </Button></td>
-                    <td className={styles1.tableAction}> 
-                      {user.DropDownRole !== 'dentist' && (
-                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                        </ArchiveButton>
-                      )}
-                      <Button onClick={(e: any) => {
-                        if (user.role === 'dentist' || user.role === 'employee') {
-                          setShowValiUser(true);
-                          onUpdateUser(user, 'updateRole');
-                          // Show the modal for admin or employee users
-                        } else {
-                          onUpdateUser(user, 'updateRolePatient');
+                      <td>{index + 1}</td>
+                      <td>{user.name}</td>
+                      <td>{user.contactNumber}</td>
+                      <td>{user.email}</td>
+                      <td> {user.age }</td>
+                      <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
+                      <td>
+                        <select 
+                        value={
+                          tempRoles[user._id] !== undefined // Check if temporary role is set for the user
+                            ? tempRoles[user._id] // Use temp role if set
+                            : user.role // Otherwise use the original user's role
                         }
-                      }}> Update Role </Button>
-                    </td>
-                  </tr>
-                   )) 
-                ) : (
-                  // GENERAL VIEWING
-                users.map((user, index) => (
-                  <tr key={user._id}>
-                    <td>{index + 1}</td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.contactNumber}</td>
-                    <td>
-                      <select value = {user.role} onChange = {(e) => handleRoleChange(e, index)}>
-                      {roles.map((role) => (
-                        <option key={role} value={role}>
-                          {role}
-                        </option>
-                      ))}
-                      </select>
-                    </td>
-                    <td className={styles1.tableAction}> 
-                      {user.DropDownRole !== 'dentist' &&  (
-                        <ArchiveButton onClick={() => onUpdateUser(user, 'archiveUser')}>
-                          <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                        </ArchiveButton>
-                      )}
-                      <Button onClick={(e: any) => {
-                        if (user.role === 'dentist' || user.role === 'employee') {
-                          setShowValiUser(true);
-                          onUpdateUser(user, 'updateRole');
-                          // Show the modal for admin or employee users
-                        } else {
-                          onUpdateUser(user, 'updateRolePatient');
-                        }
-                      }}> Update Role </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
+                        onChange={(e) => 
+                          {handleRoleChange(e.target.value, user._id, index)
+                          }}
+                        onBlur={() => {
+                          setTempRoles((prevRoles) => {
+                            const updatedRoles = { ...prevRoles };
+                            delete updatedRoles[user._id]; // Clear the temporary role on blur
+                            return updatedRoles;
+                          });
+                        }}
+                        >
+                        {roles.map((role) => (
+                          <option key={role} value={role}>
+                            {role}
+                          </option>
+                        ))}
+                        </select>
+                      </td>
+                      <td> <Button> Show More </Button></td>
+                      <td className={styles1.tableAction}> 
+                        {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                          <ArchiveButton onClick={(e: any) => {
+                            const selectedRole = e.target.value;
+                            onUpdateUser(user, 'archiveUser')}}>
+                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                          </ArchiveButton>
+                        )}
+                        <Button onClick={(e: any) => {
+                          const userId = user._id; 
+                          const selectedRole = tempRoles[userId] || user.role;; 
+                          console.log("userId: ", userId)
+                          console.log("selectedRole: ", selectedRole)
+
+                          if (tempRoles[userId] === 'dentist' || tempRoles[userId] === 'employee') {
+                            console.log('Showing modal for admin or employee users');
+                            setShowValiUser(true);
+                            // onUpdateUser(user, 'updateRole');
+                          } else {
+                            onUpdateUser(user, 'updateRolePatient');
+                          }
+                        }}
+                        > Update Role </Button>
+                      </td>
+                    </tr>
+                    )) 
+                  ) : (
+                    // GENERAL VIEWING
+                  users.map((user, index) => (
+                    <tr key={user._id}>
+                      <td>{index + 1}</td>
+                      <td>{user.name}</td>
+                      <td>{user.contactNumber}</td>
+                      <td>{user.email}</td>
+                      <td> {user.age }</td>
+                      <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
+                      <td>
+                        <select 
+                          value={
+                              tempRoles[user._id] !== undefined // Check if temporary role is set for the user
+                                ? tempRoles[user._id] // Use temp role if set
+                                : user.role // Otherwise use the original user's role
+                            }
+                            onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                            onBlur={() => {
+                              setTempRoles((prevRoles) => {
+                                const updatedRoles = { ...prevRoles };
+                                delete updatedRoles[user._id]; // Clear the temporary role on blur
+                                return updatedRoles;
+                              });
+                            }}
+                          >
+                        {roles.map((role) => (
+                          <option key={role} value={role}>
+                            {role}
+                          </option>
+                        ))}
+                        </select>
+                      </td>
+                      <td className={styles1.tableAction}> 
+                        {user.role !== 'dentist' &&  (
+                          <ArchiveButton onClick={(e: any) => {
+                            const selectedRole = e.target.value;
+                            onUpdateUser(user, 'archiveUser')}}>
+                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                          </ArchiveButton>
+                        )}
+                        <Button 
+                          onClick={(e: any) => {
+                            const userId = user._id; 
+                            const selectedRole = tempRoles[userId] || user.role;; 
+                            console.log("userId: ", userId)
+                            console.log("selectedRole: ", selectedRole)
+
+                            if (tempRoles[userId] === 'dentist' || tempRoles[userId] === 'employee') {
+                              console.log('Showing modal for admin or employee users');
+                              setShowValiUser(true);
+                              // onUpdateUser(user, 'updateRole');
+                            } else {
+                              onUpdateUser(user, 'updateRolePatient');
+                            }
+                          }}
+                          > Update Role </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </main>

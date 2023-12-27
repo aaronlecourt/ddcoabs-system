@@ -3,7 +3,7 @@ import styles from '../styles/forms/services.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
-import { BookingFormContext } from "../pages/book";
+import { BookingFormContext, BookingFormContextDentist } from "../pages/book";
 import { handleFormDataChange, handleFormEnter } from "../utils/form-handles";
 import { isServicesFormValid } from "../validations/servicesform";
 

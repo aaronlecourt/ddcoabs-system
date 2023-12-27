@@ -1,22 +1,22 @@
 import { ErrorFormDataField } from "./error";
 
-type Keys = 
-  'firstName' |
-    'lastName' |
-    'age' |
-    'sex' |
-    'contactNumber' 
-  ;
+// type Keys = 
+//   'firstName' |
+//     'lastName' |
+//     'age' |
+//     'sex' |
+//     'contactNumber' 
+//   ;
 
-export interface Question {
-  note?: string;
-  question: string;
-  key: Keys;
-  customWidth?: number;
-  others?: Question;
-  subQuestions?: Question[];
-  type?: string;
-}
+// export interface Question {
+//   note?: string;
+//   question: string;
+//   // key: Keys;
+//   customWidth?: number;
+//   others?: Question;
+//   subQuestions?: Question[];
+//   type?: string;
+// }
 
 export interface PatientFormDataDentist {
     firstName: string;

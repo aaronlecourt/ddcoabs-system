@@ -21,7 +21,6 @@ import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
 export const BookingFormContext = createContext({})
 export const BookingFormContextDentist = createContext({})
 
-
 export default function Book() {
   const { session, status } = useAuthGuard();
 
@@ -52,7 +51,6 @@ export default function Book() {
     }
   }
 
-
   useEffect(() => {
 
     const setServicesData = async () => {
@@ -79,8 +77,6 @@ export default function Book() {
       setActiveStep(e, currentStepIndex - 1)
     }
   }
-
-
 
   const [steps, setSteps] = useState<any>([
     {
@@ -134,6 +130,7 @@ export default function Book() {
   }, [session?.user?.role]);
 
   const [currentStep, setCurrentStep] = useState(steps[currentStepIndex])
+
   // FOR DENTIST
   const [patientFormDentist, setPatientFormDentist] = useState<PatientFormDataDentist>(PatientWalkIn)
   const [patientErrorFormDataDentist, setPatientErrorFormDentist] = useState<PatientErrorFormDataDentist>(ErrorPatientFormObjectDentist)
