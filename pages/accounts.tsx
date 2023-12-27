@@ -539,7 +539,7 @@ export default function Accounts() {
     )
   }
 
-  return (
+return (
     <>
       {(status !== 'loading' && session) && (
         <DentistLayout>

@@ -15,5 +15,6 @@ export interface IAppointment {
     price?: number,
     paymentMethod: string,
     details?: object, // patient form
-    isArchived: boolean
+    isArchived: boolean,
+    cancelReason: string
 }

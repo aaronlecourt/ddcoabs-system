@@ -74,6 +74,7 @@ export default function Home({
   const [selectedSorting, setSelectedSorting] = useState('');
   const [filteredAppointments, setFilteredAppointments] = useState<IAppointment[]>(initialAppointmentData);
   const [searchResults, setSearchResults] = useState<IAppointment[]>([]);
+  const [cancelReasonValue, setCancelReasonValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const sortBy = ['Latest to Oldest', 'Oldest to Latest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)', 'Pending First'];
 
@@ -90,13 +91,15 @@ export default function Home({
     const user = session.user;
 
     if (user) {
+      const reason = cancelReasonValue;
+
       fetch(`/api/dentist/appointment/cancel/${selectedAppointment._id}`, {
         // fetch(`/api/${user.role}/appointment/cancel/${selectedAppointment._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: "",
+        body: JSON.stringify({cancelReason: reason}),
       })
         .then(async (response) => {
           const responseMsg = await response.json();
@@ -113,34 +116,6 @@ export default function Home({
         });
     }
   };
-
-  // const filterAppointmentsByStatus = (status: string) => {
-  //   const currentDate = new Date().toDateString(); // Get today's date
-
-  //   if (initialAppointmentData) {
-  //     const filteredAppointments = initialAppointmentData.filter(
-  //       (appointment: IAppointment) => {
-  //         const appointmentDate = new Date(appointment.date).toDateString();
-
-  //         if (status === "All") {
-  //           return true; // Show all appointments when 'All' is selected
-  //         } else if (status === "Today") {
-  //           return appointmentDate === currentDate; // Show appointments for today's date
-  //         }
-
-  //         return appointment.status === status; // Filter by other statuses
-  //       }
-  //     );
-
-  //     setFilteredAppointments(filteredAppointments); // Update the filteredAppointments state with the filtered list
-  //   }
-  // };
-
-  // // UseEffect to filter appointments for 'Today' when the component mounts
-  // useEffect(() => {
-  //   filterAppointmentsByStatus("Today");
-  //   handleSortChange("Latest to Oldest");
-  // }, []);
 
   const filterAppointmentsByStatus = (status: string) => {
     const currentDate = new Date().toDateString(); // Get today's date
@@ -375,9 +350,13 @@ export default function Home({
           </div>
           <input
             type="text"
+            name="cancelReason"
             className={styles.cancelReason}
+            value={cancelReasonValue}
+            onChange={e => setCancelReasonValue(e.target.value)}
             placeholder="Enter your reason for cancelling..."
           />
+
           <div className={styles.cancelActions}>
             <Button
               type="secondary"

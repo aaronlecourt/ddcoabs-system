@@ -287,6 +287,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           </div>
         </Modal>
       )}
+
       <div className={styles.appointments__item} onClick={openAppointment}>
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
         {!isPatient && <div className={styles.appointments__user}>
@@ -364,13 +365,13 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row3}>
-            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
-                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
-                <span>Show Details</span>
-              </div>
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
                 <FontAwesomeIcon icon={faNoteSticky} color={'#909090'} width={15} />
-                <span>"I had to attend an emergency meeting."</span>
+                <span>"{appointment.cancelReason}"</span>
+              </div>
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick=  {toggleModal}>
+                  <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                  <span>Show Details</span>
               </div>
               {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
@@ -386,10 +387,6 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
                 <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
                 <span>Show Details</span>
-              </div>
-              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
-              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
-                <div className={styles.mainAction}>RESOLVE</div>
               </div>
             </div>
           </>
@@ -431,7 +428,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
         {appointment.status == APPOINTMENT_STATUS.done &&
           <>
             <div className={styles.appointments__details__separator}></div>
-            <div className={styles.appointments__details__row2}>
+            <div className={styles.appointments__details__row3}>
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
                 <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
                 <span>Show Details</span>
