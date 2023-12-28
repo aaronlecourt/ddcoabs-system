@@ -424,7 +424,6 @@ export default function Accounts() {
                                 ? tempRoles[user._id]
                                 : user.role 
                             }
-                            // onChange={(e) => handleRoleChange(e, user._id)}
                             onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
                             onBlur={() => {
                               setTempRoles((prevRoles) => {
@@ -447,18 +446,6 @@ export default function Accounts() {
                           )}
                         </td>
                         <td className={styles1.tableAction}>
-                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                            <ArchiveButton onClick={(e: any) => {
-                              const selectedRole = e.target.value;
-                              onUpdateUser(user, 'archiveUser')}}>
-                              <FontAwesomeIcon
-                                icon={faFileArchive}
-                                width={24}
-                                height={24}
-                                color={'#ffffff'}
-                              />
-                            </ArchiveButton>
-                          )}
                           <Button
                             type='secondary'
                             onClick={(e: any) => {
@@ -507,30 +494,29 @@ export default function Accounts() {
                       <td>{user.email}</td>
                       <td> {user.age }</td>
                       <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
-                      <td>
-                        <select 
-                        value={
-                          tempRoles[user._id] !== undefined // Check if temporary role is set for the user
-                            ? tempRoles[user._id] // Use temp role if set
-                            : user.role // Otherwise use the original user's role
-                        }
-                        onChange={(e) => 
-                          {handleRoleChange(e.target.value, user._id, index)
-                          }}
-                        onBlur={() => {
-                          setTempRoles((prevRoles) => {
-                            const updatedRoles = { ...prevRoles };
-                            delete updatedRoles[user._id]; // Clear the temporary role on blur
-                            return updatedRoles;
-                          });
-                        }}
-                        >
-                        {roles.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                        </select>
+                      <td className={styles1.filters__sortDropdown}>
+                        <select
+                            // value={user.role}
+                            value={
+                              tempRoles[user._id] !== undefined 
+                                ? tempRoles[user._id]
+                                : user.role 
+                            }
+                            onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                            onBlur={() => {
+                              setTempRoles((prevRoles) => {
+                                const updatedRoles = { ...prevRoles };
+                                delete updatedRoles[user._id]; 
+                                return updatedRoles;
+                              });
+                            }}
+                          >
+                            {roles.map((role) => (
+                              <option key={role} value={role}>
+                                {role}
+                              </option>
+                            ))}
+                          </select>
                       </td>
                       <td>
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
@@ -538,29 +524,39 @@ export default function Accounts() {
                           )}
                         </td>
                       <td className={styles1.tableAction}> 
-                        {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                          <ArchiveButton onClick={(e: any) => {
-                            const selectedRole = e.target.value;
-                            onUpdateUser(user, 'archiveUser')}}>
-                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                          </ArchiveButton>
-                        )}
-                        <Button onClick={(e: any) => {
-                          const userId = user._id; 
-                          const selectedRole = tempRoles[userId] || user.role;; 
-                          console.log("userId: ", userId)
-                          console.log("selectedRole: ", selectedRole)
+                      <Button
+                            type='secondary'
+                            onClick={(e: any) => {
+                              const userId = user._id; 
+                              const selectedRole = tempRoles[userId] || user.role;; 
+                              console.log("userId: ", userId)
+                              console.log("selectedRole: ", selectedRole)
+                              console.log("Temp role: ", tempRoles[userId])
 
-                          if (tempRoles[userId] === 'dentist' || tempRoles[userId] === 'employee') {
-                            console.log('Showing modal for admin or employee users');
-                            setShowValiUser(true);
-                            // onUpdateUser(user, 'updateRole');
-                          } else {
-                            setShowValiUserPatient(true);
-                            onUpdateUser(user, 'updateRolePatient');
-                          }
-                        }}
-                        > Update Role </Button>
+                              if (selectedRole === 'dentist' || selectedRole === 'employee') {
+                                console.log('Showing modal for admin or employee users');
+                                setShowValiUser(true);
+                                onUpdateUser(user, 'updateRole');
+                              } else {
+                                setShowValiUserPatient(true);
+                                onUpdateUser(user, 'updateRolePatient');
+                              }
+                            }}
+                          >
+                            Update Role
+                          </Button>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <ArchiveButton onClick={(e: any) => {
+                              const selectedRole = e.target.value;
+                              onUpdateUser(user, 'archiveUser')}}>
+                              <FontAwesomeIcon
+                                icon={faFileArchive}
+                                width={24}
+                                height={24}
+                                color={'#ffffff'}
+                              />
+                            </ArchiveButton>
+                          )}
                       </td>
                     </tr>
                     )) 
@@ -574,28 +570,29 @@ export default function Accounts() {
                       <td>{user.email}</td>
                       <td> {user.age }</td>
                       <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
-                      <td>
-                        <select 
-                          value={
-                              tempRoles[user._id] !== undefined // Check if temporary role is set for the user
-                                ? tempRoles[user._id] // Use temp role if set
-                                : user.role // Otherwise use the original user's role
+                      <td className={styles1.filters__sortDropdown}>
+                        <select
+                            // value={user.role}
+                            value={
+                              tempRoles[user._id] !== undefined 
+                                ? tempRoles[user._id]
+                                : user.role 
                             }
                             onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
                             onBlur={() => {
                               setTempRoles((prevRoles) => {
                                 const updatedRoles = { ...prevRoles };
-                                delete updatedRoles[user._id]; // Clear the temporary role on blur
+                                delete updatedRoles[user._id]; 
                                 return updatedRoles;
                               });
                             }}
                           >
-                        {roles.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                        </select>
+                            {roles.map((role) => (
+                              <option key={role} value={role}>
+                                {role}
+                              </option>
+                            ))}
+                          </select>
                       </td>
                       <td>
                         {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
@@ -603,30 +600,39 @@ export default function Accounts() {
                         )}
                       </td>
                       <td className={styles1.tableAction}> 
-                        {user.role !== 'dentist' &&  (
-                          <ArchiveButton onClick={(e: any) => {
-                            const selectedRole = e.target.value;
-                            onUpdateUser(user, 'archiveUser')}}>
-                            <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                          </ArchiveButton>
-                        )}
-                        <Button 
-                          onClick={(e: any) => {
-                            const userId = user._id; 
-                            const selectedRole = tempRoles[userId] || user.role;; 
-                            console.log("userId: ", userId)
-                            console.log("selectedRole: ", selectedRole)
+                      <Button
+                            type='secondary'
+                            onClick={(e: any) => {
+                              const userId = user._id; 
+                              const selectedRole = tempRoles[userId] || user.role;; 
+                              console.log("userId: ", userId)
+                              console.log("selectedRole: ", selectedRole)
+                              console.log("Temp role: ", tempRoles[userId])
 
-                            if (tempRoles[userId] === 'dentist' || tempRoles[userId] === 'employee') {
-                              console.log('Showing modal for admin or employee users');
-                              setShowValiUser(true);
-                              // onUpdateUser(user, 'updateRole');
-                            } else {
-                              setShowValiUserPatient(true);
-                              onUpdateUser(user, 'updateRolePatient');
-                            }
-                          }}
-                          > Update Role </Button>
+                              if (selectedRole === 'dentist' || selectedRole === 'employee') {
+                                console.log('Showing modal for admin or employee users');
+                                setShowValiUser(true);
+                                onUpdateUser(user, 'updateRole');
+                              } else {
+                                setShowValiUserPatient(true);
+                                onUpdateUser(user, 'updateRolePatient');
+                              }
+                            }}
+                          >
+                            Update Role
+                          </Button>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <ArchiveButton onClick={(e: any) => {
+                              const selectedRole = e.target.value;
+                              onUpdateUser(user, 'archiveUser')}}>
+                              <FontAwesomeIcon
+                                icon={faFileArchive}
+                                width={24}
+                                height={24}
+                                color={'#ffffff'}
+                              />
+                            </ArchiveButton>
+                          )}
                       </td>
                     </tr>
                   ))
