@@ -2,30 +2,91 @@
 
 .main {
   padding: 2rem;
-
-  // &LandingPage {
-  //   background: linear-gradient(180deg, #3C6CAF 0%, #55BD97 100%);
-  //   height: 100vh;
-  //   display: flex;
-  //   flex-direction: column;
-  //   align-items: center;
-  //   color: $white;
-  // }
+  
   &LandingPage {
     // height: 100vh;
-    display: flex;
-    flex-direction: column;
+    // display: flex;
+    // flex-direction: column;
     align-items: center;
     color: $text;
   }
 }
 
+.countContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Creating 4 columns */
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  text-align: center;
+  margin: 1rem 0;
+
+  &Box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    border: 1px solid $grey;
+    border-radius: 10px;
+    padding: 0.2rem;
+
+    div {
+      font-size: 50px;
+      font-weight: bold;
+      color: $green;
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+}
+
+.Home {
+  gap: 3rem;
+  display: flex;
+  padding-left: 1rem;
+}
+
+.servicesContainer {
+  height: 600px;
+  padding: 1rem;
+  overflow-y: scroll;
+  // background-color: red;
+
+  &Card {
+    border: 1px solid rgba($color: $grey, $alpha: 1);
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+
+    span {
+      font-size: 16px;
+    }
+
+    &:hover {
+      border: 1px solid rgba($color: $green, $alpha: 1);
+      background-color: rgba($color: $green, $alpha: 0.15);
+    }
+
+    &Label {
+      display: flex;
+      justify-content: space-between;
+      color: $green;
+      font-weight: bold;
+    }
+  }
+}
 .sub {
   width: 50vw;
 
   &Header {
     font-weight: bolder;
     color: $green;
+  }
+
+  p {
+    font-size: 16px;
   }
 }
 

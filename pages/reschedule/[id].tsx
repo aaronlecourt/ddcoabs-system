@@ -113,14 +113,16 @@ export default function Reschedule() {
           <h1 className={styles.title}>Reschedule</h1>
           <p className={styles.subtitle}>Reschedule the appointment by selecting a different start time and/or date.</p>
           {loading && <div>Loading...</div>}
-          {!loading && <div className={styles.container}>
-            <div className={styles.container__row}>
-              <strong>Select Date</strong>
-              <div style={{ marginTop: '.5rem' }}>
-                <CustomCalendar 
-                  selectedDate={reschedDate}
-                  setSelectedDate={setReschedDate}
-                />
+          {!loading && (
+            <div className={styles.container}>
+              <div className={styles.container__row}>
+                <strong>Select Date</strong>
+                <div style={{ marginTop: '.5rem' }}>
+                  <CustomCalendar 
+                    selectedDate={reschedDate}
+                    setSelectedDate={setReschedDate}
+                  />
+                </div>
               </div>
               <div className={styles.container__row}>
                 <strong>Booking Details</strong>
@@ -152,33 +154,16 @@ export default function Reschedule() {
               </div>
               <div className={styles.container__row}>
                 <strong>Select Time</strong>
-                {errors && errors.length > 0 && errors.map((error, index) => 
-                  <div key={index}>
-                    <span style={{ color: 'red', textTransform: 'uppercase' }}>{error}</span>
-                  </div>
-                )}
                 <div className={styles.timeContainer}>
                   <TimeUnitPicker selectedTimeUnit={selectedTimeUnit} onSelectTimeUnit={setSelectedTimeUnit} />
-                  {/* <div className={styles.timePicker}>
-                    <strong className={styles.timePicker__label}>Start</strong>
-                    <div className={styles.timePicker__input}>
-                      <input type='time' value={startTime} onChange={e => setStartTime(e.target.value)} />
-                    </div>
-                  </div>
-                  <div className={styles.timePicker}>
-                    <strong className={styles.timePicker__label}>End</strong>
-                    <div className={styles.timePicker__input}>
-                      <input type='time' value={endTime} onChange={e => setEndTime(e.target.value)} />
-                    </div>
-                  </div> */}
                 </div>
               </div>
             </div>
-            </div>}
-          </main>
-        )}
-      </>
-    );
+          )}
+        </main>
+      )}
+    </>
+  );
   
 
   const renderDentistContent = () => (
