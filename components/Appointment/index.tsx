@@ -258,11 +258,15 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
                 <br />
                   <h3>Have or has had:</h3>
                   {selectedAppointmentDetails.details.others ? (
-                    selectedAppointmentDetails.details.others.map((item: string, index: number) => (
-                      <li key={index}>{item}</li>
-                    ))
+                    selectedAppointmentDetails.details.others.includes('Select this if nothing applies') ? (
+                      <li>None</li>
+                    ) : (
+                      selectedAppointmentDetails.details.others.map((item: string, index: number) => (
+                        <li key={index}>{item}</li>
+                      ))
+                    )
                   ) : (
-                    <li>N/A</li>
+                    <li>None</li>
                   )}
                 </>
               )}
