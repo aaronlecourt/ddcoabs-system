@@ -62,6 +62,13 @@ export const ErrorPatientFormObject = {
 export const PatientFormCheckboxList = [
   [
     {
+      id: '32',
+      text: 'None',
+      value: false,
+    },
+  ],
+  [
+    {
       id: '1',
       text: 'High Blood Pressure',
       value: false,
@@ -236,10 +243,12 @@ export const PatientFormCheckboxList = [
       text: 'Thyroid Problem',
       value: false,
     },
+  ],
+  [
     {
-      id: '32',
+      id: '33',
       text: 'Others',
-      value: true,
+      value: false,
       textbox: true,
       textValue: ''
     },
