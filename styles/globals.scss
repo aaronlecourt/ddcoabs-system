@@ -195,7 +195,7 @@ a {
     }
 
     &__nav {
-      cursor: default;
+      cursor: pointer;
       color: $text;
 
       &>svg:first-child {
@@ -247,6 +247,13 @@ a {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+
+    &:first-child,
+    &:last-child {
+      .rbc-button-link {
+        color: $grey;
+      }
+    }
   }
 
   .rbc-button-link {

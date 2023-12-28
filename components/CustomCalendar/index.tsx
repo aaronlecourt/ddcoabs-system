@@ -14,7 +14,10 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
   };
 
   const navigateBackward = () => {
-    const previousMonthDate = moment(selectedDate).subtract(1, 'months').toDate();
+    let previousMonthDate = moment(selectedDate).subtract(1, 'months').toDate();
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (previousMonthDate < today) previousMonthDate = today;
     setSelectedDate(previousMonthDate);
   };
 
@@ -38,9 +41,11 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
   }
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
+    const selectedDate = new Date(start);
     const today = new Date();
     today.setHours(0,0,0,0);
-    if (new Date(start) < today) return;
+    if (selectedDate < today) return; // Beyond Today Date
+    else if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) return; // is Weekend
 
     setSelectedDate(start);
   };
