@@ -18,6 +18,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from '../components/Modal';
 import Button from '../components/ArchiveButton';
+import { Service } from '../types/services';
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const session = await getSession(context);
@@ -72,6 +73,28 @@ export default function Home({
   const [itemsPerPage] = useState(5);
   // const totalPages = Math.max(Math.ceil(filteredAppointments.length / itemsPerPage), 1);
 
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch('/api/dentist/dentist-service');
+      if (!response.ok) {
+        throw new Error('Failed to fetch services');
+      }
+      const data = await response.json();
+      setServices(data); // Assuming the response directly contains an array of services
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
   const onCancelAppointment = (appointment: any) => {
     setSelectedAppointment(appointment);
     setShowCancelAppointment(true);
@@ -91,7 +114,7 @@ export default function Home({
         .then(async (response) => {
           const responseMsg = await response.json()
           if (!response.ok) {
-            toast.error('appointment cancel failed: ' + JSON.stringify(responseMsg))
+            toast.error('Appointment cancel failed: ' + JSON.stringify(responseMsg))
           } else {
             toast.success('Appointment Cancel Successful')
             window.location.href = '/'
@@ -239,9 +262,6 @@ export default function Home({
       );
     };
     
-    
-    
-
     const handleFilterChange = (newFilter: string) => {
       if (newFilter !== selectedFilter) {
         setSelectedFilter(newFilter);
@@ -309,6 +329,16 @@ export default function Home({
         </div>
       );
     };
+    
+    // Count appointments by status for the logged-in user
+    const countUserAppointmentsByStatus = (status: string) => {
+      if (status === 'All') {
+        return appointments.filter((appointment:IAppointment) => appointment.patientId === session.user?.id).length;
+      }
+      return appointments.filter(
+        (appointment:IAppointment) => appointment.patientId === session.user?.id && appointment.status === status
+      ).length;
+    };
 
   const renderContent = () => {
     return (
@@ -317,29 +347,59 @@ export default function Home({
         {session && (
           <main className={`${styles.main} ${styles.mainLandingPage}`}>
             {/* separate into 2 services scroll 1 side */}
-            <div className="">
-            <Image
-              src='/logo_dark.png'
-              alt='logo'
-              width={415}
-              height={100}
-            />
-            <br />
-            <div className={styles.sub}>
-            <h2 className={styles.subHeader}>About the Clinic</h2>
-            <p>
-              The DentalFix Dental Clinic is a family-owned and newly founded business in the fourth week of January 2023. It is established through thorough planning, hard work, and with the help of Dr. Sheela Mae De Jesus’ parents. Considering the factors such as the population in the area, central business district, and the location of their laboratory, they have decided to establish and rent a space for their dental clinic in a building near the University of Baguio where Dr. De Jesus graduated Doctor of Medicine in Dentistry (DMD) last 2019. 
-            </p>
-            <br />
-            <div>
-            <h2 className={styles.subHeader}>Operating Hours</h2>
-            <p>
-              Monday - Friday: 8:00 AM - 6:00 PM
-              <br />
-              Saturday - Sunday: Closed
-            </p>
-            </div>
-            </div>
+            <div className={styles.Home}>
+              <div className={styles.sub}>
+                <h1 className={styles.title}>Hello {session.user?.name}!</h1>
+                <div className={styles.appointmentCounts}>
+                  <h3>You have</h3>
+                <div className={styles.countContainer}>
+                  <div className={styles.countContainerBox}>
+                    <div>{countUserAppointmentsByStatus('Pending')}</div>
+                    <span>Pending Appointments</span>
+                  </div>
+                  <div className={styles.countContainerBox}>
+                    <div>{countUserAppointmentsByStatus('Confirmed')}</div>
+                    <span>Confirmed Appointments</span>
+                  </div>
+                  <div className={styles.countContainerBox}>
+                    <div>{countUserAppointmentsByStatus('Rescheduled')}</div>
+                    <span>Rescheduled Appointments</span>
+                  </div>
+                  <div className={styles.countContainerBox}>
+                    <div>{countUserAppointmentsByStatus('Done')}</div>
+                    <span>Done Appointments</span>
+                  </div>
+                </div>
+              </div>
+                <h2 className={styles.subHeader}>About the Clinic</h2>
+                  <p>
+                    The DentalFix Dental Clinic is a family-owned and newly founded business in the fourth week of January 2023. It is established through thorough planning, hard work, and with the help of Dr. Sheela Mae De Jesus’ parents. Considering the factors such as the population in the area, central business district, and the location of their laboratory, they have decided to establish and rent a space for their dental clinic in a building near the University of Baguio where Dr. De Jesus graduated Doctor of Medicine in Dentistry (DMD) last 2019. 
+                  </p>
+                  <br />
+                <h2 className={styles.subHeader}>Operating Hours</h2>
+                  <p>
+                    <b>Monday - Friday:</b> 8:00 AM - 6:00 PM
+                    <br />
+                    <b>Saturday - Sunday:</b> Closed
+                  </p>
+              </div>
+
+              <div className={styles.sub}>
+                <h2 className={styles.subHeader}>Offered Services</h2>
+                <div className={styles.servicesContainer}>
+                  {loading && <p>Loading...</p>}
+                  {!loading &&
+                    services.map((service) => (
+                      <div key={service._id} className={styles.servicesContainerCard}>
+                        <div className={styles.servicesContainerCardLabel}>
+                          <span>{service.name}</span>
+                          <span>P{parseFloat(service.price).toFixed(2)}</span>
+                        </div>
+                        <span>{service.description}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
             </div>
           </main>
         )}

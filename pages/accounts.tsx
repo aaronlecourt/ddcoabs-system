@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import User from '../models/User';
+import CancelButton from '../components/CancelButton';
 
 interface User {
   _id: string;
@@ -340,7 +341,7 @@ export default function Accounts() {
         </Modal>
 
       <section className={styles.main}>
-        <div>
+        <div className={styles.servicecrud}>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
             <input type='text' className={styles1.filters__searchInput} placeholder='Search account name...'
@@ -381,7 +382,7 @@ export default function Accounts() {
             </div>
           </div>
           <div className={styles1.filters__sortDropdown}>
-            <button> Generate Report </button>
+            <Button type='secondary'> Generate Report </Button>
           </div>
         </div>
         {session && (
@@ -415,7 +416,7 @@ export default function Accounts() {
                         <td>{user.email}</td>
                         <td>{user.age}</td>
                         <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
-                        <td>
+                        <td className={styles1.filters__sortDropdown}>
                           <select
                             // value={user.role}
                             value={
@@ -459,6 +460,7 @@ export default function Accounts() {
                             </ArchiveButton>
                           )}
                           <Button
+                            type='secondary'
                             onClick={(e: any) => {
                               const userId = user._id; 
                               const selectedRole = tempRoles[userId] || user.role;; 
@@ -478,6 +480,19 @@ export default function Accounts() {
                           >
                             Update Role
                           </Button>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <ArchiveButton onClick={(e: any) => {
+                              const selectedRole = e.target.value;
+                              onUpdateUser(user, 'archiveUser')}}>
+                              <FontAwesomeIcon
+                                icon={faFileArchive}
+                                width={24}
+                                height={24}
+                                color={'#ffffff'}
+                              />
+                            </ArchiveButton>
+                          )}
+                          
                         </td>
                       </tr>
                     ))

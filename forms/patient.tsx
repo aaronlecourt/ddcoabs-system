@@ -62,6 +62,13 @@ export const ErrorPatientFormObject = {
 export const PatientFormCheckboxList = [
   [
     {
+      id: '32',
+      text: 'Select this if nothing applies',
+      value: false,
+    },
+  ],
+  [
+    {
       id: '1',
       text: 'High Blood Pressure',
       value: false,
@@ -236,10 +243,12 @@ export const PatientFormCheckboxList = [
       text: 'Thyroid Problem',
       value: false,
     },
+  ],
+  [
     {
-      id: '32',
+      id: '33',
       text: 'Others',
-      value: true,
+      value: false,
       textbox: true,
       textValue: ''
     },
@@ -281,6 +290,8 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
       },
     ]
   ])
+
+  const hasErrors = Object.values(errorFormData).some((error:any) => error.error);
 
   const [dentalHistoryQuestions] = useState<Question[]>([
     {
@@ -416,9 +427,10 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
   }))
 
   return (
-    <div className={styles.form}>
+    <div className={styles.formContain}>
+    <div className={`${styles.form} ${hasErrors ? styles.errorBorder : ''}`}>
       {initialQuestions.map((rowQuestions, index) =>
-        <div key={`rowQuestions-${index + 1}`} className={styles.form__row}>
+        <div key={`rowQuestions-${index + 1}`} className={styles.form__column}>
           {rowQuestions.map(question =>
             <div key={question.key} className={styles.form__row__field} style={{ flex: question.customWidth ? question.customWidth : 1 }}>
               <div className={`formLabel ${styles.form__row__field__label}`}>
@@ -437,7 +449,6 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
           )}
         </div>
       )}
-      <div className={styles.form__container}>
         <div className={styles.form__column}>
           {questions.map((question, index) =>
             <div key={question.key}>
@@ -530,12 +541,11 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
             </div>
           )}
         </div>
-        <div className={styles.form__column} style={{ flex: 0.5, marginLeft: '2rem' }}>
+        <div className={styles.form__column}>
           <h3>Dental History</h3>
-          <div className={styles.form}>
             {dentalHistoryQuestions.map(question =>
-              <div key={question.key} className={`${styles.form__column__field} ${styles.col}`} style={{ flex: question.customWidth ? question.customWidth : 1 }}>
-                <div className={`formLabel ${styles.form__column__field__label}`}>
+              <div key={question.key} className={`${styles.form__row__field} ${styles.row}`} style={{ flex: question.customWidth ? question.customWidth : 1 }}>
+                <div className={`formLabel ${styles.form__row__field__label}`}>
                   <label>{question.question}</label>
                 </div>
                 <div className={`formInput ${errorFormData[question.key].error ? 'formInput--error' : ''}`}>
@@ -549,11 +559,11 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
                 </div>
               </div>
             )}
-            <div className={styles.next}>
-              <Button onClick={next}>Next</Button>
-            </div>
-          </div>
         </div>
+      </div>
+
+      <div className={styles.next}>
+        <Button onClick={next}>Next</Button>
       </div>
     </div>
   )
