@@ -36,11 +36,13 @@ export default function Services() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('');
+  
   const [errorFormData, setErrorFormData] = useState<ErrorAddServicesFormData>({
     name: { error: false, message: null },
     price: { error: false, message: null },
     description: { error: false, message: null },
   });
+
   const [serviceFormData, setServiceFormData] = useState<AddServicesFormData>({
     name: '',
     price: '',
@@ -48,6 +50,7 @@ export default function Services() {
     type: '',
     isArchived: false,
   });
+
   const [updateServiceFormData, setUpdateServiceFormData] = useState<UpdateServicesFormData>({
     _id: '',
     name: '',
@@ -231,24 +234,20 @@ export default function Services() {
       // Check if the service is added to the services state
       setServices(prevServices => {
         const updatedServices = [...prevServices, responseData];
-        console.log('Updated Services:', updatedServices);
         return updatedServices;
       });
 
       // Calculate the total number of pages based on the updated services
       const updatedTotalPages = Math.max(Math.ceil((services.length + 1) / itemsPerPage), 1);
 
-      // Update the sortedServices array with the new service data
       setSortedServices(prevSortedServices => {
         const updatedSortedServices = [...prevSortedServices, responseData];
         console.log('Updated Sorted Services:', updatedSortedServices);
         return updatedSortedServices;
       });
 
-      // Update the current page to display the new service if it's on the last page
       setCurrentPage(updatedTotalPages);
 
-      // Inside addService after updating states
       console.log('Updated Services:', services);
       console.log('Updated Sorted Services:', sortedServices);
 
@@ -400,36 +399,36 @@ export default function Services() {
       content = (
         <>
         <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Service Name</th>
-                        <th>Base Charge</th>
-                        <th>Description</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {pageItems.map((service, index) => (
-                        <tr key={service._id}>
-                          <td>{startIndex + index + 1}</td>
-                          <td>{service.name}</td>
-                          <td>₱ {Number(service.price).toFixed(2)}</td>
-                          <td>{service.description}</td>
-                          <td className={styles1.tableAction}>
-                            <EditButton onClick={() => onUpdateService(service, 'update')}>
-                              <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
-                            </EditButton>
-                            <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
-                              <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
-                            </ArchiveButton>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    
-                  </table>
-                  <div>{renderPagination()}</div>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Service Name</th>
+              <th>Base Charge</th>
+              <th>Description</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {pageItems.map((service, index) => (
+              <tr key={service._id}>
+                <td>{startIndex + index + 1}</td>
+                <td>{service.name}</td>
+                <td>₱ {Number(service.price).toFixed(2)}</td>
+                <td>{service.description}</td>
+                <td className={styles1.tableAction}>
+                  <EditButton onClick={() => onUpdateService(service, 'update')}>
+                    <FontAwesomeIcon icon={faPencil} width={24} height={24} color={'#ffffff'} />
+                  </EditButton>
+                  <ArchiveButton onClick={() => onUpdateService(service, 'archive')}>
+                    <FontAwesomeIcon icon={faFileArchive} width={24} height={24} color={'#ffffff'} />
+                  </ArchiveButton>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          
+        </table>
+        <div>{renderPagination()}</div>
         </>
       );
     }
@@ -507,13 +506,19 @@ export default function Services() {
           <label> Service Name: </label>
           <div className={styles1.cancelText}>
             <div className={styles1.filters__search}>
-              <input type='text' name = "name" className={styles1.filters__searchInput} value={serviceFormData.name} onChange={e => handleFormDataChange(e, setServiceFormData, setErrorFormData)}/>
+              <div className={`formInput ${errorFormData.name.error ? 'formInput--error' : ''}`}>
+               {errorFormData.name.error && <span className='formInput__errorMessage'>{errorFormData.name.message}</span>}
+                <input type='text' name = "name" className={styles1.filters__searchInput} value={serviceFormData.name} onChange={e => handleFormDataChange(e, setServiceFormData, setErrorFormData)}/>
+              </div>
             </div>
           </div>
           <label> Base Price:  </label>
           <div className={styles1.cancelText}>
             <div className={styles1.filters__search}>
-              <input type='text' name = "price" className={styles1.filters__searchInput} value={serviceFormData.price} onChange={e => handleFormDataChange(e, setServiceFormData, setErrorFormData)}/>
+              <div className={`formInput ${errorFormData.name.error ? 'formInput--error' : ''}`}>
+                {errorFormData.price.error && <span className='formInput__errorMessage'>{errorFormData.price.message}</span>}
+                <input type='text' name = "price" className={styles1.filters__searchInput} value={serviceFormData.price} onChange={e => handleFormDataChange(e, setServiceFormData, setErrorFormData)}/>
+              </div>
             </div>
           </div>
           <label> Type: </label>
