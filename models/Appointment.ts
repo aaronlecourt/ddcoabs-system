@@ -12,6 +12,9 @@ const schema = new Schema<IAppointment>({
     patientId: {
         type: Types.ObjectId,
     },
+    patientName: {
+        type: String,
+    },
     dentistService: {
         type: String,
     },

@@ -12,8 +12,8 @@ import {
   BookConfirmationForm,
   BookWalkInForm,
 } from '../forms';
-import { PatientErrorFormData, PatientFormCheckbox, PatientFormData, ServicesErrorFormData, ServicesFormData } from '../types/book';
-import { PatientErrorFormDataDentist, PatientFormDataDentist} from '../types/emergencyBook';
+import { PatientErrorFormData, PatientFormCheckbox, PatientFormData, ServicesErrorFormData, ServicesFormData,  PatientErrorFormDataDentist, PatientFormDataDentist  } from '../types/book';
+// import { PatientErrorFormDataDentist, PatientFormDataDentist} from '../types/emergencyBook';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
 import { ErrorPatientFormObjectDentist, PatientWalkIn } from '../forms/walk-in';
 import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
@@ -80,9 +80,22 @@ export default function Book() {
 
   const [steps, setSteps] = useState<any>([
     {
-      label: 'Patient Form',
+      // label: 'Patient Form',
+      // active: true,
+      // component: () => <BookPatientForm ref={formRef} />,
+      // current: true
+
+      label: session?.user?.role === 'patient' ? 'Patient Form' : 'Walk In Patient Form',
       active: true,
-      component: () => <BookPatientForm ref={formRef} />,
+      component: session?.user?.role === 'patient' ? 
+        () => {
+          console.log("User is A PATIENT.");
+          return <BookPatientForm ref={formRef} />;
+        } : 
+        () => {
+          console.log("User is A DENTIST.");
+          return <BookWalkInForm ref={formRef} />;
+        },
       current: true
     },
     {
@@ -111,23 +124,35 @@ export default function Book() {
     }
   ])
 
-  useEffect(() => {
-    if (session?.user?.role === 'dentist') {
-      setSteps((prevSteps: any) => {
-        const updatedSteps = [...prevSteps];
-        const patientFormStepIndex = updatedSteps.findIndex(step => step.label === 'Patient Form');
-        if (patientFormStepIndex !== -1) {
-          updatedSteps[patientFormStepIndex].label = "Walk In Patient Form";
-          updatedSteps[patientFormStepIndex].component = () => <BookWalkInForm ref={formRef} />;
-        }
-        return updatedSteps;
-      });
-  
-      // Update context values for the dentist
-      setPatientFormDentist(PatientWalkIn);
-      setPatientErrorFormDentist(ErrorPatientFormObjectDentist);
-    }
-  }, [session?.user?.role]);
+  // useEffect(() => {
+  //   if (session?.user?.role === 'dentist') {
+  //     console.log("USER ROLE DAPAT IS DENTIST, ", session?.user?.role)
+
+  //     setSteps((prevSteps: any) => {
+  //       const updatedSteps = [...prevSteps];
+  //       const patientFormStepIndex = updatedSteps.findIndex(
+  //         (step: { label: string }) => step.label === 'Patient Form'
+  //       );
+
+  //       if (patientFormStepIndex !== -1) {
+  //         updatedSteps[patientFormStepIndex].label = 'Walk In Patient Form';
+  //         updatedSteps[patientFormStepIndex].component = () => (
+  //           <BookWalkInForm ref={formRef} />
+  //         );
+  //       }
+
+  //       return updatedSteps;
+  //     });
+
+  //     setCurrentStepIndex(0); 
+  //   }
+  // }, [session?.user?.role]);
+
+  // useEffect(() => {
+  //   if (session?.user?.role === 'dentist') {
+  //     setCurrentStepIndex(0); 
+  //   }
+  // }, [session?.user?.role]);
 
   const [currentStep, setCurrentStep] = useState(steps[currentStepIndex])
 
@@ -179,6 +204,8 @@ export default function Book() {
 
   const renderContent = () => {
     console.log('User Role:', session?.user?.role);
+    const isDentist = session?.user?.role === 'dentist';
+
     return (
       <>
         {session && (
@@ -194,15 +221,15 @@ export default function Book() {
               onStepNext={onStepNext}
             />
             <section className={styles.component}>
-              {session.user?.role === 'dentist' ? (
-              <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
-                {currentStep && currentStep.component && <currentStep.component />}
-              </BookingFormContextDentist.Provider>
-            ) : (
-              <BookingFormContext.Provider value={bookingFormContextValues}>
-                {currentStep && currentStep.component && <currentStep.component />}
-              </BookingFormContext.Provider>
-            )}
+              {isDentist ? (
+                <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
+                  {currentStep && currentStep.component && <currentStep.component />}
+                </BookingFormContextDentist.Provider>
+              ) : (
+                <BookingFormContext.Provider value={bookingFormContextValues}>
+                  {currentStep && currentStep.component && <currentStep.component />}
+                </BookingFormContext.Provider>
+              )}
           </section>
           </main>
         )}

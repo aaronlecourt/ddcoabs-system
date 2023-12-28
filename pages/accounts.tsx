@@ -163,6 +163,7 @@ export default function Accounts() {
 
   const [showArchiveUser, setShowArchiveUser] = useState(false)
   const [showValiUser, setShowValiUser] = useState(false)
+  const [showValiUserPatient, setShowValiUserPatient] = useState(false)
 
   // UPDATE USER ROLE BUTTONS
   const onUpdateUser = (user: User, buttonName: string) => {
@@ -190,12 +191,13 @@ export default function Accounts() {
         });
 
       } else if (buttonName === 'updateRolePatient') {
+        setShowValiUserPatient(true);
         setUpdateUserFormData({
           ...user,
           role: 'patient'
         });
 
-        updateUserRole(undefined, user._id);
+        // updateUserRole(undefined, user._id);
       }
       
   };
@@ -203,7 +205,7 @@ export default function Accounts() {
   // ROLE UPDATE
   const [tempRoles, setTempRoles] = useState<Record<string, string>>({});
 
-  const handleRoleChange = (selectedRole: string, userId: string) => {
+  const handleRoleChange = (selectedRole: string, userId: string, index: number) => {
     setTempRoles((prevRoles) => ({
       ...prevRoles,
       [userId]: selectedRole, 
@@ -212,8 +214,8 @@ export default function Accounts() {
     console.log('Temp roles after selection:', selectedRole);
     console.log('ID after update:', userId);
     console.log('Updated Temp Roles:', tempRoles);
-    // const updatedUsers = [...users]; 
-    // updatedUsers[index].role = selectedRole ;
+    const updatedUsers = [...users]; 
+    updatedUsers[index].role = selectedRole ;
   };
 
   //UPDATE USER ROLE
@@ -240,6 +242,7 @@ export default function Accounts() {
         const updatedUser = await response.json();
         console.log('User role updated: ', updatedUser);
         setShowValiUser(false);
+        setShowValiUserPatient(false);
   
         setUsers((prevServices) =>
           prevServices.map((prevService) =>
@@ -280,16 +283,13 @@ export default function Accounts() {
           const updatedUser = await response.json();
           console.log('User updated: ', updatedUser);
           setShowArchiveUser(false); 
-          // Close the modal after successful update
 
-          // Update the 'users' state with the modified 'updatedUser'
             setUsers((prevUsers) =>
             prevUsers.map((prevUser) =>
               prevUser._id === updatedUser._id ? updatedUser : prevUser
             )
           );
-  
-          // Remove the updated service from the table
+
           setUsers((prevServices) =>
             prevServices.filter((service) => service._id !== updatedUser._id)
           );
@@ -310,7 +310,7 @@ export default function Accounts() {
       <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want to archive this user?</p>
-          <input type='text' name = "_id" value={updateUserFormData._id}/>
+          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
             <Button onClick={archiveUser} type = "submit">Yes</Button>
@@ -321,9 +321,20 @@ export default function Accounts() {
         <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want this user to be an admin or employee?</p>
-          <input type='text' name = "_id" value={updateUserFormData._id}/>
+          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
+            <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type = "submit">Yes</Button>
+          </div>
+        </Modal>
+
+        {/* MODAL FOR PATIENT VALIDATION */}
+        <Modal open={showValiUserPatient} setOpen={setShowValiUserPatient} modalWidth={400} modalRadius={10}>
+          <h3 className={styles1.cancelTitle}> WARNING! </h3>
+          <p> Are you sure you want this user to be a patient? </p>
+          <input type='hidden' name = "_id" value={updateUserFormData._id}/>
+          <div className={styles1.cancelActions}>
+            <Button type='secondary' onClick={() => setShowValiUserPatient(false)}>No</Button>
             <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type = "submit">Yes</Button>
           </div>
         </Modal>
@@ -413,7 +424,7 @@ export default function Accounts() {
                                 : user.role 
                             }
                             // onChange={(e) => handleRoleChange(e, user._id)}
-                            onChange={(e) => handleRoleChange(e.target.value, user._id)}
+                            onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
                             onBlur={() => {
                               setTempRoles((prevRoles) => {
                                 const updatedRoles = { ...prevRoles };
@@ -430,10 +441,11 @@ export default function Accounts() {
                           </select>
                         </td>
                         <td>
-                          <Button> Show More </Button>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <Button> Show More </Button>
+                          )}
                         </td>
                         <td className={styles1.tableAction}>
-                          {/* Existing buttons */}
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
                             <ArchiveButton onClick={(e: any) => {
                               const selectedRole = e.target.value;
@@ -459,6 +471,7 @@ export default function Accounts() {
                                 setShowValiUser(true);
                                 onUpdateUser(user, 'updateRole');
                               } else {
+                                setShowValiUserPatient(true);
                                 onUpdateUser(user, 'updateRolePatient');
                               }
                             }}
@@ -487,7 +500,7 @@ export default function Accounts() {
                             : user.role // Otherwise use the original user's role
                         }
                         onChange={(e) => 
-                          {handleRoleChange(e.target.value, user._id)
+                          {handleRoleChange(e.target.value, user._id, index)
                           }}
                         onBlur={() => {
                           setTempRoles((prevRoles) => {
@@ -504,7 +517,11 @@ export default function Accounts() {
                         ))}
                         </select>
                       </td>
-                      <td> <Button> Show More </Button></td>
+                      <td>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <Button> Show More </Button>
+                          )}
+                        </td>
                       <td className={styles1.tableAction}> 
                         {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
                           <ArchiveButton onClick={(e: any) => {
@@ -524,6 +541,7 @@ export default function Accounts() {
                             setShowValiUser(true);
                             // onUpdateUser(user, 'updateRole');
                           } else {
+                            setShowValiUserPatient(true);
                             onUpdateUser(user, 'updateRolePatient');
                           }
                         }}
@@ -548,7 +566,7 @@ export default function Accounts() {
                                 ? tempRoles[user._id] // Use temp role if set
                                 : user.role // Otherwise use the original user's role
                             }
-                            onChange={(e) => handleRoleChange(e.target.value, user._id)}
+                            onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
                             onBlur={() => {
                               setTempRoles((prevRoles) => {
                                 const updatedRoles = { ...prevRoles };
@@ -563,6 +581,11 @@ export default function Accounts() {
                           </option>
                         ))}
                         </select>
+                      </td>
+                      <td>
+                        {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                          <Button> Show More </Button>
+                        )}
                       </td>
                       <td className={styles1.tableAction}> 
                         {user.role !== 'dentist' &&  (
@@ -584,6 +607,7 @@ export default function Accounts() {
                               setShowValiUser(true);
                               // onUpdateUser(user, 'updateRole');
                             } else {
+                              setShowValiUserPatient(true);
                               onUpdateUser(user, 'updateRolePatient');
                             }
                           }}

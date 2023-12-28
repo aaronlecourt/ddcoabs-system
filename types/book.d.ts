@@ -104,3 +104,20 @@ export interface ServicesErrorFormData {
   service: ErrorFormDataField;
   concern: ErrorFormDataField;
 }
+
+export interface PatientFormDataDentist {
+  patientName: string;
+  age: number;
+  sex: string;
+  contactNumber: number;
+  guardianName: string;
+  guardianNumber: number;
+}
+
+export interface PatientErrorFormDataDentist {
+  firstName: ErrorFormDataField;
+  lastName: ErrorFormDataField;
+  age: ErrorFormDataField;
+  sex: ErrorFormDataField;
+  contactNumber: ErrorFormDataField;
+}

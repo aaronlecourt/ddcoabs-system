@@ -3,13 +3,16 @@ import styles from '../styles/forms/confirmation.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
-import { BookingFormContext } from "../pages/book";
+import { BookingFormContext, BookingFormContextDentist } from "../pages/book";
 import useAuthGuard from '../guards/auth.guard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const BookConfirmationForm = forwardRef(({ }, ref) => {
   const { session } = useAuthGuard();
+
+  const bookingFormContext = useContext(session?.user?.role === 'patient' ? BookingFormContext : BookingFormContextDentist);
+
   const {
     onStepBack,
     selectedPaymentMethod,
@@ -17,7 +20,8 @@ const BookConfirmationForm = forwardRef(({ }, ref) => {
     selectedTimeUnit,
     patientForm,
     servicesForm,
-  }:any = useContext(BookingFormContext);
+    patientFormDentist,
+  }:any = bookingFormContext;
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
@@ -35,16 +39,42 @@ const BookConfirmationForm = forwardRef(({ }, ref) => {
 
     const user = session.user;
 
-    const payload = {
-      dentistService: servicesForm.service.name || 'Consultation',
-      date: selectedDate,
-      timeUnit: selectedTimeUnit,
-      price: servicesForm.service.price || 500,
-      paymentMethod: selectedPaymentMethod,
-      concern: servicesForm.concern,
-      details: patientForm,
-      [`${user.role}Id`]: user.id,
-    };
+    let payload = {};
+
+    if (user.role === 'patient') {
+      payload = {
+        dentistService: servicesForm.service.name || 'Consultation',
+        date: selectedDate,
+        timeUnit: selectedTimeUnit,
+        price: servicesForm.service.price || 500,
+        paymentMethod: selectedPaymentMethod,
+        concern: servicesForm.concern,
+        details: patientForm,
+        [`${user.role}Id`]: user.id,
+      };
+    } else {
+      payload = {
+        dentistService: servicesForm.service.name || 'Consultation',
+        date: selectedDate,
+        timeUnit: selectedTimeUnit,
+        price: servicesForm.service.price || 500,
+        paymentMethod: selectedPaymentMethod,
+        concern: servicesForm.concern,
+        patientName: patientFormDentist.patientName,
+        [`${user.role}Id`]: user.id,
+      };
+    }
+
+    // const payload = {
+    //   dentistService: servicesForm.service.name || 'Consultation',
+    //   date: selectedDate,
+    //   timeUnit: selectedTimeUnit,
+    //   price: servicesForm.service.price || 500,
+    //   paymentMethod: selectedPaymentMethod,
+    //   concern: servicesForm.concern,
+    //   details: patientForm,
+    //   [`${user.role}Id`]: user.id,
+    // };
 
     try {
       const response = await fetch(`/api/${user.role}/appointment/book`, {
@@ -69,6 +99,8 @@ const BookConfirmationForm = forwardRef(({ }, ref) => {
     }
   };
 
+  const isDentist = patientFormDentist && patientFormDentist.patientName;
+
   return (
     <div className={styles.container}>
       <div className={styles.form}>
@@ -79,6 +111,12 @@ const BookConfirmationForm = forwardRef(({ }, ref) => {
         <div className={styles.form__container}>
           <strong>Confirm Booking</strong>
           <div className={styles.details}>
+            {isDentist && (
+              <div className={styles.details__row}>
+                <label>Patient Name:</label>
+                <span>{patientFormDentist.patientName}</span>
+              </div>
+            )}
             <div className={styles.details__row}>
               <label>Service:</label>
               <span>{servicesForm.service.name || 'Consultation'}</span>

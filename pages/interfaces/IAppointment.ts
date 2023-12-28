@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 export interface IAppointment {
     dentistId?: ObjectId,
     patientId?: ObjectId,
-    patientName?: string,
+    patientName: string,
     dentistService: string,
     concern?: string,
     status: string,

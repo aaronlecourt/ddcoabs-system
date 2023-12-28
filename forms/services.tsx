@@ -17,13 +17,22 @@ export const ErrorServicesFormObject = {
   concern: { error: false, message: null },
 }
 
-const BookServicesForm = forwardRef(({ }: any, ref) => {
+const BookServicesForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
+  let context;
+
+  if (userRole === 'patient'){
+    context = useContext(BookingFormContext);
+  } else {
+    console.log("USER IS DENTIST - SERVICES")
+    context = useContext(BookingFormContextDentist);
+  }
+
   const { 
     onStepNext, onStepBack, 
     services, setServices, 
     servicesForm, setServicesForm,
     servicesErrorForm, setServicesErrorForm
-}: any = useContext(BookingFormContext);
+}: any = context;
 
   const next = (e: any) => {
     e.preventDefault();

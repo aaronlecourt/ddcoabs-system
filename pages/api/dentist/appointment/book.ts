@@ -29,7 +29,8 @@ export default async function userHandler (
             'dentistId',
             'date',
             'timeUnit',
-            'paymentMethod'
+            'paymentMethod',
+            'patientName'
         ];
 
         validBookingFields.map(v => {
@@ -72,12 +73,23 @@ export default async function userHandler (
             return;
         }
 
+        const patientName = body.patientName || 'Default Patient Name';
+
         // set default values
         body.details = body.details || {} // patient form
         body.concern = body.concern || ""
         body.status = APPOINTMENT_STATUS.pending;
 
-        const appointmentCreated: IAppointment = await Appointment.create(body);
+        console.log('Body with patientName:', body);
+        console.log('Extracted Patient Name:', patientName);
+
+        const appointmentData = new Appointment({
+          ...body,
+          patientName: patientName,
+        });
+
+        // const appointmentCreated: IAppointment = await Appointment.create(appointmentData);
+        const appointmentCreated: IAppointment = await appointmentData.save();
         res.status(200).json(appointmentCreated);
         break
       default:

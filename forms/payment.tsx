@@ -4,15 +4,25 @@ import { faCashRegister, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 
-import { BookingFormContext } from "../pages/book";
+import { BookingFormContext, BookingFormContextDentist } from "../pages/book";
 
-const BookPaymentForm = forwardRef(({ }: any, ref) => {
+const BookPaymentForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
+
+  const getContext = () => {
+    if (userRole === 'patient') {
+      return useContext(BookingFormContext);
+    } else {
+      console.log("USER IS DENTIST - PAYMENT")
+      return useContext(BookingFormContextDentist);
+    }
+  };
+
   const { onStepNext, onStepBack,
     servicesForm,
     selectedPaymentMethod, setSelectedPaymentMethod,
     selectedDate,
     selectedTimeUnit
-  }: any = useContext(BookingFormContext);
+  }: any = getContext();
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 

@@ -6,8 +6,7 @@ import { BookingFormContextDentist } from '../pages/book'
 import Button from '../components/ArchiveButton'
 
 export const PatientWalkIn = {
-  firstName: '',
-  lastName: '',
+  patientName: '',
   age: 0,
   sex: '',
   contactNumber: 0,
@@ -33,10 +32,23 @@ const BookPatientFormDentist = forwardRef(({ }: any, ref) => {
     setPatientErrorFormDentist,
     onStepNext
   }: any = useContext(BookingFormContextDentist);
+
   const formData = patientFormDentist;
   const setFormData = setPatientFormDentist;
   const errorFormData = patientErrorFormDataDentist;
   const setErrorFormData = setPatientErrorFormDentist;
+
+  const updatePatientName = (e: any) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData: any) => ({
+      ...prevData,
+      [name]: value,
+      patientName: `${prevData.firstName} ${prevData.lastName}` 
+      
+    }));
+    console.log("PATIENT NAME: ", formData.patientName)
+  };
   
   useEffect(() => {
     
@@ -45,11 +57,7 @@ const BookPatientFormDentist = forwardRef(({ }: any, ref) => {
 
   const next = (e: any) => {
     e.preventDefault();
-
-    // Use the gathered form data as needed, for example, logging to the console
     console.log('Form Data:', formData);
-
-
     onStepNext(e);
   }
 
@@ -63,11 +71,11 @@ const BookPatientFormDentist = forwardRef(({ }: any, ref) => {
     <div className={styles.form}>
       <div className={styles.form__container}>
         <label> First Name: </label>
-        <input type = "text" name='firstName' placeholder="Jane or John" onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.firstName}/>
+        <input type = "text" name='firstName' placeholder="Jane or John" onChange={(e) => {handleFormDataChange(e, setFormData, setErrorFormData); updatePatientName(e);}} value={formData.firstName}/>
       </div>
       <div className={styles.form__container}>
         <label> Last Name: </label>
-        <input type = "text" name='lastName' placeholder='Doe' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.lastName} />
+        <input type = "text" name='lastName' placeholder='Doe' onChange={(e) => {handleFormDataChange(e, setFormData, setErrorFormData); updatePatientName(e);}} value={formData.lastName} />
       </div>
 
       <div className={styles.form__container}>
