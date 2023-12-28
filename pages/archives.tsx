@@ -417,31 +417,30 @@ const renderContent = () => {
           </div>
         </Modal>
 
-        {/* RECORD TYPE: */}
-        <section> 
-          <h4> Record Type: </h4>
-          <button onClick={() => handleRecordTypeChange('accounts')}> Accounts </button>
-          <button onClick={() => handleRecordTypeChange('services')}> Services </button>
-        </section>
-
-        {/* FILTER */}
-        <section>
-          <h4> Sort By: </h4>
-          <select 
-            id = "filterSelect"
-            value={selectedFilter}
-            onChange={(e) => handleFilterChange(e.target.value)}
-            >
-              {filterBy.map((filter) => (
-                <option key = {filter} value = {filter}>
-                    {filter}
-                </option>
-              ))}
-          </select>
-        </section>
-
+        <section className={styles1.main}>
         {session && (
-          <main className={styles.main}>
+          <div className={styles1.servicecruds}>
+          <div className={styles1.filters1}> 
+            <h4 className={styles1.filters__sortTitle}> Record Type: </h4>
+            <Button onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button>
+            <Button onClick={() => handleRecordTypeChange('services')}> Services </Button>
+
+            <h4 className={styles1.filters__sortTitle}> Sort By: </h4>
+            <div className={styles1.filters__sortDropdown}>
+              <select 
+                id = "filterSelect"
+                value={selectedFilter}
+                onChange={(e) => handleFilterChange(e.target.value)}
+                >
+                  {filterBy.map((filter) => (
+                    <option key = {filter} value = {filter}>
+                        {filter}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          </div>
+          <div className={styles.main}>
             {showAccountsTable ? (
               <table className={styles.table}>
               <thead>
@@ -512,8 +511,10 @@ const renderContent = () => {
               </table>
             )}
             
-          </main>
+          </div>
+          </div>
         )}
+        </section>
       </>
     )
   }

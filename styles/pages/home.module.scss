@@ -1,7 +1,7 @@
 @import '../variables.scss';
 
 .main {
-  padding: 2rem;
+  padding: 2rem 4rem;
  
   &LandingPage {
     // height: 100vh;
@@ -362,7 +362,7 @@
 }
 
 .servicecrud {
-  width: 90%;
+  max-width: 80%;
 }
 
 .filters {
@@ -477,6 +477,13 @@
       background-color: $darkgreen;
     }
   }
+}
+
+.filters1 {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 2rem 2rem 0 2rem;
 }
 
 .tableAction {

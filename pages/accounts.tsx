@@ -330,7 +330,7 @@ export default function Accounts() {
         </Modal>
 
       <section className={styles.main}>
-        <div>
+        <div className={styles.servicecrud}>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
             <input type='text' className={styles1.filters__searchInput} placeholder='Search account name...'
