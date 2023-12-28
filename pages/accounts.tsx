@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import User from '../models/User';
+import CancelButton from '../components/CancelButton';
 
 interface User {
   _id: string;
@@ -321,7 +322,7 @@ export default function Accounts() {
         <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
           <p> Are you sure you want this user to be an admin or employee?</p>
-          <input type='text' name = "_id" value={updateUserFormData._id}/>
+          {/* <input type='text' name = "_id" value={updateUserFormData._id}/> */}
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
             <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type = "submit">Yes</Button>
@@ -370,7 +371,7 @@ export default function Accounts() {
             </div>
           </div>
           <div className={styles1.filters__sortDropdown}>
-            <button> Generate Report </button>
+            <Button type='secondary'> Generate Report </Button>
           </div>
         </div>
         {session && (
@@ -404,7 +405,7 @@ export default function Accounts() {
                         <td>{user.email}</td>
                         <td>{user.age}</td>
                         <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
-                        <td>
+                        <td className={styles1.filters__sortDropdown}>
                           <select
                             // value={user.role}
                             value={
@@ -430,23 +431,12 @@ export default function Accounts() {
                           </select>
                         </td>
                         <td>
-                          <Button> Show More </Button>
+                          <CancelButton> Show Record </CancelButton>
                         </td>
                         <td className={styles1.tableAction}>
                           {/* Existing buttons */}
-                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                            <ArchiveButton onClick={(e: any) => {
-                              const selectedRole = e.target.value;
-                              onUpdateUser(user, 'archiveUser')}}>
-                              <FontAwesomeIcon
-                                icon={faFileArchive}
-                                width={24}
-                                height={24}
-                                color={'#ffffff'}
-                              />
-                            </ArchiveButton>
-                          )}
                           <Button
+                            type='secondary'
                             onClick={(e: any) => {
                               const userId = user._id; 
                               const selectedRole = tempRoles[userId] || user.role;; 
@@ -465,6 +455,19 @@ export default function Accounts() {
                           >
                             Update Role
                           </Button>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <ArchiveButton onClick={(e: any) => {
+                              const selectedRole = e.target.value;
+                              onUpdateUser(user, 'archiveUser')}}>
+                              <FontAwesomeIcon
+                                icon={faFileArchive}
+                                width={24}
+                                height={24}
+                                color={'#ffffff'}
+                              />
+                            </ArchiveButton>
+                          )}
+                          
                         </td>
                       </tr>
                     ))
@@ -504,7 +507,7 @@ export default function Accounts() {
                         ))}
                         </select>
                       </td>
-                      <td> <Button> Show More </Button></td>
+                      <td> <CancelButton> Show Record </CancelButton></td>
                       <td className={styles1.tableAction}> 
                         {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
                           <ArchiveButton onClick={(e: any) => {

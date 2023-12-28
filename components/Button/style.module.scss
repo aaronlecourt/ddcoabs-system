@@ -7,15 +7,19 @@
   font-size: 16px;
   font-family: 'Poppins';
   font-weight: 700;
-  padding: 1rem 2rem;
-  cursor: pointer;
+  padding: 0.8rem 2rem;
 
   &:hover {
     background: linear-gradient(45deg, #3AB286 22.53%, #3A66B2 91.21%);
   }
 
   &Secondary {
-    background: $text;
+    background: $green;
+    color: white;
+
+    &:hover {
+      background: $darkgreen;
+    }
   }
 }
 

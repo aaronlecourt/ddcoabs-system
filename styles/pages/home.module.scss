@@ -2,7 +2,7 @@
 
 .main {
   padding: 2rem;
-  
+ 
   &LandingPage {
     // height: 100vh;
     // display: flex;
@@ -481,7 +481,7 @@
 
 .tableAction {
   display: flex; gap: 10px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .dropbtn {
