@@ -63,7 +63,7 @@ export const PatientFormCheckboxList = [
   [
     {
       id: '32',
-      text: 'None',
+      text: 'Select this if nothing applies',
       value: false,
     },
   ],
