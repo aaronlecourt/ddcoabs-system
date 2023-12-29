@@ -8,7 +8,9 @@ export default function useAuthGuard() {
   const router = useRouter();
   const authPaths = [
     '/login',
-    '/register'
+    '/register',
+    '/forgotpassword',
+    '/resetpassword',
   ]
 
   const patientRoutes = [
