@@ -7,6 +7,7 @@ import { BookingFormContextDentist } from "../pages/walk-in";
 import useAuthGuard from '../guards/auth.guard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CancelButton from "../components/CancelButton";
 
 const BookWalkInConfirmationForm = forwardRef(({ }, ref) => {
   const { session } = useAuthGuard();
@@ -119,7 +120,7 @@ const BookWalkInConfirmationForm = forwardRef(({ }, ref) => {
             </div>
             <div className={`${styles.details__row} ${styles.actions}`}>
               <div>
-                <Button type='secondary' onClick={back}>Back</Button>
+                <CancelButton onClick={back}>Back</CancelButton>
               </div>
               <div>
                 <Button onClick={confirmBooking}>Confirm Booking</Button>

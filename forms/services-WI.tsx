@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import { BookingFormContextDentist } from "../pages/walk-in";
 import { handleFormDataChange, handleFormEnter } from "../utils/form-handles";
 import { isServicesFormValid } from "../validations/servicesform";
+import CancelButton from "../components/CancelButton";
 
 export const ServicesFormObject = {
   service: '',
@@ -160,7 +161,7 @@ const WalkInServicesForm = forwardRef(({  }: any, ref) => {
           <br />
           <div className={styles.buttons}>
             <div>
-              <Button type='secondary' onClick={back}>Back</Button>
+              <CancelButton onClick={back}>Back</CancelButton>
             </div>
             <div>
               <Button onClick={next}>Next</Button>
