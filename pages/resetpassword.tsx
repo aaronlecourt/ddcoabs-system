@@ -71,8 +71,10 @@ export default function ForgotPassword({
         setTokenVerified(true)
       } else {
         setTokenVerified(false)
-        toast.error(passwordResetToken.message)
-        router.replace('/')
+        toast.error(`${passwordResetToken.message} Redirecting you now to Home Page ...`)
+        setTimeout(() => {
+          router.replace('/')
+        }, 7000)
       }
     }
 
