@@ -67,10 +67,10 @@ export default function Accounts() {
           });
           break;
         case 'Alphabetical (A-Z)':
-          sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
+          sortedUsers.sort((a, b) => a.name?.localeCompare(b.name));
           break;
         case 'Alphabetical (Z-A)':
-          sortedUsers.sort((a, b) => b.name.localeCompare(a.name));
+          sortedUsers.sort((a, b) => b.name?.localeCompare(a.name));
           break;
         default:
           break;
