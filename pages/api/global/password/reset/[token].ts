@@ -37,7 +37,8 @@ export default async function userHandler (
 
           // difference should only be within 1 hr
           if (diff > 60) {
-            res.status(HTTP_CODES.badRequest).json({ verified: false, message: 'Token is already expired or invalid. ' + diff + ' ' + currentDate + ' ' + tokenCreatedDate + " " + token})
+            // res.status(HTTP_CODES.badRequest).json({ verified: false, message: 'Token is already expired or invalid. ' + diff + ' ' + currentDate + ' ' + tokenCreatedDate + " " + token})
+            res.status(HTTP_CODES.badRequest).json({ verified: false, message: 'Token is already expired or invalid.'})
           }
         }
 
