@@ -14,7 +14,9 @@ import { BookingFormContextDentist } from "../pages/walk-in";
 import Button from "../components/Button";
 
 export const PatientWalkIn = {
-  patientName: "",
+  patientName: '',
+  firstName: '',
+  lastName: '',
   age: 0,
   sex: "",
   contactNumber: "",
