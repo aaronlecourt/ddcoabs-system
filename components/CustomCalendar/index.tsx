@@ -35,6 +35,24 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
     )
   }
 
+  const customDateCell = ({ value }: any) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const date = new Date(value);
+    date.setHours(0, 0, 0, 0);
+    const day = date.getDate();
+    const rbcCurrent = new Date(selectedDate);
+    rbcCurrent.setHours(0, 0, 0, 0);
+    const selected = rbcCurrent.getTime() === date.getTime();
+
+    const fullyBooked = false; // Change this
+    return (
+      <div className={`rbc-date-cell rbc-date-cell--custom ${date < today ? 'rbc-off-range' : ''} ${today == date ? 'rbc-now': ''} ${selected ? 'rbc-current' : ''}`} role="cell">
+        <button type="button" className="rbc-button-link" role="cell">{day}</button>
+      </div>
+    )
+  }
+
   const formats = {
     weekdayFormat: (date: any) => localizer.format(date, 'dd')[0],
     dateFormat: (date: any) => localizer.format(date, 'D')
@@ -63,6 +81,7 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
         onSelectSlot={handleSelectSlot}
         components={{
           toolbar: customToolbar,
+          dateCellWrapper: customDateCell,
         }}
         className={`custom-calendar ${!selectable ? 'custom-calendar--not-selectable' : ''}`}
       />

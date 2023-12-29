@@ -79,6 +79,19 @@ export default function Book() {
       active: true,
       component: () => <BookPatientForm ref={formRef} />,
       current: true
+
+      // label: session?.user?.role === 'patient' ? 'Patient Form' : 'Walk In Patient Form',
+      // active: true,
+      // component: session?.user?.role === 'patient' ? 
+      //   () => {
+      //     console.log("User is A PATIENT.");
+      //     return <BookPatientForm ref={formRef} />;
+      //   } : 
+      //   () => {
+      //     console.log("User is A DENTIST.");
+      //     return <BookWalkInForm ref={formRef} />;
+      //   },
+      // current: true
     },
     {
       label: 'Services',

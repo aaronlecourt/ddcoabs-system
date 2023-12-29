@@ -243,10 +243,16 @@ a {
 
   .rbc-date-cell {
     text-align: center;
+    opacity: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    position: relative;
+
+    &--custom {
+      opacity: 1;
+    }
 
     &:first-child,
     &:last-child {
