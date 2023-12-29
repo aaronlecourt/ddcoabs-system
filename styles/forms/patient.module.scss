@@ -9,14 +9,31 @@
 
 .form {
   max-height: 600px;
-  width:  1200px;
+  width:  1000px;
   padding: 0 1rem;
   border: 1px solid $grey;
   border-radius: 10px;
   overflow-y: auto;
+  overflow-x: hidden;
   margin: 0 2rem;
   display: flex;
   flex-direction: column;
+
+  &__Input {
+    border: 1px solid $grey;
+    border-radius: 10px;
+    flex: 1;
+
+    input {
+      background-color: transparent;
+      padding: 1rem 0.9rem;
+      font-family: 'Poppins';
+
+      &[type='number'] {
+        border: none;
+      }
+    }
+  }
 
   &.errorBorder {
     border: 1px solid $red;
