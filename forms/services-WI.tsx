@@ -3,7 +3,7 @@ import styles from '../styles/forms/services.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
-import { BookingFormContext } from "../pages/book";
+import { BookingFormContextDentist } from "../pages/walk-in";
 import { handleFormDataChange, handleFormEnter } from "../utils/form-handles";
 import { isServicesFormValid } from "../validations/servicesform";
 
@@ -17,12 +17,12 @@ export const ErrorServicesFormObject = {
   concern: { error: false, message: null },
 }
 
-const BookServicesForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
+const WalkInServicesForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
   let context;
 
   if (userRole === 'patient'){
-    console.log("USER IS PATIENT - SERVICES")
-    context = useContext(BookingFormContext);
+    console.log("USER IS DENTIST - SERVICES")
+    context = useContext(BookingFormContextDentist);
   } 
 
   const { 
@@ -30,7 +30,7 @@ const BookServicesForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
     services, setServices, 
     servicesForm, setServicesForm,
     servicesErrorForm, setServicesErrorForm
-}: any = useContext(BookingFormContext);
+}: any = useContext(BookingFormContextDentist);
 
   const next = (e: any) => {
     e.preventDefault();
@@ -178,4 +178,4 @@ const BookServicesForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
   )
 })
 
-export default BookServicesForm;
+export default WalkInServicesForm;

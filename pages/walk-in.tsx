@@ -4,18 +4,16 @@ import useAuthGuard from '../guards/auth.guard';
 import Steps from '../components/Steps';
 import { useRef, useState, createContext, useEffect } from 'react';
 import {
-  BookServicesForm,
-  BookScheduleForm,
-  BookPaymentForm,
-  BookConfirmationForm,
+  BookWalkInServicesForm,
+  BookWalkInScheduleForm,
+  BookWalkInPaymentForm,
+  BookWalkInConfirmationForm,
   BookWalkInForm,
 } from '../forms';
 import { ServicesErrorFormData, ServicesFormData,  PatientErrorFormDataDentist, PatientFormDataDentist  } from '../types/book';
-// import { PatientErrorFormDataDentist, PatientFormDataDentist} from '../types/emergencyBook';
 import { ErrorPatientFormObjectDentist, PatientWalkIn } from '../forms/walk-in';
 import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
 
-export const BookingFormContext = createContext({})
 export const BookingFormContextDentist = createContext({})
 
 export default function Book() {
@@ -85,25 +83,25 @@ export default function Book() {
     {
       label: 'Services',
       active: false,
-      component: () => <BookServicesForm ref={formRef} />,
+      component: () => <BookWalkInServicesForm ref={formRef} />,
       current: false
     },
     {
       label: 'Date & Time',
       active: false,
-      component: () => <BookScheduleForm ref={formRef} />,
+      component: () => <BookWalkInScheduleForm ref={formRef} />,
       current: false
     },
     {
       label: 'Payment',
       active: false,
-      component: () => <BookPaymentForm ref={formRef} />,
+      component: () => <BookWalkInPaymentForm ref={formRef} />,
       current: false
     },
     {
       label: 'Confirmation',
       active: false,
-      component: () => <BookConfirmationForm ref={formRef} />,
+      component: () => <BookWalkInConfirmationForm ref={formRef} />,
       current: false
     }
   ])
@@ -121,6 +119,7 @@ export default function Book() {
 
   // FOR DATE N TIME
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
 
   // FOR PAYMENT FORM
@@ -133,14 +132,13 @@ export default function Book() {
     servicesErrorForm, setServicesErrorForm,
     services, setServices,
     selectedDate, setSelectedDate,
+    selectedTime, setSelectedTime,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,
     onStepNext, onStepBack,
   }
 
   const renderContent = () => {
-    // console.log('User Role:', session?.user?.role);
-    // const isDentist = session?.user?.role === 'dentist';
 
     return (
       <>
@@ -158,19 +156,11 @@ export default function Book() {
                 onStepNext={onStepNext}
               />
               <section className={styles.component}>
-                {/* {isDentist ? ( */}
-                  <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
-                    {currentStep && currentStep.component && (
-                      <currentStep.component ref={formRef} />
-                    )}
-                  </BookingFormContextDentist.Provider>
-                {/* ) : (
-                  <BookingFormContext.Provider value={bookingFormContextValues}>
-                    {currentStep && currentStep.component && (
-                      <currentStep.component ref={formRef} />
-                    )}
-                  </BookingFormContext.Provider>
-                )} */}
+                <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
+                {currentStep && currentStep.component && (
+                    <currentStep.component ref={formRef} />
+                )}
+                </BookingFormContextDentist.Provider>
               </section>
             </>
           )}
@@ -181,18 +171,9 @@ export default function Book() {
 
   return (
     <>
-      {/* {(status !== 'loading' && session) && (
-        session.user?.role === 'patient' ? (
-          <PatientLayout>
+        <DentistLayout>
             {renderContent()}
-          </PatientLayout>
-        ) : ( */}
-          <DentistLayout>
-            {renderContent()}
-          </DentistLayout>
-        {/* )
-      )
-      } */}
-    </>
+        </DentistLayout>
+</>
   )
 }

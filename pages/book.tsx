@@ -11,12 +11,10 @@ import {
   BookConfirmationForm,
 } from '../forms';
 import { PatientErrorFormData, PatientFormCheckbox, PatientFormData, ServicesErrorFormData, ServicesFormData } from '../types/book';
-// import { PatientErrorFormDataDentist, PatientFormDataDentist} from '../types/emergencyBook';
 import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
 import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
 
 export const BookingFormContext = createContext({})
-export const BookingFormContextDentist = createContext({})
 
 export default function Book() {
   const { session, status } = useAuthGuard();
@@ -141,8 +139,6 @@ export default function Book() {
   }
 
   const renderContent = () => {
-    console.log('User Role:', session?.user?.role);
-    const isDentist = session?.user?.role === 'dentist';
 
     return (
       <>
@@ -160,11 +156,11 @@ export default function Book() {
                 onStepNext={onStepNext}
               />
               <section className={styles.component}>
-                  <BookingFormContext.Provider value={bookingFormContextValues}>
-                    {currentStep && currentStep.component && (
-                      <currentStep.component ref={formRef} />
-                    )}
-                  </BookingFormContext.Provider>
+                <BookingFormContext.Provider value={bookingFormContextValues}>
+                  {currentStep && currentStep.component && (
+                    <currentStep.component ref={formRef} />
+                  )}
+                </BookingFormContext.Provider>
               </section>
             </>
           )}

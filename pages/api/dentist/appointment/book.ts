@@ -79,6 +79,7 @@ export default async function userHandler (
         body.details = body.details || {} // patient form
         body.concern = body.concern || ""
         body.status = APPOINTMENT_STATUS.pending;
+        body.isWalkIn = true;
 
         console.log('Body with patientName:', body);
         console.log('Extracted Patient Name:', patientName);

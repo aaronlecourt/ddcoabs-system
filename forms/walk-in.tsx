@@ -9,7 +9,7 @@ import {
 } from "react";
 import { handleFormEnter, handleFormDataChange } from "../utils/form-handles";
 import styles from "../styles/forms/patient.module.scss";
-import { isPatientFormValid } from "../validations/patientform";
+import { isWalkInPatientFormValid } from "../validations/patientform";
 import { BookingFormContextDentist } from "../pages/walk-in";
 import Button from "../components/Button";
 
@@ -67,7 +67,7 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
 
   useImperativeHandle(ref, () => ({
     checkValidForm: () => {
-      return isPatientFormValid(formData, errorFormData, setErrorFormData);
+      return isWalkInPatientFormValid(formData, errorFormData, setErrorFormData);
     },
   }));
 
@@ -80,6 +80,7 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
             <label> First Name: </label>
           </div>
           <div className={styles.form__Input}>
+            
             <input
               type="text"
               name="firstName"
