@@ -25,7 +25,7 @@ export default function DentistLayout({ children }: { children: ReactNode }) {
     },
     {
       text: 'Walk In',
-      link: '/book'
+      link: '/walk-in'
     }
   ]
 

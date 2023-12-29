@@ -76,6 +76,7 @@ export default async function userHandler (
         body.details = body.details || {} // patient form
         body.concern = body.concern || ""
         body.status = APPOINTMENT_STATUS.pending;
+        body.isWalkIn = false;
 
         const appointmentCreated: IAppointment = await Appointment.create(body);
         res.status(200).json(appointmentCreated);

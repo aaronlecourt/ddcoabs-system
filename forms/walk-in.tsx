@@ -10,7 +10,7 @@ import {
 import { handleFormEnter, handleFormDataChange } from "../utils/form-handles";
 import styles from "../styles/forms/patient.module.scss";
 import { isPatientFormValid } from "../validations/patientform";
-import { BookingFormContextDentist } from "../pages/book";
+import { BookingFormContextDentist } from "../pages/walk-in";
 import Button from "../components/Button";
 
 export const PatientWalkIn = {

@@ -1,18 +1,18 @@
 import styles from '../styles/pages/book.module.scss'
-import PatientLayout from '../layouts/PatientLayout';
+import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Steps from '../components/Steps';
 import { useRef, useState, createContext, useEffect } from 'react';
 import {
-  BookPatientForm,
   BookServicesForm,
   BookScheduleForm,
   BookPaymentForm,
   BookConfirmationForm,
+  BookWalkInForm,
 } from '../forms';
-import { PatientErrorFormData, PatientFormCheckbox, PatientFormData, ServicesErrorFormData, ServicesFormData } from '../types/book';
+import { ServicesErrorFormData, ServicesFormData,  PatientErrorFormDataDentist, PatientFormDataDentist  } from '../types/book';
 // import { PatientErrorFormDataDentist, PatientFormDataDentist} from '../types/emergencyBook';
-import { ErrorPatientFormObject, PatientFormCheckboxList, PatientFormObject } from '../forms/patient';
+import { ErrorPatientFormObjectDentist, PatientWalkIn } from '../forms/walk-in';
 import { ErrorServicesFormObject, ServicesFormObject } from '../forms/services';
 
 export const BookingFormContext = createContext({})
@@ -79,7 +79,7 @@ export default function Book() {
     {
       label: 'Patient Form',
       active: true,
-      component: () => <BookPatientForm ref={formRef} />,
+      component: () => <BookWalkInForm ref={formRef} />,
       current: true
     },
     {
@@ -110,10 +110,9 @@ export default function Book() {
 
   const [currentStep, setCurrentStep] = useState(steps[currentStepIndex])
 
-  // FOR PATIENT
-  const [patientForm, setPatientForm] = useState<PatientFormData>(PatientFormObject)
-  const [patientErrorForm, setPatientErrorForm] = useState<PatientErrorFormData>(ErrorPatientFormObject)
-  const [patientFormCheckbox, setPatientFormCheckbox] = useState<Array<PatientFormCheckbox[]>>(PatientFormCheckboxList)
+  // FOR DENTIST
+  const [patientFormDentist, setPatientFormDentist] = useState<PatientFormDataDentist>(PatientWalkIn)
+  const [patientErrorFormDataDentist, setPatientErrorFormDentist] = useState<PatientErrorFormDataDentist>(ErrorPatientFormObjectDentist)
 
   // FOR SERCVICES
   const [servicesForm, setServicesForm] = useState<ServicesFormData>(ServicesFormObject);
@@ -127,22 +126,21 @@ export default function Book() {
   // FOR PAYMENT FORM
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Pay in Cash');
 
-  const bookingFormContextValues = {
-    patientForm, setPatientForm,
-    patientErrorForm, setPatientErrorForm,
-    patientFormCheckbox, setPatientFormCheckbox,
+    const bookingFormContextValuesDentist = {
+    patientFormDentist, setPatientFormDentist,
+    patientErrorFormDataDentist, setPatientErrorFormDentist,
     servicesForm, setServicesForm,
     servicesErrorForm, setServicesErrorForm,
     services, setServices,
     selectedDate, setSelectedDate,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,
-    onStepNext, onStepBack
+    onStepNext, onStepBack,
   }
 
   const renderContent = () => {
-    console.log('User Role:', session?.user?.role);
-    const isDentist = session?.user?.role === 'dentist';
+    // console.log('User Role:', session?.user?.role);
+    // const isDentist = session?.user?.role === 'dentist';
 
     return (
       <>
@@ -160,11 +158,19 @@ export default function Book() {
                 onStepNext={onStepNext}
               />
               <section className={styles.component}>
+                {/* {isDentist ? ( */}
+                  <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
+                    {currentStep && currentStep.component && (
+                      <currentStep.component ref={formRef} />
+                    )}
+                  </BookingFormContextDentist.Provider>
+                {/* ) : (
                   <BookingFormContext.Provider value={bookingFormContextValues}>
                     {currentStep && currentStep.component && (
                       <currentStep.component ref={formRef} />
                     )}
                   </BookingFormContext.Provider>
+                )} */}
               </section>
             </>
           )}
@@ -175,10 +181,18 @@ export default function Book() {
 
   return (
     <>
-      <PatientLayout>
-        {renderContent()}
-      </PatientLayout>
-
+      {/* {(status !== 'loading' && session) && (
+        session.user?.role === 'patient' ? (
+          <PatientLayout>
+            {renderContent()}
+          </PatientLayout>
+        ) : ( */}
+          <DentistLayout>
+            {renderContent()}
+          </DentistLayout>
+        {/* )
+      )
+      } */}
     </>
   )
 }

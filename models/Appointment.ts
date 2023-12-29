@@ -64,6 +64,11 @@ const schema = new Schema<IAppointment>({
     cancelReason: {
         type: String
     },
+    isWalkIn: {
+        type: Boolean,
+        default: false,
+    },
+    
 }, {
     timestamps: true
 })
