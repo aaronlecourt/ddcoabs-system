@@ -59,6 +59,51 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
 
   useEffect(() => {}, []);
 
+  useEffect(() => {
+    const selectedSex = localStorage.getItem('selectedSex');
+    if (selectedSex) {
+      setFormData({ ...formData, sex: selectedSex });
+    }
+  }, []);
+
+// Validation logic for guardian details when age is less than 18
+useEffect(() => {
+  if (formData.age < 18) {
+    setErrorFormData((prevErrors: any) => ({
+      ...prevErrors,
+      guardianName: {
+        ...prevErrors.guardianName,
+        optional: false, // Not optional anymore
+        error: !formData.guardianName.trim(), // Set error if guardian name is empty
+        message: "Guardian name is required for minors.", // Error message
+      },
+      guardianNumber: {
+        ...prevErrors.guardianNumber,
+        optional: false, // Not optional anymore
+        error: !formData.guardianNumber.trim(), // Set error if guardian number is empty
+        message: "Guardian number is required for minors.", // Error message
+      },
+    }));
+  } else {
+    // If age is 18 or above, make guardian details optional
+    setErrorFormData((prevErrors: any) => ({
+      ...prevErrors,
+      guardianName: {
+        ...prevErrors.guardianName,
+        optional: true,
+        error: false,
+        message: null,
+      },
+      guardianNumber: {
+        ...prevErrors.guardianNumber,
+        optional: true,
+        error: false,
+        message: null,
+      },
+    }));
+  }
+}, [formData.age]);
+
   const next = (e: any) => {
     e.preventDefault();
     console.log("Form Data:", formData);
@@ -135,6 +180,7 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
             id="female"
             name="sex"
             value="Female"
+            checked={formData.sex === 'Female'}
             onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
           />
           <label htmlFor="female"> Female </label>
@@ -143,6 +189,7 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
             id="male"
             name="sex"
             value="Male"
+            checked={formData.sex === 'Male'}
             onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
           />
           <label htmlFor="male"> Male </label>

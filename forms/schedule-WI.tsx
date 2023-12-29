@@ -29,7 +29,7 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
     }
   }))
 
-    // FOR SCHEDULING
+    // FOR MANUAL SCHEDULING
     const setTimeAndUnit = (hour: any) => {
         setSelectedStartTime(hour);
         setSelectedTimeUnit(hour >= 12 ? 'PM' : 'AM');
@@ -37,17 +37,33 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
 
     const handleStartTimeSelection = (e: any) => {
         const selectedStartHour = parseInt(e.target.value, 10);
-        setSelectedStartTime(selectedStartHour);
-    
-        if (selectedEndTime < selectedStartHour) {
-            setSelectedEndTime(selectedStartHour);
-        }
+          
+      
+          if (selectedEndTime < selectedStartHour) {
+              setSelectedEndTime(selectedStartHour);
+          }
 
-        setTimeAndUnit(selectedStartHour);
-      };
+          if (selectedStartHour === 12) {
+            alert("Start time cannot be 12:00 PM!");
+            return; 
+          }
+          
+          if (selectedEndTime === selectedStartHour) {
+            alert("Start time and End time should not be THE SAME!")
+            setSelectedEndTime(selectedStartHour + 1)
+            return;
+          }
+          setSelectedStartTime(selectedStartHour);
+          setTimeAndUnit(selectedStartHour);
+        };
 
       const handleEndTimeSelection = (e: any) => {
         const selectedEndHour = parseInt(e.target.value, 10);
+
+        if (selectedStartTime === selectedEndHour) {
+          alert("Start time and End time should not be THE SAME!")
+          return;
+        }
     
         // If the selected end time is earlier than the start time, prevent updating the end time
         if (selectedEndHour >= selectedStartTime) {
@@ -95,15 +111,15 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
           />
         </div>
         <div className={styles.form__container}>
-          <strong>Select Time</strong>
+          <strong>SELECT TIME</strong>
           <div className={styles.form__container}>
-            <strong>Select Start Time</strong>
+            <strong>Start Time:</strong>
             <select value={selectedStartTime} onChange={handleStartTimeSelection}>
                 {generateTimeOptions(8, 16)}
             </select>
             </div>
             <div className={styles.form__container}>
-                <strong>Select End Time</strong>
+                <strong>End Time: </strong>
                 <select value={selectedEndTime} onChange={handleEndTimeSelection}>
                     {generateTimeOptions(selectedStartTime, 17)} 
                 </select>

@@ -5,10 +5,14 @@ export const handleFormDataChange = (e: any, setFormData: any, setErrorFormData:
   if (files && files.length > 0) {
     val = files[0].name
   }
+  
   setFormData((prevFormData: any) => ({
     ...prevFormData,
     [name]: val
   }))
+  
+  localStorage.setItem('selectedSex', value);
+
   setErrorFormData((prevErrorFormData: any) => ({
     ...prevErrorFormData,
     [name]: {
