@@ -80,6 +80,9 @@ export default async function userHandler (
         }
 
         // validate start time
+        if (body.startTime < 9)
+          errorMessages.push('startTime should not be before 9:00 AM.');
+
         if (body.startTime >= body.endTime) {
           errorMessages.push('startTime should be less endTime.');
         }
@@ -89,6 +92,9 @@ export default async function userHandler (
         }
 
         // validate end time
+        if (body.endTime > 17)
+          errorMessages.push('endTime should not be later than 5:00 PM.');
+
         if (appointment.timeUnit === 'PM') {
           if (body.startTime < 12 ) {
             errorMessages.push('startTime should be 12 PM onwards.');
