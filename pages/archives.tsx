@@ -4,11 +4,16 @@ import styles1 from '../styles/pages/home.module.scss'
 import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Button from '../components/Button';
+import Button2 from '../components/Button2';
+import DeleteButton from '../components/DeleteButton';
+import RestoreButton from '../components/RestoreButton';
 import Modal from '../components/Modal';
 import { UpdateServicesFormData } from '../types/services';
 import { ArchiveProfileFormData } from '../types/profile';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleHalfStroke, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 interface Service {
   _id: string;
@@ -417,13 +422,13 @@ const renderContent = () => {
           </div>
         </Modal>
 
-        <section className={styles1.main}>
         {session && (
-          <div className={styles1.servicecruds}>
+          <section className={styles1.main}>
+          <div className={styles1.servicecrud}>
           <div className={styles1.filters1}> 
             <h4 className={styles1.filters__sortTitle}> Record Type: </h4>
-            <Button onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button>
-            <Button onClick={() => handleRecordTypeChange('services')}> Services </Button>
+            <Button2 onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button2>
+            <Button2 onClick={() => handleRecordTypeChange('services')}> Services </Button2>
 
             <h4 className={styles1.filters__sortTitle}> Sort By: </h4>
             <div className={styles1.filters__sortDropdown}>
@@ -450,7 +455,7 @@ const renderContent = () => {
                   <th> Email Address </th>
                   <th> Mobile Number </th>
                   <th> Sex </th>
-                  <th> Date OF Birth </th>
+                  <th> Date of Birth </th>
                   <th> Address </th>
                   <th> Action </th>
                 </tr>
@@ -466,14 +471,30 @@ const renderContent = () => {
                       <td> {account.sex} </td>
                       <td> {renderDateOfBirth(account.dateOfBirth)} </td>
                       <td> {account.address} </td>
-                      <td> 
-                        <Button onClick={() => onUpdateAccount(account, 'delete')}> DELETE </Button>
-                        <Button onClick={() => onUpdateAccount(account, 'restore')}> RESTORE </Button>
+                      <td className={styles1.cancelActions}> 
+                        <RestoreButton onClick={() => onUpdateAccount(account, 'restore')} title="Restore Record">
+                          <FontAwesomeIcon
+                          icon={faRefresh}
+                          width={24}
+                          height={24}
+                          color={"#ffffff"}
+                          />
+                        </RestoreButton>
+                        <DeleteButton onClick={() => onUpdateAccount(account, 'delete')} title="Delete Record">
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            width={24}
+                            height={24}
+                            color={"#ffffff"}
+                            />
+                        </DeleteButton>
                       </td>
                     </tr>
                   ))
                 ) : (
-                  <p> NO ARCHIVED ACCOUNTS </p>
+                  <tr>
+                    <td colSpan={9}>No archived accounts.</td>
+                  </tr>
                 )}
               </tbody>
             </table>
@@ -505,7 +526,9 @@ const renderContent = () => {
                     </tr>
                     ))
                   ) : (
-                    <p> NO ARCHIVED SERVICES </p>
+                    <tr>
+                    <td colSpan={9}>No archived services.</td>
+                    </tr>
                   )}
                 </tbody>
               </table>
@@ -513,8 +536,8 @@ const renderContent = () => {
             
           </div>
           </div>
+          </section>
         )}
-        </section>
       </>
     )
   }

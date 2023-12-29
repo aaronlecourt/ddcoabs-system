@@ -1,8 +1,22 @@
 @import '../variables.scss';
 
+.main2 {
+  padding: 2rem 4rem;
+
+  &LandingPage {
+    // height: 100vh;
+    // display: flex;
+    // flex-direction: column;
+    align-items: center;
+    color: $text;
+  }
+}
+
 .main {
   padding: 2rem 4rem;
- 
+  display: flex;
+  justify-content: center;
+  
   &LandingPage {
     // height: 100vh;
     // display: flex;
@@ -357,12 +371,13 @@
   padding-top: 1rem;
 
   &>div:first-child {
-    margin-right: 1rem;
+    margin-right: 0.5rem;
   }
 }
 
 .servicecrud {
   max-width: 80%;
+  // background-color: red;
 }
 
 .filters {
@@ -421,7 +436,39 @@
     flex: 1;
     display: flex;
     align-items: center;
-    // justify-content: flex-end;
+    // justify-content: space-between;
+
+    &Genrep {
+      display: flex;
+      justify-content: flex-end;
+      margin-left: 1rem;
+    }
+
+    &Details {
+      margin-left:0rem;
+      flex: 1;
+      border-radius: 10px;
+      border: 1px solid $grey;
+      background-color: #FAFAFA;
+      padding: 0.2rem;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: wrap; // Allows items to wrap onto the next line
+
+      label {
+        display: flex;
+        align-items: center;
+        margin-right: 0.5rem; // Adjust the spacing between checkbox and label
+        font-size: 12px;
+        width: 25%; // Set each item to occupy 25% of the container width for 4 items in a row
+
+        input[type="checkbox"] {
+          opacity: 0.5;
+          margin-right: 0.5rem; // Adjust the spacing between checkboxes
+        }
+      }
+    }
 
     &Title {
       font-size: 18px;
@@ -432,6 +479,8 @@
 
     &Dropdown {
       position: relative;
+      display: flex;
+      flex: 1;
 
       select {
         appearance: none;
@@ -451,6 +500,7 @@
         background-repeat: no-repeat;
         margin: 0;
         padding: 0.5rem;
+        padding-left: 1rem;
         color: $text;
         font-size: 16px;
     
@@ -472,6 +522,7 @@
     border-radius: 10px;
     cursor: pointer;
     font-weight: bold;
+    margin-left: 1rem;
 
     &:hover {
       background-color: $darkgreen;

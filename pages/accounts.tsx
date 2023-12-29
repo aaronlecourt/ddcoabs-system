@@ -67,10 +67,10 @@ export default function Accounts() {
           });
           break;
         case 'Alphabetical (A-Z)':
-          sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
+          sortedUsers.sort((a, b) => a.name?.localeCompare(b.name));
           break;
         case 'Alphabetical (Z-A)':
-          sortedUsers.sort((a, b) => b.name.localeCompare(a.name));
+          sortedUsers.sort((a, b) => b.name?.localeCompare(a.name));
           break;
         default:
           break;
@@ -79,15 +79,15 @@ export default function Accounts() {
   };
 
   //FILTER
-  const filterBy= ['Select All', 'Dentist', 'Employee', 'Patient', 'Male', 'Female', 'Minor', 'Adult']
+  const filterBy= ['All', 'Dentist', 'Employee', 'Patient', 'Male', 'Female', 'Minor', 'Adult']
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const handleFilterSelection = (filter: string) => {
-    if (filter === 'Select All'){
+    if (filter === 'All'){
       if (selectedFilters.length === filterBy.length - 1) {
-        setSelectedFilters([]); // Uncheck all if 'Select All' was previously checked
+        setSelectedFilters([]); // Uncheck all if 'All' was previously checked
       } else {
-        setSelectedFilters(filterBy.filter((item) => item !== 'Select All'));
+        setSelectedFilters(filterBy.filter((item) => item !== 'All'));
       }
     }
      else if (selectedFilters.includes(filter)) {
@@ -340,8 +340,8 @@ export default function Accounts() {
           </div>
         </Modal>
 
-      <section className={styles.main}>
-        <div className={styles.servicecrud}>
+      <section className={styles1.main}>
+        <div className={styles1.servicecrud}>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
             <input type='text' className={styles1.filters__searchInput} placeholder='Search account name...'
@@ -367,21 +367,21 @@ export default function Accounts() {
           </div>
           <div className={styles1.filters__sort}>
             <span className={styles1.filters__sortTitle}>Filter:</span>
-            <div className={styles1.filters__sortDropdown}>
+            <div className={styles1.filters__sortDetails}>
               {filterBy.map((filter) => (
                 <label key={filter}>
                   <input
                     type="checkbox"
                     value={filter}
                     onChange={() => handleFilterSelection(filter)}
-                    checked={selectedFilters.includes(filter) || (filter === 'Select All' && selectedFilters.length === filterBy.length - 1)}
+                    checked={selectedFilters.includes(filter) || (filter === 'All' && selectedFilters.length === filterBy.length - 1)}
                   />
                   {filter}
                 </label>
               ))}
             </div>
           </div>
-          <div className={styles1.filters__sortDropdown}>
+          <div className={styles1.filters__sortGenrep}>
             <Button type='secondary'> Generate Report </Button>
           </div>
         </div>
@@ -442,7 +442,7 @@ export default function Accounts() {
                         </td>
                         <td>
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                            <Button> Show More </Button>
+                            <CancelButton> Show More </CancelButton>
                           )}
                         </td>
                         <td className={styles1.tableAction}>
@@ -520,7 +520,7 @@ export default function Accounts() {
                       </td>
                       <td>
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                            <Button> Show More </Button>
+                            <CancelButton> Show More </CancelButton>
                           )}
                         </td>
                       <td className={styles1.tableAction}> 
@@ -596,7 +596,7 @@ export default function Accounts() {
                       </td>
                       <td>
                         {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                          <Button> Show More </Button>
+                          <CancelButton> Show More </CancelButton>
                         )}
                       </td>
                       <td className={styles1.tableAction}> 

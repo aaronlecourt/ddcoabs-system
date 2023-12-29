@@ -345,7 +345,7 @@ export default function Home({
       <>
       <ToastContainer />
         {session && (
-          <main className={`${styles.main} ${styles.mainLandingPage}`}>
+          <main className={`${styles.main2} ${styles.main2LandingPage}`}>
             {/* separate into 2 services scroll 1 side */}
             <div className={styles.Home}>
               <div className={styles.sub}>
@@ -427,7 +427,7 @@ export default function Home({
 
       <ToastContainer />
         {session && (
-          <main className={styles.main}>
+          <main className={styles.main2}>
             <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
             <div className={styles.container}>
               <section>

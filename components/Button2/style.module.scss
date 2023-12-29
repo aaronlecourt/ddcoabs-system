@@ -1,0 +1,28 @@
+@import '../../styles/variables.scss';
+
+.button {
+  border-radius: 12px;
+  background: #FAFAFA;
+  color: $text;
+  font-size: 16px;
+  font-family: 'Poppins';
+  padding: 0.5rem 2rem;
+  border: 1px solid $grey;
+  align-items: center;
+  display: flex;
+
+  &:hover {
+    background: rgba($color: $green, $alpha: 0.25);
+    border: 1px solid $green;
+  }
+
+  &Secondary {
+    background: $green;
+    color: white;
+
+    &:hover {
+      background: $darkgreen;
+    }
+  }
+}
+
