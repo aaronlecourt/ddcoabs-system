@@ -119,7 +119,8 @@ export default function Book() {
 
   // FOR DATE N TIME
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  const [selectedStartTime, setSelectedStartTime] = useState(8);
+  const [selectedEndTime, setSelectedEndTime] = useState(17);
   const [selectedTimeUnit, setSelectedTimeUnit] = useState('AM');
 
   // FOR PAYMENT FORM
@@ -132,7 +133,8 @@ export default function Book() {
     servicesErrorForm, setServicesErrorForm,
     services, setServices,
     selectedDate, setSelectedDate,
-    selectedTime, setSelectedTime,
+    selectedStartTime, setSelectedStartTime,
+    selectedEndTime, setSelectedEndTime,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,
     onStepNext, onStepBack,

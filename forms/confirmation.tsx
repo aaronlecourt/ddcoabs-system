@@ -3,15 +3,13 @@ import styles from '../styles/forms/confirmation.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
-import { BookingFormContext, BookingFormContextDentist } from "../pages/book";
+import { BookingFormContext } from "../pages/book";
 import useAuthGuard from '../guards/auth.guard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const BookConfirmationForm = forwardRef(({ }, ref) => {
   const { session } = useAuthGuard();
-
-  const bookingFormContext = useContext(session?.user?.role === 'patient' ? BookingFormContext : BookingFormContextDentist);
 
   const {
     onStepBack,
@@ -21,7 +19,7 @@ const BookConfirmationForm = forwardRef(({ }, ref) => {
     patientForm,
     servicesForm,
     patientFormDentist,
-  }:any = bookingFormContext;
+  }:any = useContext(BookingFormContext);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 

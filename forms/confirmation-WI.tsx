@@ -18,9 +18,21 @@ const BookWalkInConfirmationForm = forwardRef(({ }, ref) => {
     selectedTimeUnit,
     servicesForm,
     patientFormDentist,
+    selectedStartTime, 
+    selectedEndTime,
   }:any = useContext(BookingFormContextDentist);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const convertTo12HourFormat = (time: any) => {
+    let hours = time % 12 || 12; 
+    const amPm = time >= 12 ? 'PM' : 'AM'; 
+  
+    return `${hours}:00 ${amPm}`;
+  };
+
+  const formattedStartTime = convertTo12HourFormat(selectedStartTime);
+  const formattedEndTime = convertTo12HourFormat(selectedEndTime);
 
   const back = (e :any) => {
     e.preventDefault();
@@ -63,7 +75,7 @@ const BookWalkInConfirmationForm = forwardRef(({ }, ref) => {
       } else {
         toast.success('Appointment Booked Successfully!', { autoClose: false });
         console.log('appointment booked ', await response.json());
-        window.location.href = '/book';
+        window.location.href = '/';
       }
     } catch (error) {
       toast.error('Appointment booking failed', { autoClose: false });
@@ -95,7 +107,7 @@ const BookWalkInConfirmationForm = forwardRef(({ }, ref) => {
             </div>
             <div className={styles.details__row}>
               <label>Time:</label>
-              <span>{selectedTimeUnit}</span>
+              <span>{formattedStartTime} to {formattedEndTime}</span>
             </div>
             <div className={styles.details__row}>
               <label>Base Charge:</label>

@@ -17,13 +17,7 @@ export const ErrorServicesFormObject = {
   concern: { error: false, message: null },
 }
 
-const BookServicesForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
-  let context;
-
-  if (userRole === 'patient'){
-    console.log("USER IS PATIENT - SERVICES")
-    context = useContext(BookingFormContext);
-  } 
+const BookServicesForm = forwardRef(({  }: any, ref) => {
 
   const { 
     onStepNext, onStepBack, 

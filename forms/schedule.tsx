@@ -3,12 +3,10 @@ import styles from '../styles/forms/schedule.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
-import { BookingFormContext, BookingFormContextDentist } from "../pages/book";
+import { BookingFormContext} from "../pages/book";
 import CustomCalendar from "../components/CustomCalendar";
 
-const BookScheduleForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
-
-  const getContext = userRole === 'patient' ? useContext(BookingFormContext) : useContext(BookingFormContextDentist);
+const BookScheduleForm = forwardRef(({  }: any, ref) => {
 
   const { onStepNext, onStepBack,
     selectedDate, setSelectedDate,

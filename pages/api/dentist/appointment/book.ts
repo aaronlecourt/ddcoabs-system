@@ -87,6 +87,8 @@ export default async function userHandler (
         const appointmentData = new Appointment({
           ...body,
           patientName: patientName,
+          startTime: body.startTime,
+          endTime: body.endTime !== null ? body.endTime : undefined,
         });
 
         // const appointmentCreated: IAppointment = await Appointment.create(appointmentData);

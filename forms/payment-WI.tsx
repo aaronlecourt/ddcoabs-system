@@ -12,10 +12,20 @@ const BookWalkInPaymentForm = forwardRef(({ }: any, ref) => {
     servicesForm,
     selectedPaymentMethod, setSelectedPaymentMethod,
     selectedDate,
-    selectedTimeUnit
+    selectedStartTime, selectedEndTime,
   }: any = useContext(BookingFormContextDentist);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const convertTo12HourFormat = (time: any) => {
+    let hours = time % 12 || 12; // Get hours in 12-hour format
+    const amPm = time >= 12 ? 'PM' : 'AM'; // Determine AM/PM
+  
+    return `${hours}:00 ${amPm}`;
+  };
+
+  const formattedStartTime = convertTo12HourFormat(selectedStartTime);
+  const formattedEndTime = convertTo12HourFormat(selectedEndTime);
 
   const next = (e: any) => {
     e.preventDefault();
@@ -49,7 +59,7 @@ const BookWalkInPaymentForm = forwardRef(({ }: any, ref) => {
             </div>
             <div className={styles.details__row}>
               <label>Time:</label>
-              <span>{selectedTimeUnit}</span>
+              <span>{formattedStartTime} to {formattedEndTime}</span>
             </div>
             <div className={styles.details__row}>
               <label>Base Amount:</label>

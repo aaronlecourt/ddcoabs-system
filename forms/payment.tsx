@@ -4,18 +4,9 @@ import { faCashRegister, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 
-import { BookingFormContext, BookingFormContextDentist } from "../pages/book";
+import { BookingFormContext } from "../pages/book";
 
-const BookPaymentForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
-
-  const getContext = () => {
-    if (userRole === 'patient') {
-      return useContext(BookingFormContext);
-    } else {
-      console.log("USER IS DENTIST - PAYMENT")
-      return useContext(BookingFormContextDentist);
-    }
-  };
+const BookPaymentForm = forwardRef(({  }: any, ref) => {
 
   const { onStepNext, onStepBack,
     servicesForm,

@@ -8,7 +8,8 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
 
   const { onStepNext, onStepBack,
     selectedDate, setSelectedDate,
-    selectedTime, setSelectedTime,
+    selectedStartTime, setSelectedStartTime,
+    selectedEndTime, setSelectedEndTime,
     selectedTimeUnit, setSelectedTimeUnit
   }: any = useContext(BookingFormContextDentist);
 
@@ -28,7 +29,46 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
     }
   }))
 
+    // FOR SCHEDULING
+    const setTimeAndUnit = (hour: any) => {
+        setSelectedStartTime(hour);
+        setSelectedTimeUnit(hour >= 12 ? 'PM' : 'AM');
+    };
 
+    const handleStartTimeSelection = (e: any) => {
+        const selectedStartHour = parseInt(e.target.value, 10);
+        setSelectedStartTime(selectedStartHour);
+    
+        if (selectedEndTime < selectedStartHour) {
+            setSelectedEndTime(selectedStartHour);
+        }
+
+        setTimeAndUnit(selectedStartHour);
+      };
+
+      const handleEndTimeSelection = (e: any) => {
+        const selectedEndHour = parseInt(e.target.value, 10);
+    
+        // If the selected end time is earlier than the start time, prevent updating the end time
+        if (selectedEndHour >= selectedStartTime) {
+            setSelectedEndTime(selectedEndHour);
+        }
+      };
+
+      const generateTimeOptions = (selectedStartTime: any, selectedEndTime: any) => {
+        const options = [];
+        for (let hour = selectedStartTime; hour <= selectedEndTime; hour++) {
+          const formattedHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+          options.push(
+            <option key={hour} value={hour}>
+              {`${formattedHour}:00`}
+            </option>
+          );
+        }
+        return options;
+      };
+
+  // SET AUTOMATIC TIME AND DATE
 
   const setCurrentDateTime = (e: any) => {
     e.preventDefault();
@@ -38,7 +78,7 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
     const timeUnit = hours >= 12 ? 'PM' : 'AM';
   
     setSelectedDate(currentDate);
-    setSelectedTime(hours);
+    setSelectedStartTime(hours);
     setSelectedTimeUnit(timeUnit);
   
     onStepNext(e);
@@ -56,6 +96,18 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
         </div>
         <div className={styles.form__container}>
           <strong>Select Time</strong>
+          <div className={styles.form__container}>
+            <strong>Select Start Time</strong>
+            <select value={selectedStartTime} onChange={handleStartTimeSelection}>
+                {generateTimeOptions(8, 16)}
+            </select>
+            </div>
+            <div className={styles.form__container}>
+                <strong>Select End Time</strong>
+                <select value={selectedEndTime} onChange={handleEndTimeSelection}>
+                    {generateTimeOptions(selectedStartTime, 17)} 
+                </select>
+            </div>
           <div className={styles.timeUnit}>
             <div onClick={() => setSelectedTimeUnit('AM')}
               className={selectedTimeUnit == 'AM' ? styles.selected : ''}>AM</div>
