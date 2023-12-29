@@ -16,7 +16,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const PatientWalkIn = {
-  patientName: "",
+  patientName: '',
+  firstName: '',
+  lastName: '',
   age: 0,
   sex: "",
   contactNumber: "",
