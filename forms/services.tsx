@@ -21,18 +21,25 @@ const BookServicesForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
   let context;
 
   if (userRole === 'patient'){
+    console.log("USER IS PATIENT - SERVICES")
     context = useContext(BookingFormContext);
-  } else {
+  } 
+  
+  else if (userRole === 'dentist'){
     console.log("USER IS DENTIST - SERVICES")
     context = useContext(BookingFormContextDentist);
   }
+  // else {
+  //   console.log("USER IS DENTIST - SERVICES")
+  //   context = useContext(BookingFormContextDentist);
+  // }
 
   const { 
     onStepNext, onStepBack, 
     services, setServices, 
     servicesForm, setServicesForm,
     servicesErrorForm, setServicesErrorForm
-}: any = context;
+}: any = useContext(BookingFormContext);;
 
   const next = (e: any) => {
     e.preventDefault();

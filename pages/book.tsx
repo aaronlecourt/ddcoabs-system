@@ -80,22 +80,25 @@ export default function Book() {
 
   const [steps, setSteps] = useState<any>([
     {
-      // label: 'Patient Form',
-      // active: true,
-      // component: () => <BookPatientForm ref={formRef} />,
-      // current: true
-
-      label: session?.user?.role === 'patient' ? 'Patient Form' : 'Walk In Patient Form',
+      label: 'Patient Form',
       active: true,
-      component: session?.user?.role === 'patient' ? 
-        () => {
-          console.log("User is A PATIENT.");
-          return <BookPatientForm ref={formRef} />;
-        } : 
-        () => {
-          console.log("User is A DENTIST.");
-          return <BookWalkInForm ref={formRef} />;
-        },
+      component: () => <BookPatientForm ref={formRef} />,
+      // current: true,
+
+      // label: session?.user?.role === 'dentist' ? 'Walk In  Patient Form' : 'Patient Form',
+      // active: true,
+      // component: () => {
+      //   if (session?.user?.role === 'dentist') {
+      //     console.log("User is a PATIENT.");
+      //     return <BookWalkInForm ref={formRef} />;
+      //   }
+        
+      //   if (session?.user?.role === 'patient') {
+      //     console.log("User is a DENTIST.");
+      //     return <BookPatientForm ref={formRef} />;
+      //   } 
+
+      //   },
       current: true
     },
     {

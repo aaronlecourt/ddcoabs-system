@@ -22,7 +22,7 @@ const BookPaymentForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
     selectedPaymentMethod, setSelectedPaymentMethod,
     selectedDate,
     selectedTimeUnit
-  }: any = getContext();
+  }: any = useContext(BookingFormContext);
 
   const formattedDate = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 

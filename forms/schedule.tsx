@@ -13,7 +13,7 @@ const BookScheduleForm = forwardRef(({ userRole, ...otherProps }: any, ref) => {
   const { onStepNext, onStepBack,
     selectedDate, setSelectedDate,
     selectedTimeUnit, setSelectedTimeUnit
-  }: any = getContext;
+  }: any = useContext(BookingFormContext);
 
   const next = (e: any) => {
     e.preventDefault();
