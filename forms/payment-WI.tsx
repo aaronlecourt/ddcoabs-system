@@ -3,6 +3,7 @@ import styles from '../styles/forms/payment.module.scss';
 import { faCashRegister, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
+import CancelButton from "../components/CancelButton";
 
 import { BookingFormContextDentist } from "../pages/walk-in";
 
@@ -90,7 +91,7 @@ const BookWalkInPaymentForm = forwardRef(({ }: any, ref) => {
         </div>
         <div className={`${styles.form__container} ${styles.actions}`}>
           <div>
-            <Button type='secondary' onClick={back}>Back</Button>
+            <CancelButton onClick={back}>Back</CancelButton>
           </div>
           <div>
             <Button onClick={next}>Next</Button>

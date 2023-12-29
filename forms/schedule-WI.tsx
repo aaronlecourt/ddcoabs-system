@@ -1,7 +1,9 @@
 import { forwardRef, useContext, useImperativeHandle } from "react";
 import styles from '../styles/forms/schedule.module.scss';
+import styles1 from '../styles/pages/home.module.scss';
 import Button from "../components/Button";
 import { BookingFormContextDentist } from "../pages/walk-in";
+import CancelButton from "../components/CancelButton";
 import CustomCalendar from "../components/CustomCalendar";
 
 const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
@@ -96,32 +98,40 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
         </div>
         <div className={styles.form__container}>
           <strong>Select Time</strong>
-          <div className={styles.form__container}>
-            <strong>Select Start Time</strong>
-            <select value={selectedStartTime} onChange={handleStartTimeSelection}>
-                {generateTimeOptions(8, 16)}
-            </select>
+          <div className={styles.form__row2}>
+            <div className={styles.form__row__field__label}>
+              <label>Select Start Time</label>
             </div>
-            <div className={styles.form__container}>
-                <strong>Select End Time</strong>
-                <select value={selectedEndTime} onChange={handleEndTimeSelection}>
-                    {generateTimeOptions(selectedStartTime, 17)} 
-                </select>
+            <div className={styles1.filters__sortDropdown}>
+              <select value={selectedStartTime} onChange={handleStartTimeSelection}>
+                  {generateTimeOptions(8, 16)}
+              </select>
+            </div>
+          </div>
+          <div className={styles.form__row2}>
+                <div className={styles.form__row__field__label}>
+                  <label>Select End Time</label>
+                </div>
+                <div className={styles1.filters__sortDropdown}>
+                  <select value={selectedEndTime} onChange={handleEndTimeSelection}>
+                      {generateTimeOptions(selectedStartTime, 17)} 
+                  </select>
+                </div>
             </div>
           <div className={styles.timeUnit}>
-            <div onClick={() => setSelectedTimeUnit('AM')}
+            <div
               className={selectedTimeUnit == 'AM' ? styles.selected : ''}>AM</div>
-            <div onClick={() => setSelectedTimeUnit('PM')}
+            <div
               className={selectedTimeUnit == 'PM' ? styles.selected : ''}>PM</div>
           </div>
+          <Button type="secondary" onClick={setCurrentDateTime}>Select Walk-in Date/Time</Button>
         </div>
         <div className={`${styles.form__container} ${styles.actions}`}>
           <div>
-            <Button type='secondary' onClick={back}>Back</Button>
+            <CancelButton onClick={back}>Back</CancelButton>
           </div>
           <div>
             <Button onClick={next}>Next</Button>
-            <Button onClick={setCurrentDateTime}>Walk In Schedule</Button>
           </div>
         </div>
       </div>
