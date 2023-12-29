@@ -79,7 +79,7 @@ export default function Accounts() {
   };
 
   //FILTER
-  const filterBy= ['Select All', 'Dentist', 'Employee', 'Patient', 'Male', 'Female', 'Minor', 'Adult']
+  const filterBy= ['All', 'Dentist', 'Employee', 'Patient', 'Male', 'Female', 'Minor', 'Adult']
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const handleFilterSelection = (filter: string) => {
@@ -340,8 +340,8 @@ export default function Accounts() {
           </div>
         </Modal>
 
-      <section className={styles.main}>
-        <div className={styles.servicecrud}>
+      <section className={styles1.main}>
+        <div className={styles1.servicecrud}>
         <div className={styles1.filters}>
           <div className={styles1.filters__search}>
             <input type='text' className={styles1.filters__searchInput} placeholder='Search account name...'
@@ -367,7 +367,7 @@ export default function Accounts() {
           </div>
           <div className={styles1.filters__sort}>
             <span className={styles1.filters__sortTitle}>Filter:</span>
-            <div className={styles1.filters__sortDropdown}>
+            <div className={styles1.filters__sortDetails}>
               {filterBy.map((filter) => (
                 <label key={filter}>
                   <input
@@ -381,7 +381,7 @@ export default function Accounts() {
               ))}
             </div>
           </div>
-          <div className={styles1.filters__sortDropdown}>
+          <div className={styles1.filters__sortGenrep}>
             <Button type='secondary'> Generate Report </Button>
           </div>
         </div>

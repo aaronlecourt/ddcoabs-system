@@ -8,6 +8,7 @@ import { faArchive, faBoxArchive, faChevronDown, faChevronLeft, faChevronRight, 
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import Modal from '../components/Modal';
 import EditButton from '../components/EditButton';
+import CancelButton from '../components/CancelButton'; 
 import ArchiveButton from '../components/ArchiveButton';
 import Button from '../components/Button';
 import { AddServicesFormData, ErrorAddServicesFormData, UpdateServicesFormData } from '../types/services';
@@ -523,7 +524,7 @@ export default function Services() {
           </div>
           <label> Type: </label>
           <div className={styles1.cancelText}>
-            <div className={styles1.filters__search}>
+            <div className={styles1.filters__sortDropdown}>
               <select onChange={(e: any) => setServiceFormData({ ...serviceFormData, type: e.target.value })} value={serviceFormData.type}>
                 <option selected disabled>Choose a type</option>
                 {types.map((type, index) => (
@@ -568,7 +569,7 @@ export default function Services() {
 
           <label> Type: </label>
           <div className={styles1.cancelText}>
-            <div className={styles1.filters__type}>
+            <div className={styles1.filters__sortDropdown}>
               <select onChange={(e: any) => setUpdateServiceFormData({ ...updateServiceFormData, type: e.target.value })}
                 value={updateServiceFormData.type}>
                 <option selected disabled>Choose a type</option>
@@ -599,7 +600,7 @@ export default function Services() {
           <p> Are you sure you want to archive this dental service?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
-            <Button type='secondary' onClick={() => setShowArchiveService(false)}>No</Button>
+            <CancelButton onClick={() => setShowArchiveService(false)}>No</CancelButton>
             <Button onClick={archiveService} type = "submit">Yes</Button>
           </div>
         </Modal>
