@@ -96,8 +96,10 @@ export default function Reschedule() {
           setErrors([...errorMsgs]);
           toast.error('Appointment reschedule failed: ' + JSON.stringify(responseMsg));
         } else {
-          toast.success('Appointment Reschedule Successful');
-          window.location.href = '/';
+          toast.success('Appointment rescheduled successfully!');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
         }
       } catch (error) {
         toast.error('Appointment reschedule failed');
@@ -248,6 +250,7 @@ export default function Reschedule() {
 
   return (
     <>
+    <ToastContainer />
       {(status !== 'loading' && session) && (
         session.user?.role === 'patient' ? (
           <PatientLayout>

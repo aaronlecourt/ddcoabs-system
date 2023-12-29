@@ -276,7 +276,10 @@ export default function Services() {
       console.log("Service registered:", responseData);
 
       setShowAddService(false);
-
+      toast.success ('Service added successfully!')
+      setTimeout(() => {
+        window.location.href = '/services';
+      }, 5000);
       // Check if the service is added to the services state
       setServices((prevServices) => {
         const updatedServices = [...prevServices, responseData];
@@ -385,6 +388,9 @@ export default function Services() {
         clearModal();
 
         toast.success("Service updated successfully!");
+        setTimeout(() => {
+          window.location.href = '/services';
+        }, 5000);
       }
     } catch (error) {
       toast.error("Updating service failed");
@@ -419,7 +425,10 @@ export default function Services() {
         console.log("Service updated: ", updatedService);
 
         setShowArchiveService(false);
-
+        toast.success ('Service archived successfully!')
+        setTimeout(() => {
+          window.location.href = '/services';
+        }, 5000);
         // Remove the archived service from services
         setServices((prevServices) =>
           prevServices.filter((service) => service._id !== updatedService._id)

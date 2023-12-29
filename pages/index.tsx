@@ -116,8 +116,10 @@ export default function Home({
           if (!response.ok) {
             toast.error('Appointment cancel failed: ' + JSON.stringify(responseMsg))
           } else {
-            toast.success('Appointment Cancel Successful')
-            window.location.href = '/'
+            toast.success('Appointment successfully canceled')
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 3000);
           }
         })
         .catch(error => {
