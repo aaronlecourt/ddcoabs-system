@@ -1,9 +1,22 @@
 @import '../variables.scss';
 
+.main2 {
+  padding: 2rem 4rem;
+
+  &LandingPage {
+    // height: 100vh;
+    // display: flex;
+    // flex-direction: column;
+    align-items: center;
+    color: $text;
+  }
+}
+
 .main {
   padding: 2rem 4rem;
   display: flex;
   justify-content: center;
+  
   &LandingPage {
     // height: 100vh;
     // display: flex;
@@ -358,7 +371,7 @@
   padding-top: 1rem;
 
   &>div:first-child {
-    margin-right: 1rem;
+    margin-right: 0.5rem;
   }
 }
 

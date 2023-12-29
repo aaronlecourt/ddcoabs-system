@@ -403,7 +403,7 @@ export default function Home({
           </div>
         </Modal>
         {session && (
-          <main className={styles.main}>
+          <main className={styles.main2}>
             <h1 className={styles.title}>Hello {session.user?.name}!</h1>
             <div className={styles.container}>
               <section>
