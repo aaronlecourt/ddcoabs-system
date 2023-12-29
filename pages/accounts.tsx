@@ -83,11 +83,11 @@ export default function Accounts() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const handleFilterSelection = (filter: string) => {
-    if (filter === 'Select All'){
+    if (filter === 'All'){
       if (selectedFilters.length === filterBy.length - 1) {
-        setSelectedFilters([]); // Uncheck all if 'Select All' was previously checked
+        setSelectedFilters([]); // Uncheck all if 'All' was previously checked
       } else {
-        setSelectedFilters(filterBy.filter((item) => item !== 'Select All'));
+        setSelectedFilters(filterBy.filter((item) => item !== 'All'));
       }
     }
      else if (selectedFilters.includes(filter)) {
@@ -374,7 +374,7 @@ export default function Accounts() {
                     type="checkbox"
                     value={filter}
                     onChange={() => handleFilterSelection(filter)}
-                    checked={selectedFilters.includes(filter) || (filter === 'Select All' && selectedFilters.length === filterBy.length - 1)}
+                    checked={selectedFilters.includes(filter) || (filter === 'All' && selectedFilters.length === filterBy.length - 1)}
                   />
                   {filter}
                 </label>
@@ -442,7 +442,7 @@ export default function Accounts() {
                         </td>
                         <td>
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                            <Button> Show More </Button>
+                            <CancelButton> Show More </CancelButton>
                           )}
                         </td>
                         <td className={styles1.tableAction}>
@@ -520,7 +520,7 @@ export default function Accounts() {
                       </td>
                       <td>
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                            <Button> Show More </Button>
+                            <CancelButton> Show More </CancelButton>
                           )}
                         </td>
                       <td className={styles1.tableAction}> 
@@ -596,7 +596,7 @@ export default function Accounts() {
                       </td>
                       <td>
                         {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                          <Button> Show More </Button>
+                          <CancelButton> Show More </CancelButton>
                         )}
                       </td>
                       <td className={styles1.tableAction}> 
