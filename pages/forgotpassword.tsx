@@ -2,14 +2,14 @@ import connectMongo from '../utils/connectMongo';
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { signIn } from 'next-auth/react'
 import { useRouter } from "next/router";
-import { useState , useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import styles from '../styles/pages/auth.module.scss';
-import pageStyles from '../styles/pages/login.module.scss';
+import pageStyles from '../styles/pages/forgotpassword.module.scss';
 import Button from '../components/Button';
 import AuthLayout from '../layouts/AuthLayout';
-import { FormData, ErrorFormData } from '../types/login';
-import { isLoginFormValid } from '../validations/login';
+import { FormData, ErrorFormData } from '../types/forgotpassword';
+import { isForgotPasswordFormValid } from '../validations/forgotpassword';
 import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import useAuthGuard from '../guards/auth.guard';
 import { toast, ToastContainer } from 'react-toastify';
@@ -44,7 +44,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default function Login({
+export default function ForgotPassword({
   isConnected,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { session, status } = useAuthGuard();
@@ -52,89 +52,51 @@ export default function Login({
 
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    password: '',
   })
 
   const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
     email: { error: false, message: null },
-    password: { error: false, message: null },
   })
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-  
+
     try {
-      const { email, password } = formData;
-      const res: any = await signIn('credentials', { email, password, redirect: false })
-  
-      if (res.error) {
-        console.log(res.error);
-        if (res.status == 401) {
-          setErrorFormData(prevValue => ({
-            ['email']: {
-              error: true,
-              message: 'Invalid email address.'
-            },
-            ['password']: {
-              error: true,
-              message: 'Invalid password.'
-            }
-          }))
-        }
-        return;
-      }
-      
-      console.log(res, 'Logged in!');
-      
-      // Introduce a delay before redirection
-      setTimeout(() => {
-        router.replace('/');
-        toast.success('Login successful!');
-      }, 900); // Adjust the delay as needed
+      fetch(`/api/global/password/forgot`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+        .then(async (response) => {
+          const responseMsg = await response.json()
+          if (!response.ok) {
+            toast.error('Error ' + JSON.stringify(responseMsg))
+          } else {
+            const data = responseMsg
+            console.log('response ', data); // Handle the response from the API
+            toast.success(data.message + 'You may now close this tab. Please check your email.')
+          }
+        })
+        .catch(error => {
+          toast.error('Something went wrong. ' + error);
+        });
+
     } catch (error) {
       console.log(error)
-      toast.error('Login failed!');
     }
   }
-  
+
   const proceed = (e: any) => {
     e.preventDefault();
 
-    if (isLoginFormValid(formData, errorFormData, setErrorFormData)) handleSubmit(e);
+    if (isForgotPasswordFormValid(formData, errorFormData, setErrorFormData)) handleSubmit(e);
   }
-
-  useEffect(() => {
-    // Check for saved notifications in localStorage
-    const savedNotification = localStorage.getItem('loginNotification');
-  
-    if (savedNotification) {
-      // Display the saved notification
-      toast.success(savedNotification, {
-        onClose: () => {
-          // Clear the saved notification from localStorage after it's closed
-          localStorage.removeItem('loginNotification');
-        },
-      });
-    }
-  }, []); // Run this effect only once when the component mounts  
-
-  useEffect(() => {
-    // Save notification to localStorage when a new notification is created
-    const unsubscribe = toast.onChange((toast: { message?: string; type?: string }) => {
-      if (toast && toast.type === 'success' && toast.message) {
-        localStorage.setItem('loginNotification', toast.message);
-      }
-    });
-
-    return () => {
-      // Cleanup the subscription when the component unmounts
-      unsubscribe();
-    };
-  }, []);
 
   return (
     <>
-    <ToastContainer autoClose={5000} />
+      <ToastContainer />
       {(status !== 'loading' && !session) && <AuthLayout>
         <div className={styles.container}>
           <div className={styles.header} style={{ marginBottom: '5rem' }}>
@@ -162,30 +124,9 @@ export default function Login({
                 />
               </div>
             </div>
-            <div className={styles.formField}>
-              <div className='formLabel'>
-                <label>Password</label>
-                {errorFormData.password.error && <span className='formLabel__errorMessage'>{errorFormData.password.message}</span>}
-              </div>
-              <div className={`formInput ${errorFormData.password.error ? 'formInput--error' : ''}`}>
-                <input type='password'
-                  onKeyDown={e => handleFormEnter(e, proceed)}
-                  name='password'
-                  value={formData.password}
-                  onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)}
-                  placeholder='••••••••'
-                />
-              </div>
-            </div>
           </div>
           <div className={pageStyles.action}>
-            <a href='/forgotpassword'>Reset Password?</a>
             <Button onClick={proceed}>Proceed</Button>
-          </div>
-          <div className={pageStyles.signupText}>
-            <span>Do not have an existing account?</span>
-            <br />
-            <a href='/register'>Sign up here!</a>
           </div>
         </div>
       </AuthLayout>}
