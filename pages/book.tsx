@@ -83,7 +83,6 @@ export default function Book() {
       label: 'Patient Form',
       active: true,
       component: () => <BookPatientForm ref={formRef} />,
-      // current: true,
 
       // label: session?.user?.role === 'dentist' ? 'Walk In  Patient Form' : 'Patient Form',
       // active: true,
@@ -126,6 +125,49 @@ export default function Book() {
       current: false
     }
   ])
+
+  // const [steps, setSteps] = useState<any>([]);
+
+  // useEffect(() => {
+  //   if (session && session.user && session.user.role) {
+  //     const isDentist = session.user.role === 'dentist';
+  
+  //     const steps = [
+  //       {
+  //         label: isDentist ? 'Walk In Patient Form' : 'Patient Form',
+  //         active: true,
+  //         component: isDentist ? <BookWalkInForm ref={formRef} /> : <BookPatientForm ref={formRef} />,
+  //         current: true
+  //       },
+  //       {
+  //         label: 'Services',
+  //         active: false,
+  //         component: <BookServicesForm ref={formRef} />,
+  //         current: false
+  //       },
+  //       {
+  //         label: 'Date & Time',
+  //         active: false,
+  //         component: <BookScheduleForm ref={formRef} />,
+  //         current: false
+  //       },
+  //       {
+  //         label: 'Payment',
+  //         active: false,
+  //         component: <BookPaymentForm ref={formRef} />,
+  //         current: false
+  //       },
+  //       {
+  //         label: 'Confirmation',
+  //         active: false,
+  //         component: <BookConfirmationForm ref={formRef} />,
+  //         current: false
+  //       }
+  //     ];
+  
+  //     setSteps(steps);
+  //   }
+  // }, [session]);
 
   // useEffect(() => {
   //   if (session?.user?.role === 'dentist') {
@@ -211,31 +253,37 @@ export default function Book() {
 
     return (
       <>
-        {session && (
-          <main className={styles.main}>
-            <Steps
-              ref={stepsRef}
-              steps={steps}
-              setSteps={setSteps}
-              currentStep={currentStep}
-              setCurrentStep={setCurrentStep}
-              currentStepIndex={currentStepIndex}
-              setCurrentStepIndex={setCurrentStepIndex}
-              onStepNext={onStepNext}
-            />
-            <section className={styles.component}>
-              {isDentist ? (
-                <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
-                  {currentStep && currentStep.component && <currentStep.component />}
-                </BookingFormContextDentist.Provider>
-              ) : (
-                <BookingFormContext.Provider value={bookingFormContextValues}>
-                  {currentStep && currentStep.component && <currentStep.component />}
-                </BookingFormContext.Provider>
-              )}
-          </section>
-          </main>
-        )}
+        <main className={styles.main}>
+          {session && (
+            <>
+              <Steps
+                ref={stepsRef}
+                steps={steps}
+                setSteps={setSteps}
+                currentStep={currentStep}
+                setCurrentStep={setCurrentStep}
+                currentStepIndex={currentStepIndex}
+                setCurrentStepIndex={setCurrentStepIndex}
+                onStepNext={onStepNext}
+              />
+              <section className={styles.component}>
+                {isDentist ? (
+                  <BookingFormContextDentist.Provider value={bookingFormContextValuesDentist}>
+                    {currentStep && currentStep.component && (
+                      <currentStep.component ref={formRef} />
+                    )}
+                  </BookingFormContextDentist.Provider>
+                ) : (
+                  <BookingFormContext.Provider value={bookingFormContextValues}>
+                    {currentStep && currentStep.component && (
+                      <currentStep.component ref={formRef} />
+                    )}
+                  </BookingFormContext.Provider>
+                )}
+              </section>
+            </>
+          )}
+        </main>
       </>
     )
   }

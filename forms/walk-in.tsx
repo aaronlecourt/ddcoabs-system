@@ -96,7 +96,7 @@ const BookPatientFormDentist = forwardRef(({ }: any, ref) => {
 
       <div className={styles.form__container}>
         <label> Contact Number: </label>
-        <input type = "number" name='contactNumber' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.contactNumber}/>
+        <input type = "text" name='contactNumber' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.contactNumber}/>
       </div>
 
       <hr></hr>
@@ -108,7 +108,7 @@ const BookPatientFormDentist = forwardRef(({ }: any, ref) => {
 
       <div className={styles.form__container}>
         <label> Contact Number: </label>
-        <input type = "number" name='guardianNumber' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.guardianNumber}/>
+        <input type = "text" name='guardianNumber' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.guardianNumber}/>
       </div>
 
       <div className={styles.next}>
