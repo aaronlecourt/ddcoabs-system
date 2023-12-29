@@ -15,7 +15,7 @@ import Button from "../components/Button";
 
 export const PatientWalkIn = {
   patientName: "",
-  age: "",
+  age: 0,
   sex: "",
   contactNumber: "",
   guardianName: "",

@@ -19,13 +19,12 @@ import { ErrorFormDataField } from "./error";
 // }
 
 export interface PatientFormDataDentist {
-    firstName: string;
-    lastName: string;
+    patientName: string;
     age: number;
     sex: string;
-    contactNumber: number;
+    contactNumber: string;
     guardianName: string;
-    guardianNumber: number;
+    guardianNumber: string;
 }
 
 export interface PatientErrorFormDataDentist {
