@@ -193,23 +193,6 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
         </div>
       </div>
 
-      <div className={styles.form__container}>
-        <label> Contact Number: </label>
-        <input type = "text" name='contactNumber' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.contactNumber}/>
-      </div>
-
-      <hr></hr>
-
-      <div className={styles.form__container}>
-        <label> Parent's or Guardians Name: </label>
-        <input type = "text" placeholder='N/A' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} name='guardianName' value={formData.guardianName}/>
-      </div>
-
-      <div className={styles.form__container}>
-        <label> Contact Number: </label>
-        <input type = "text" name='guardianNumber' onChange={e => handleFormDataChange(e, setFormData, setErrorFormData)} value={formData.guardianNumber}/>
-      </div>
-
       <div className={styles.next}>
         <Button onClick={next}>Next</Button>
       </div>
