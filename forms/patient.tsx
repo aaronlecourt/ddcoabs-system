@@ -35,7 +35,7 @@ export const PatientFormObject = {
 
 export const ErrorPatientFormObject = {
   physicianName: { error: false, message: null },
-  officeAddress: { optional: true, error: false, message: null },
+  officeAddress: { optional: false, error: false, message: null },
   specialty: { optional: true, error: false, message: null },
   goodHealth: { error: false, message: null },
   medicalTreatment: { error: false, message: null },
@@ -53,7 +53,7 @@ export const ErrorPatientFormObject = {
   pregnant: { optional: true, error: false, message: null },
   nursing: { optional: true, error: false, message: null },
   birthControl: { optional: true, error: false, message: null },
-  others: { optional: true, error: false, message: null },
+  others: { optional: false, error: false, message: null },
   previousDentist: { optional: true, error: false, message: null },
   previousTreatment: { optional: true, error: false, message: null },
   lastDentalVisit: { optional: true, error: false, message: null }
@@ -384,16 +384,17 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
   ])
 
   useEffect(() => {
-    // for question 10
+    // Calculate the selected symptoms for question 10
     const symptoms = checkboxList.flatMap(row =>
       row.filter(checkbox => checkbox.value)
     ).map(i => i.textValue || i.text);
-
+    
+    // Update the form data with the selected symptoms
     setFormData((prevFormData: any) => ({
       ...prevFormData,
       ['others']: symptoms
-    }))
-  }, [checkboxList])
+    }));  
+  }, [checkboxList]);
 
   const handleCheckboxChange = (rowIndex: number, index: number, textValue?: string) => {
     setCheckboxList((prevState) => {
@@ -411,6 +412,17 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
 
   const next = (e: any) => {
     e.preventDefault();
+    // const isOthersValid = formData.others.length != 0;
+
+    // // Update the error status for 'others' based on its validity
+    // setErrorFormData((prevValue:any) => ({
+    //   ...prevValue,
+    //   others: {
+    //     optional: false,
+    //     error: !isOthersValid,
+    //     message: !isOthersValid ? 'Please select at least one option' : null,
+    //   },
+    // }));
 
     // for question 10
     const symptoms = checkboxList.flatMap(row =>
@@ -425,6 +437,61 @@ const BookPatientForm = forwardRef(({ }: any, ref) => {
       return isPatientFormValid(formData, errorFormData, setErrorFormData)
     }
   }))
+
+  
+
+  useEffect(() => {
+    setErrorFormData((prevValue: any) => {
+      return {
+        ...prevValue,
+        ['medicalTreatmentValue']: { optional: formData.medicalTreatment != 'yes', error: false, message: null }
+      }
+    })
+
+    setErrorFormData((prevValue: any) => {
+      return {
+        ...prevValue,
+        ['illnessValue']: { optional: formData.illness != 'yes', error: false, message: null }
+      }
+    })
+
+    setErrorFormData((prevValue: any) => {
+      return {
+        ...prevValue,
+        ['illnessValue']: { optional: formData.illness != 'yes', error: false, message: null }
+      }
+    })
+
+    setErrorFormData((prevValue: any) => {
+      return {
+        ...prevValue,
+        ['hospitalizedValue']: { optional: formData.hospitalized != 'yes', error: false, message: null }
+      }
+    })
+
+    setErrorFormData((prevValue: any) => {
+      return {
+        ...prevValue,
+        ['medicationValue']: { optional: formData.medication != 'yes', error: false, message: null }
+      }
+    })
+
+    setErrorFormData((prevValue: any) => {
+      return {
+        ...prevValue,
+        ['allergyValue']: { optional: formData.allergy != 'yes', error: false, message: null }
+      }
+    })
+    // if profile sex is female, make optional false
+    setErrorFormData((prevValue: any) => {
+      return {
+        ...prevValue,
+        ['pregant']: { optional: formData.pregant != 'yes', error: false, message: null }
+      }
+    })
+
+  }, [formData])
+
 
   return (
     <div className={styles.formContain}>
