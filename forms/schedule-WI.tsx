@@ -102,7 +102,8 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
 
     onStepNext(e);
   };
-
+  const isButtonDisabled = selectedStartTime === 8 && selectedEndTime === 17;
+  
   return (
     <div className={styles.container}>
       <div className={styles.form}>
@@ -141,14 +142,14 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
             <div
               className={selectedTimeUnit == 'PM' ? styles.selected : ''}>PM</div>
           </div>
-          {selectedStartTime ? (
-            <CancelButton>
-            Select Walk-in Date/Time
-            </CancelButton>
-          ) : (
+          {selectedStartTime && isButtonDisabled ? (
             <Button type="secondary" onClick={setCurrentDateTime}>
               Select Walk-in Date/Time
             </Button>
+          ) : (
+            <CancelButton>
+              Select Walk-in Date/Time
+            </CancelButton>
           )}
         </div>
         <div className={`${styles.form__container} ${styles.actions}`}>
