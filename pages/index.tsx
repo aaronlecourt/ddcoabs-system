@@ -9,7 +9,7 @@ import useAuthGuard from '../guards/auth.guard';
 import CustomCalendar from '../components/CustomCalendar';
 import Appointment from '../components/Appointment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCancel, faChevronLeft, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faCancel, faChevronLeft, faChevronRight, faSearch, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { IAppointment } from './interfaces/IAppointment';
@@ -431,6 +431,12 @@ export default function Home({
             <h1 className={styles.title}>Hello Dr. {session.user?.name}!</h1>
             <div className={styles.container}>
               <section>
+              <div className={styles.noteContainer}>
+                <FontAwesomeIcon icon={faInfoCircle} color={'#3AB286'} width={30} height={30} />
+                <p className={styles.note}><span className={styles.noteText}>Note: </span>
+                  Appointments inside <span className={styles.noteBox}>these containers</span> are walk-in appointments.
+                </p>
+              </div>
                 <div className={styles.filters}>
                   <div className={styles.filters__search}>
                     <input  type='text' 
