@@ -7,7 +7,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 
 const localizer = momentLocalizer(moment);
 
-export default function CustomCalendar({ selectable = true, selectedDate, setSelectedDate }: any) {
+export default function CustomCalendar({ selectable = true, selectedDate, setSelectedDate, fullyBookedSchedules }: any) {
   const navigateForward = () => {
     const nextMonthDate = moment(selectedDate).add(1, 'months').toDate();
     setSelectedDate(nextMonthDate);
@@ -44,11 +44,11 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
     const rbcCurrent = new Date(selectedDate);
     rbcCurrent.setHours(0, 0, 0, 0);
     const selected = rbcCurrent.getTime() === date.getTime();
+    const fullyBooked = fullyBookedSchedules?.includes(value.toString());
 
-    const fullyBooked = false; // Change this
     return (
       <div className={`rbc-date-cell rbc-date-cell--custom ${date < today ? 'rbc-off-range' : ''} ${today == date ? 'rbc-now': ''} ${selected ? 'rbc-current' : ''}`} role="cell">
-        <button type="button" className="rbc-button-link" role="cell">{day}</button>
+        <button type="button" className={`rbc-button-link ${fullyBooked ? 'rbc-button-link--full' : ''}`} role="cell">{day}</button>
       </div>
     )
   }
@@ -62,8 +62,10 @@ export default function CustomCalendar({ selectable = true, selectedDate, setSel
     const selectedDate = new Date(start);
     const today = new Date();
     today.setHours(0,0,0,0);
+    const fullyBooked = fullyBookedSchedules?.includes(start.toString());
     if (selectedDate < today) return; // Beyond Today Date
     else if (selectedDate.getDay() === 0 || selectedDate.getDay() === 6) return; // is Weekend
+    else if (fullyBooked) return;
 
     setSelectedDate(start);
   };

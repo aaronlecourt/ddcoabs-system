@@ -29,7 +29,7 @@ export default async function userHandler (
 
         Object.keys(datesBooked).map(v => {
             // times 9, 10, 11, 13, 14, 15, 16, 17
-            if (v.length == 8) datesFullyBooked.push(v);
+            if (datesBooked[v].length == 8) datesFullyBooked.push(v);
         })
 
         res.status(200).json(datesFullyBooked);
