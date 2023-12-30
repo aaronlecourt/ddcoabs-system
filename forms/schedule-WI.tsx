@@ -98,7 +98,8 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
     setSelectedDate(currentDate);
     setSelectedStartTime(hours);
     setSelectedTimeUnit(timeUnit);
-  
+    setSelectedEndTime(hours + 1);
+
     onStepNext(e);
   };
 
@@ -140,7 +141,15 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
             <div
               className={selectedTimeUnit == 'PM' ? styles.selected : ''}>PM</div>
           </div>
-          <Button type="secondary" onClick={setCurrentDateTime}>Select Walk-in Date/Time</Button>
+          {selectedStartTime ? (
+            <CancelButton>
+            Select Walk-in Date/Time
+            </CancelButton>
+          ) : (
+            <Button type="secondary" onClick={setCurrentDateTime}>
+              Select Walk-in Date/Time
+            </Button>
+          )}
         </div>
         <div className={`${styles.form__container} ${styles.actions}`}>
           <div>

@@ -143,7 +143,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
   };
 
   return (
-    <div className={styles.appointments__itemContainer}>
+    <div className={`${styles.appointments__itemContainer} ${appointment.isWalkIn ? styles.appointments__walkIn : ''}`}>
       {showModal && selectedAppointmentDetails && (
         <Modal open={toggleModal} setOpen={toggleModal} modalWidth={900} modalRadius={10}>
           {/* Render appointment details here */}
@@ -349,7 +349,11 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           </div>
         </Modal>
       )}
-      <div className={styles.appointments__item} onClick={openAppointment}>
+      
+      <div 
+        className={`${styles.appointments__item}`}
+        onClick={openAppointment}
+      >
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
         {!isPatient && <div className={styles.appointments__user}>
           <FontAwesomeIcon icon={faUser} width={15} height={15} color={'#c3c3c3'} />

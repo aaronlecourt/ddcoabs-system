@@ -57,6 +57,8 @@ const BookWalkInConfirmationForm = forwardRef(({ }, ref) => {
         paymentMethod: selectedPaymentMethod,
         concern: servicesForm.concern,
         patientName: patientFormDentist.patientName,
+        startTime: selectedStartTime,
+        endTime: selectedEndTime,
         [`${user.role}Id`]: user.id,
       };
     
