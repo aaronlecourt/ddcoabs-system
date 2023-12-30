@@ -105,8 +105,8 @@ export default async function userHandler (
         }
 
         // validate end time
-        if (body.endTime > 17)
-          errorMessages.push('endTime should not be later than 5:00 PM');
+        if (body.endTime > 18)
+          errorMessages.push('endTime should not be later than 6:00 PM');
 
           if (appointment.timeUnit === 'PM') {
           if (body.startTime < 12 ) {
