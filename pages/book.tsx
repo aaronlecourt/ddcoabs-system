@@ -61,7 +61,16 @@ export default function Book() {
       setServices(data)
     }
 
+    const setFullyBookSchedulesData = async () => {
+      let response = await fetch('api/global/fullybookeddates');
+      let data = await response.json() || [];
+      console.log('data ', response)
+
+      setFullyBookedSchedules(data)
+    }
+
     if (currentStepIndex == 1 && services.length == 0) setServicesData()
+    else if (currentStepIndex == 2) setFullyBookSchedulesData()
   }, [ currentStepIndex ])
 
   const onStepBack = (e: any) => {
@@ -130,6 +139,7 @@ export default function Book() {
   const [servicesForm, setServicesForm] = useState<ServicesFormData>(ServicesFormObject);
   const [servicesErrorForm, setServicesErrorForm] = useState<ServicesErrorFormData>(ErrorServicesFormObject);
   const [services, setServices] = useState([]);
+  const [fullyBookedSchedules, setFullyBookedSchedules] = useState([]);
 
   // FOR DATE N TIME
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -145,6 +155,7 @@ export default function Book() {
     servicesForm, setServicesForm,
     servicesErrorForm, setServicesErrorForm,
     services, setServices,
+    fullyBookedSchedules, setFullyBookedSchedules,
     selectedDate, setSelectedDate,
     selectedTimeUnit, setSelectedTimeUnit,
     selectedPaymentMethod, setSelectedPaymentMethod,

@@ -266,6 +266,11 @@ a {
     color: $text;
     font-size: 16px;
     pointer-events: none;
+
+    &--full {
+      color: $green;
+      font-weight: bold;
+    }
   }
 
   .rbc-off-range-bg {

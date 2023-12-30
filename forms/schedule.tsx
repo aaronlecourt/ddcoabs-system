@@ -1,4 +1,4 @@
-import { forwardRef, useContext, useImperativeHandle } from "react";
+import { forwardRef, useContext, useEffect, useImperativeHandle } from "react";
 import styles from '../styles/forms/schedule.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +10,8 @@ const BookScheduleForm = forwardRef(({  }: any, ref) => {
 
   const { onStepNext, onStepBack,
     selectedDate, setSelectedDate,
-    selectedTimeUnit, setSelectedTimeUnit
+    selectedTimeUnit, setSelectedTimeUnit,
+    fullyBookedSchedules
   }: any = useContext(BookingFormContext);
 
   const next = (e: any) => {
@@ -37,6 +38,7 @@ const BookScheduleForm = forwardRef(({  }: any, ref) => {
           <CustomCalendar 
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
+            fullyBookedSchedules={fullyBookedSchedules}
           />
         </div>
         <div className={styles.form__container}>

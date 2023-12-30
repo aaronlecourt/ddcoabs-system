@@ -19,10 +19,6 @@ export const ErrorServicesFormObject = {
 
 const BookServicesForm = forwardRef(({  }: any, ref) => {
 
-  context = useContext(BookingFormContext); // Temporary
-
-  context = useContext(BookingFormContext); // Temporary
-
   const { 
     onStepNext, onStepBack, 
     services, setServices, 
