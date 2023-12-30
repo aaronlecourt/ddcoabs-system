@@ -505,9 +505,9 @@ const renderContent = () => {
                     <th>#</th>
                     <th>Service Name</th>
                     <th>Base Charge</th>
-                    <th> Type </th>
+                    <th>Type</th>
                     <th>Description</th>
-                    <th> Action </th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -519,9 +519,23 @@ const renderContent = () => {
                       <td>₱ {service.price.toFixed(2)}</td>
                       <td> {service.type} </td>
                       <td>{service.description}</td>
-                      <td> 
-                        <Button onClick={() => onUpdateService(service, 'delete')}> DELETE </Button>
-                        <Button onClick={() => onUpdateService(service, 'restore')}> RESTORE </Button>
+                      <td className={styles1.cancelActions}> 
+                        <RestoreButton onClick={() => onUpdateService(service, 'restore')} title="Restore Record">
+                          <FontAwesomeIcon
+                          icon={faRefresh}
+                          width={24}
+                          height={24}
+                          color={"#ffffff"}
+                          />
+                        </RestoreButton>
+                        <DeleteButton onClick={() => onUpdateService(service, 'delete')} title="Delete Record">
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            width={24}
+                            height={24}
+                            color={"#ffffff"}
+                            />
+                        </DeleteButton>
                       </td>
                     </tr>
                     ))

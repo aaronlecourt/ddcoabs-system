@@ -10,6 +10,7 @@
   border: 1px solid $grey;
   align-items: center;
   display: flex;
+  cursor: pointer;
 
   &:hover {
     background: rgba($color: $green, $alpha: 0.25);
