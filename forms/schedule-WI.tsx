@@ -14,7 +14,8 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
     selectedDate, setSelectedDate,
     selectedStartTime, setSelectedStartTime,
     selectedEndTime, setSelectedEndTime,
-    selectedTimeUnit, setSelectedTimeUnit
+    selectedTimeUnit, setSelectedTimeUnit,
+    fullyBookedSchedules
   }: any = useContext(BookingFormContextDentist);
 
   const next = (e: any) => {
@@ -116,6 +117,7 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
           <CustomCalendar 
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
+            fullyBookedSchedules={fullyBookedSchedules}
           />
         </div>
         <div className={styles.form__container}>
