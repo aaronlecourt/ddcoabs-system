@@ -7,6 +7,8 @@ import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
 import { IAppointment } from '../../pages/interfaces/IAppointment';
 import Modal from '../Modal';
 import Button from '../Button';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Appointment({ appointment, onCancelAppointment, isPatient }: any) {
   const [collapse, setCollapse] = useState(true);
@@ -110,14 +112,14 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
       });
   
       if (response.ok) {
-        alert('Appointment marked as done!');
+        toast.success('Appointment marked as done!');
         // Optionally, you can update the UI to reflect the change to 'done'
       } else {
-        alert('Failed to mark appointment as done');
+        toast.error('Failed to mark appointment as done');
       }
     } catch (error) {
       console.error('Error marking appointment as done:', error);
-      alert('Failed to mark appointment as done');
+      toast.error('Failed to mark appointment as done');
     } finally {
       toggleConfirmationModal();
     }
@@ -130,13 +132,13 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
       });
   
       if (response.ok) {
-        alert('Appointment confirmed!');
+        toast.success('Appointment confirmed!');
       } else {
-        alert('Failed to confirm appointment');
+        toast.error('Failed to confirm appointment');
       }
     } catch (error) {
       console.error('Error marking appointment as cofirmed:', error);
-      alert('Failed to mark appointment as cofirmed');
+      toast.error('Failed to mark appointment as cofirmed');
     } finally {
       toggleAgreeModal();
     }
@@ -144,6 +146,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
 
   return (
     <div className={styles.appointments__itemContainer}>
+      <ToastContainer />
       {showModal && selectedAppointmentDetails && (
         <Modal open={toggleModal} setOpen={toggleModal} modalWidth={900} modalRadius={10}>
           {/* Render appointment details here */}
