@@ -14,6 +14,8 @@ import { handleFormDataChange, handleFormEnter } from '../utils/form-handles';
 import useAuthGuard from '../guards/auth.guard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import React from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 type ConnectionStatus = {
   isConnected: boolean
@@ -49,7 +51,8 @@ export default function ForgotPassword({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { session, status } = useAuthGuard();
   const router = useRouter();
-
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_REACT_APP_RECAPTCHA_SITE_KEY
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
   const [formData, setFormData] = useState<FormData>({
     email: '',
   })
@@ -58,34 +61,44 @@ export default function ForgotPassword({
     email: { error: false, message: null },
   })
 
+  const handleVerification = (token) => {
+    if (token) setRecaptchaToken(token);
+  };
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    try {
-      fetch(`/api/global/password/forgot`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-        .then(async (response) => {
-          const responseMsg = await response.json()
-          if (!response.ok) {
-            toast.error('Error ' + JSON.stringify(responseMsg))
-          } else {
-            const data = responseMsg
-            console.log('response ', data); // Handle the response from the API
-            toast.success(data.message + 'You may now close this tab. Please check your email.')
-          }
+    if (recaptchaToken) {
+      try {
+        fetch(`/api/global/password/forgot`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
         })
-        .catch(error => {
-          toast.error('Something went wrong. ' + error);
-        });
-
-    } catch (error) {
-      console.log(error)
+          .then(async (response) => {
+            const responseMsg = await response.json()
+            if (!response.ok) {
+              toast.error('Error ' + JSON.stringify(responseMsg))
+            } else {
+              const data = responseMsg
+              console.log('response ', data); // Handle the response from the API
+              toast.success(data.message + 'You may now close this tab. Please check your email.')
+            }
+          })
+          .catch(error => {
+            toast.error('Something went wrong. ' + error);
+          });
+  
+      } catch (error) {
+        console.log(error)
+        toast.error('Something went wrong ' + error);
+      }
+    } else {
+      toast.warning('Sorry, reCAPTCHA verification failed.');
     }
+
   }
 
   const proceed = (e: any) => {
@@ -125,6 +138,10 @@ export default function ForgotPassword({
               </div>
             </div>
           </div>
+          <ReCAPTCHA
+            sitekey={ recaptchaSiteKey }
+            onChange={handleVerification}
+          />
           <div className={pageStyles.action}>
             <Button onClick={proceed}>Proceed</Button>
           </div>
