@@ -33,7 +33,7 @@ export default async function userHandler (
           }
         }
 
-        const appointment = await Appointment.find();          
+        const appointment = await Appointment.find();
         res.status(200).json(appointment);
         break
 

@@ -80,6 +80,9 @@ export default async function userHandler (
         }
 
         // validate start time
+        if (body.startTime == 12)
+          errorMessages.push('startTime should not be equal to 12 PM')
+
         if (body.startTime < 9)
           errorMessages.push('startTime should not be before 9:00 AM.');
 
@@ -92,6 +95,9 @@ export default async function userHandler (
         }
 
         // validate end time
+        if (body.endTime == 13)
+          errorMessages.push('endTime should not be equal to 1 PM.');
+
         if (body.endTime > 18)
           errorMessages.push('endTime should not be later than 6:00 PM.');
 
