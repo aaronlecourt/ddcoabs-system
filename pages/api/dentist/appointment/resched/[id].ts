@@ -102,11 +102,11 @@ export default async function userHandler (
           errorMessages.push('endTime should not be later than 6:00 PM.');
 
         if (appointment.timeUnit === 'PM') {
-          if (body.startTime < 12 ) {
-            errorMessages.push('startTime should be 12 PM onwards.');
+          if (body.startTime < 13 ) {
+            errorMessages.push('startTime should be 1 PM onwards');
           } 
-          if (body.endTime < 12 ) {
-            errorMessages.push('endTime should be more than 12.');
+          if (body.endTime < 14 ) {
+            errorMessages.push('endTime should be later than 1 PM');
           }
         }
 
