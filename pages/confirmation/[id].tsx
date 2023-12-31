@@ -73,9 +73,6 @@ export default function Confirmation() {
 
     const user = session.user;
 
-    console.log({startTime: Number((startTime || '0').replace(/^0+/, '').replace(/:00/, '')),
-    endTime: Number((endTime || '0').replace(/^0+/, '').replace(/:00/, '')),})
-    return
     if (user) {
       try {
         const response = await fetch(`/api/${user.role}/appointment/confirm/${id}`, {
