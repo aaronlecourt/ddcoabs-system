@@ -10,7 +10,7 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   const [appointments, setAppointments] = useState([])
   const [activeAppointmentId, setActiveAppointmentId] = useState(null)
 
-  const sortBy= ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
+  const sortBy = ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
   const [selectedSort, setSelectedSort] = useState('');
 
   const formatDate = (date: any) => {
@@ -77,29 +77,29 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
     setSelectedSort(sort);
     let sortedAppointments = [...appointments]
 
-      if (sortedAppointments.length) {
-        switch(sort){
-          case 'Oldest to Latest':
-            sortedAppointments.sort((a: any, b: any) => {
-              return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-            });
-            break;
-          case 'Latest to Oldest':
-            sortedAppointments.sort((a: any, b: any) => {
-              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
-            break;
-          case 'Alphabetical (A-Z)':
-            sortedAppointments.sort((a: any, b: any) => (`${a.dentistService}`).localeCompare(`${b.dentistService}`));
-            break;
-          case 'Alphabetical (Z-A)':
-            sortedAppointments.sort((a: any, b: any) => (`${b.dentistService}`).localeCompare(`${a.dentistService}`));
-            break;
-          default:
-            break;
-        }
-        setAppointments(sortedAppointments);
+    if (sortedAppointments.length) {
+      switch (sort) {
+        case 'Oldest to Latest':
+          sortedAppointments.sort((a: any, b: any) => {
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          });
+          break;
+        case 'Latest to Oldest':
+          sortedAppointments.sort((a: any, b: any) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
+          break;
+        case 'Alphabetical (A-Z)':
+          sortedAppointments.sort((a: any, b: any) => (`${a.dentistService}`).localeCompare(`${b.dentistService}`));
+          break;
+        case 'Alphabetical (Z-A)':
+          sortedAppointments.sort((a: any, b: any) => (`${b.dentistService}`).localeCompare(`${a.dentistService}`));
+          break;
+        default:
+          break;
       }
+      setAppointments(sortedAppointments);
+    }
   };
 
   const objectToQueryString = (obj: any) => {
@@ -110,41 +110,47 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
         }
       })
       .join('&');
-  
+
     return `${queryString ? `${queryString}` : ''}`;
   }
 
   const [filterData, setFilterData] = useState<any>({})
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(false)
 
   useEffect(() => {
     fetchFilteredAppointments();
   }, [filterData])
 
   const fetchFilteredAppointments = async () => {
-    if (loading) return;
+    if (fetching) return;
 
     try {
       setLoading(true)
+      setFetching(true)
       const queryUrl = objectToQueryString(filterData)
-      const response = await fetch("/api/global/appointment?patientId=" + recordInfo._id + '&' + queryUrl);
+      const response = await fetch("/api/global/appointment?patientId=" + recordInfo._id + '&dentistService=' + encodeURIComponent(filterData.dentistService));
       if (!response.ok) {
         throw new Error("Failed to fetch appointments");
       }
-      const data = await response.json();
-      console.log(filterData)
-      if (filterData.startdate)
+      let data = await response.json();
+      if (filterData.startDate && filterData.endDate) {
+        data = data.filter((d: any) => new Date(d.date).getTime() >= new Date(filterData.startDate).getTime()
+          && new Date(d.date).getTime() <= new Date(filterData.endDate).getTime())
+      }
       setAppointments(data)
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
       setLoading(false)
+      setFetching(false)
     }
   };
 
   let timeout: any;
   const handleFilter = (e: any) => {
     const { name, value } = e.target;
+    setLoading(true)
     clearTimeout(timeout);
 
     timeout = setTimeout(() => {
@@ -221,98 +227,101 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   const renderAppointments = () => {
     return (
       <div className={`${styles.information} ${styles.informationAppointments}`}>
-        {appointments.length > 0 ? appointments.map((appointment: any) =>
-          <div key={appointment._id}
-            className={styles.information__appointment} onClick={() => changeActiveAppointment(appointment._id)}>
-            <div className={styles.information__appointment__details}>
-              <span>{appointment.dentistService}</span>
-              <FontAwesomeIcon icon={activeAppointmentId == appointment._id ? faChevronDown : faChevronRight} width={25} height={25} />
-            </div>
-            {activeAppointmentId == appointment._id && <div className={styles.information__appointment__body}>
-              <div className={styles.information__content}>
-                <div className={styles.information__contentTitle}>Appointment Details</div>
-                <div className={styles.information__contentRow}>
-                  <div className={styles.information__data}>
-                    <label>Service: </label>
-                    <span>{appointment.dentistService}</span>
-                  </div>
-                  <div className={styles.information__data}>
-                    <label>Price: </label>
-                    <span>{appointment.price}</span>
-                  </div>
-                </div>
-                <div className={styles.information__contentRow}>
-                  <div className={styles.information__data}>
-                    <label>Date: </label>
-                    <span>{formatDate(appointment.date)}</span>
-                  </div>
-                  <div className={styles.information__data}>
-                    <label>Payment Method: </label>
-                    <span>{appointment.paymentMethod}</span>
-                  </div>
-                </div>
-                <div className={styles.information__contentRow}>
-                  <div className={styles.information__data}>
-                    <label>Time: </label>
-                    <span>{appointment.startTime}:00 {appointment.timeUnit} - {appointment.endTime}:00 {appointment.timeUnit}</span>
-                  </div>
-                </div>
+        {loading ? 'Loading...' : <>
+          {appointments.length > 0 ? appointments.map((appointment: any) =>
+            <div key={appointment._id}
+              className={styles.information__appointment} onClick={() => changeActiveAppointment(appointment._id)}>
+              <div className={styles.information__appointment__details}>
+                <span>{appointment.dentistService}</span>
+                <FontAwesomeIcon icon={activeAppointmentId == appointment._id ? faChevronDown : faChevronRight} width={25} height={25} />
               </div>
-              <div className={styles.information__content}>
-                <div className={styles.information__contentTitle}>Medical History</div>
-                <div className={styles.information__contentRow}>
-                  <div className={styles.information__data}>
-                    <label>Name of Physician: </label>
-                    <span>{appointment.physicianName}</span>
-                  </div>
-                  <div className={styles.information__data}>
-                    <label>Specialty: </label>
-                    <span>{appointment.details.specialty}</span>
-                  </div>
-                </div>
-                <div className={styles.information__contentRow}>
-                  <div className={styles.information__data}>
-                    <label>Office Address: </label>
-                    <span>{appointment.details.officeAddress}</span>
-                  </div>
-                  <div className={styles.information__data}>
-                    <label>Office Number: </label>
-                    <span>N/A</span>
-                  </div>
-                </div>
-                {Object.keys(medicalHistory(appointment)).map((key, index) =>
-                  <div key={index}
-                    className={styles.information__contentRow}>
+              {activeAppointmentId == appointment._id && <div className={styles.information__appointment__body}>
+                <div className={styles.information__content}>
+                  <div className={styles.information__contentTitle}>Appointment Details</div>
+                  <div className={styles.information__contentRow}>
                     <div className={styles.information__data}>
-                      <label>{index + 1}. {convertToTitleCase(key)}</label>
+                      <label>Service: </label>
+                      <span>{appointment.dentistService}</span>
                     </div>
                     <div className={styles.information__data}>
-                      <span>{appointment.details[key].toString().toUpperCase()}</span>
+                      <label>Price: </label>
+                      <span>{appointment.price}</span>
                     </div>
                   </div>
-                )}
-              </div>
-              <div className={styles.information__content}>
-                <div className={styles.information__contentTitle}>Dental History</div>
-                <div className={styles.information__contentRow}>
-                  <div className={styles.information__data}>
-                    <label>Previous Dentist: </label>
-                    <span>{appointment.details.previousDentist}</span>
+                  <div className={styles.information__contentRow}>
+                    <div className={styles.information__data}>
+                      <label>Date: </label>
+                      <span>{formatDate(appointment.date)}</span>
+                    </div>
+                    <div className={styles.information__data}>
+                      <label>Payment Method: </label>
+                      <span>{appointment.paymentMethod}</span>
+                    </div>
                   </div>
-                  <div className={styles.information__data}>
-                    <label>Service Availed: </label>
-                    <span>{appointment.details.previousTreatment}</span>
-                  </div>
-                </div>
-                <div className={styles.information__contentRow}>
-                  <div className={styles.information__data}>
-                    <label>Last Dental Visit: </label>
-                    <span>{appointment.details.lastDentalVisit}</span>
+                  <div className={styles.information__contentRow}>
+                    <div className={styles.information__data}>
+                      <label>Time: </label>
+                      <span>{appointment.startTime}:00 {appointment.timeUnit} - {appointment.endTime}:00 {appointment.timeUnit}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>}
-          </div>) : <>No Appointments</>}
+                <div className={styles.information__content}>
+                  <div className={styles.information__contentTitle}>Medical History</div>
+                  <div className={styles.information__contentRow}>
+                    <div className={styles.information__data}>
+                      <label>Name of Physician: </label>
+                      <span>{appointment.physicianName}</span>
+                    </div>
+                    <div className={styles.information__data}>
+                      <label>Specialty: </label>
+                      <span>{appointment.details.specialty}</span>
+                    </div>
+                  </div>
+                  <div className={styles.information__contentRow}>
+                    <div className={styles.information__data}>
+                      <label>Office Address: </label>
+                      <span>{appointment.details.officeAddress}</span>
+                    </div>
+                    <div className={styles.information__data}>
+                      <label>Office Number: </label>
+                      <span>N/A</span>
+                    </div>
+                  </div>
+                  {Object.keys(medicalHistory(appointment)).map((key, index) =>
+                    <div key={index}
+                      className={styles.information__contentRow}>
+                      <div className={styles.information__data}>
+                        <label>{index + 1}. {convertToTitleCase(key)}</label>
+                      </div>
+                      <div className={styles.information__data}>
+                        <span>{appointment.details[key].toString().toUpperCase()}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className={styles.information__content}>
+                  <div className={styles.information__contentTitle}>Dental History</div>
+                  <div className={styles.information__contentRow}>
+                    <div className={styles.information__data}>
+                      <label>Previous Dentist: </label>
+                      <span>{appointment.details.previousDentist}</span>
+                    </div>
+                    <div className={styles.information__data}>
+                      <label>Service Availed: </label>
+                      <span>{appointment.details.previousTreatment}</span>
+                    </div>
+                  </div>
+                  <div className={styles.information__contentRow}>
+                    <div className={styles.information__data}>
+                      <label>Last Dental Visit: </label>
+                      <span>{appointment.details.lastDentalVisit}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>}
+            </div>) : <>No Appointments</>}
+        </>
+        }
       </div>
     )
   }
@@ -342,41 +351,34 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
           <div className={styles.appointment__filter__field}>
             <div>
               <span>Start Date: </span>
-              <input type='date' name="startdate" onChange={handleFilter} />
+              <input type='date' name="startDate" onChange={handleFilter} />
             </div>
             <div>
               <span>End Date: </span>
-              <input type='date' name="enddate" onChange={handleFilter}/>
+              <input type='date' name="endDate" onChange={handleFilter} />
             </div>
           </div>
         </div>
         <div className={styles.appointment__filter__row}>
           <span>Sort By: </span>
-          <div className={styles.appointment__filter__dropdown}>
-            <select
-              id = "sortSelect"
-              value={selectedSort}
-              onChange={(e) => handleSortChange(e.target.value)}
-            >
-              {sortBy.map((sort) => (
-              <option key = {sort} value = {sort}>
-                  {sort}
+          <select
+            id="sortSelect"
+            value={selectedSort}
+            onChange={(e) => handleSortChange(e.target.value)}
+            className={styles.appointment__filter__dropdown}
+          >
+            {sortBy.map((sort) => (
+              <option key={sort} value={sort}>
+                {sort}
               </option>
-              ))}
-            </select>
-            <FontAwesomeIcon
-              icon={faChevronDown}
-              width={24}
-              height={24}
-              color={"#737373"}
-            />
-          </div>
+            ))}
+          </select>
         </div>
         {/* <div className={styles.appointment__filter__action}>
           <Button type='secondary' onClick={applyFilter}>Apply Filter</Button>
         </div> */}
       </div>
-    }
+      }
       {recordInfo &&
         <>
           {activeTab === 'Patient Info' ? renderPatientInfo() : renderAppointments()}
