@@ -298,7 +298,7 @@
 
           setTimeout(() => {
             window.location.href = '/services';
-          }, 5000);
+          }, 1000);
           // Check if the service is added to the services state
           setServices((prevServices) => [...prevServices, responseData]);
     
@@ -609,108 +609,108 @@
             </div>
           </section>
 
- {/* ADD SERVICE */}
-{/* ADD SERVICE */}
-<Modal
-  open={showAddService}
-  setOpen={setShowAddService}
-  modalWidth={400}
-  modalRadius={10}
-  onOpen={() => setErrorFormData(initialErrorState)} // Clear errors on open
->
-  <h3 className={styles1.cancelTitle}> Add Service </h3>
+      {/* ADD SERVICE */}
+      <Modal
+        open={showAddService}
+        setOpen={setShowAddService}
+        modalWidth={400}
+        modalRadius={10}
+        onOpen={() => setErrorFormData(initialErrorState)} // Clear errors on open
+      >
+        <h3 className={styles1.cancelTitle}> Add Service </h3>
 
-  <label> Service Name: </label>
-  <div className={styles1.cancelText}>
-    <div className={styles1.filters__search}>
-      <input
-        type="text"
-        name="name"
-        className={styles1.filters__searchInput}
-        value={serviceFormData.name}
-        onKeyDown={(e) => handleFormEnter(e, addService)}
-        onChange={(e) =>
-          handleFormDataChange(e, setServiceFormData, setErrorFormData)
-        }
-      />
-      {errorFormData.name.error && (
-        <span className="formInput__errorMessage">
-          {errorFormData.name.message}
-        </span>
-      )}
-    </div>
-  </div>
+        <label> Service Name: </label>
+        {errorFormData.name.error && (
+              <span className="formLabel__errorMessage">
+                {errorFormData.name.message}
+              </span>
+        )}
+        <div className={styles1.cancelText}>
+          <div className={styles1.filters__search}>
+            <input
+              type="text"
+              name="name"
+              className={styles1.filters__searchInput}
+              value={serviceFormData.name}
+              onKeyDown={(e) => handleFormEnter(e, addService)}
+              onChange={(e) =>
+                handleFormDataChange(e, setServiceFormData, setErrorFormData)
+              }
+            />
 
-  <label> Base Price: </label>
-  <div className={styles1.cancelText}>
-    <div className={styles1.filters__search}>
-      <input
-        type="text"
-        name="price"
-        className={styles1.filters__searchInput}
-        value={serviceFormData.price}
-        onChange={(e) =>
-          handleFormDataChange(e, setServiceFormData, setErrorFormData)
-        }
-      />
-      {errorFormData.price.error && (
-        <span className="formInput__errorMessage">
+          </div>
+        </div>
+
+        <label> Base Price: </label>
+        {errorFormData.price.error && (
+        <span className="formLabel__errorMessage">
           {errorFormData.price.message}
         </span>
-      )}
-    </div>
-  </div>
+        )}
+        <div className={styles1.cancelText}>
+          <div className={styles1.filters__search}>
+            <input
+              type="text"
+              name="price"
+              className={styles1.filters__searchInput}
+              value={serviceFormData.price}
+              onChange={(e) =>
+                handleFormDataChange(e, setServiceFormData, setErrorFormData)
+              }
+            />
+          </div>
+        </div>
 
-  <label> Type: </label>
-  <div className={styles1.cancelText}>
-    <div className={styles1.filters__sortDropdown}>
-      <select
-        onChange={(e: any) =>
-          setServiceFormData({
-            ...serviceFormData,
-            type: e.target.value,
-          })
-        }
-        value={serviceFormData.type}
-      >
-        <option disabled>Choose a type</option>
-        {types.map((type, index) => (
-          <option key={index} value={type}>
-            {type}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
+        <label> Type: </label>
+        <div className={styles1.cancelText}>
+          <div className={styles1.filters__sortDropdown}>
+            <select
+              onChange={(e: any) =>
+                setServiceFormData({
+                  ...serviceFormData,
+                  type: e.target.value,
+                })
+              }
+              value={serviceFormData.type}
+            >
+              <option disabled>Choose a type</option>
+              {types.map((type, index) => (
+                <option key={index} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-  <label> Short Description: </label>
-  <div className={styles1.cancelText}>
-    <div className={styles1.filters__search}>
-      <input
-        type="text"
-        name="description"
-        className={styles1.filters__searchInput}
-        value={serviceFormData.description}
-        onChange={(e) =>
-          handleFormDataChange(e, setServiceFormData, setErrorFormData)
-        }
-      />
-      {errorFormData.description.error && (
-        <span className="formInput__errorMessage">
+        <label> Short Description: </label>
+        {errorFormData.description.error && (
+        <span className="formLabel__errorMessage">
           {errorFormData.description.message}
         </span>
-      )}
-    </div>
-  </div>
-  <div className={styles1.cancelActions}>
-    <CancelButton onClick={() => setShowAddService(false)}>
-      Cancel
-    </CancelButton>
-    <Button onClick={addService} type="submit">
-      Submit
-    </Button>
-  </div>
-</Modal>
+        )}
+        <div className={styles1.cancelText}>
+          <div className={styles1.filters__search}>
+            <input
+              type="text"
+              name="description"
+              className={styles1.filters__searchInput}
+              value={serviceFormData.description}
+              onChange={(e) =>
+                handleFormDataChange(e, setServiceFormData, setErrorFormData)
+              }
+            />
+          </div>
+        </div>
+        <div className={styles1.cancelActions}>
+          <CancelButton onClick={() => setShowAddService(false)}>
+            Cancel
+          </CancelButton>
+          <Button onClick={addService} type="submit">
+            Submit
+          </Button>
+        </div>
+      </Modal>
 
 
       {/* UPDATE SERVICE */}
@@ -725,6 +725,11 @@
         <input type="hidden" name="_id" value={updateServiceFormData._id} />
 
         <label> Service Name: </label>
+        {errorFormData.name.error && (
+              <span className="formLabel__errorMessage">
+                {errorFormData.name.message}
+              </span>
+        )}
         <div className={styles1.cancelText}>
           <div className={styles1.filters__search}>
             <input
@@ -741,15 +746,15 @@
                 )
               }
             />
-            {errorFormData.name.error && (
-              <span className="formInput__errorMessage">
-                {errorFormData.name.message}
-              </span>
-            )}
           </div>
         </div>
 
         <label> Base Price: </label>
+        {errorFormData.price.error && (
+              <span className="formLabel__errorMessage">
+                {errorFormData.price.message}
+              </span>
+        )}
         <div className={styles1.cancelText}>
           <div className={styles1.filters__search}>
             <input
@@ -765,11 +770,6 @@
                 )
               }
             />
-            {errorFormData.price.error && (
-              <span className="formInput__errorMessage">
-                {errorFormData.price.message}
-              </span>
-            )}
           </div>
         </div>
 
@@ -798,6 +798,11 @@
         </div>
 
         <label> Short Description: </label>
+        {errorFormData.description.error && (
+              <span className="formLabel__errorMessage">
+                {errorFormData.description.message}
+              </span>
+        )}
         <div className={styles1.cancelText}>
           <div className={styles1.filters__search}>
             <input
@@ -813,11 +818,6 @@
                 )
               }
             />
-            {errorFormData.description.error && (
-              <span className="formInput__errorMessage">
-                {errorFormData.description.message}
-              </span>
-            )}
           </div>
         </div>
         <div className={styles1.cancelActions}>
