@@ -102,6 +102,58 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
       }
   };
 
+  const objectToQueryString = (obj: any) => {
+    const queryString = Object.keys(obj)
+      .map(key => {
+        if (encodeURIComponent(obj[key])) {
+          return `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`
+        }
+      })
+      .join('&');
+  
+    return `${queryString ? `${queryString}` : ''}`;
+  }
+
+  const [filterData, setFilterData] = useState({})
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetchFilteredAppointments();
+  }, [filterData])
+
+  const fetchFilteredAppointments = async () => {
+    if (loading) return;
+
+    try {
+      setLoading(true)
+      const queryUrl = objectToQueryString(filterData)
+      const response = await fetch("/api/global/appointment?patientId=" + recordInfo._id + '&' + queryUrl);
+      if (!response.ok) {
+        throw new Error("Failed to fetch appointments");
+      }
+      const data = await response.json();
+      setAppointments(data)
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    } finally {
+      setLoading(false)
+    }
+  };
+
+  let timeout: any;
+  const handleFilter = (e: any) => {
+    const { name, value } = e.target;
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+      setFilterData(prev => ({
+        ...prev,
+        [name]: value
+      }))
+    }, 1500)
+
+  }
+
   const renderPatientInfo = () => {
     return (
       <div className={styles.information}>
@@ -167,7 +219,6 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   const renderAppointments = () => {
     return (
       <div className={`${styles.information} ${styles.informationAppointments}`}>
-
         {appointments.length > 0 ? appointments.map((appointment: any) =>
           <div key={appointment._id}
             className={styles.information__appointment} onClick={() => changeActiveAppointment(appointment._id)}>
@@ -282,18 +333,18 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
           <div className={styles.appointment__filter__field}>
             <div>
               <span>Service: </span>
-              <input type='text' placeholder='ex. consultation' />
+              <input type='text' placeholder='ex. consultation' name="dentistService" onChange={handleFilter} />
             </div>
             <div></div>
           </div>
           <div className={styles.appointment__filter__field}>
             <div>
               <span>Start Date: </span>
-              <input type='date' />
+              <input type='date' name="startdate" onChange={handleFilter} />
             </div>
             <div>
               <span>End Date: </span>
-              <input type='date' />
+              <input type='date' name="enddate" onChange={handleFilter}/>
             </div>
           </div>
         </div>
@@ -319,6 +370,9 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
             />
           </div>
         </div>
+        {/* <div className={styles.appointment__filter__action}>
+          <Button type='secondary' onClick={applyFilter}>Apply Filter</Button>
+        </div> */}
       </div>
     }
       {recordInfo &&

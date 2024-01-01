@@ -40,7 +40,8 @@
   justify-content: space-between;
   align-items: center;
   padding: .5rem 2rem;
-  margin: 1rem 0;
+  margin: 1rem 0 0;
+  position: relative;
   
   &__row {
     display: flex;
@@ -81,6 +82,13 @@
       margin-right: 2rem;
     }
   }
+
+  &__action {
+    position: absolute;
+    bottom: 0;
+    right: 1rem;
+    cursor: pointer;
+  }
 }
 
 
@@ -93,6 +101,7 @@
   background-color: $white;
 
   &Appointments {
+    margin: 1rem 0;
     height: 500px;
     overflow: auto;
   }
