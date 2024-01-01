@@ -28,7 +28,11 @@ export default async function userHandler (
               res.status(417).json(`status should be in ${Object.values(APPOINTMENT_STATUS)}`);
             }
 
-            Object.assign(mongoDbQuery, { [v]: query[v] })
+            if (v == 'dentistService') {
+              Object.assign(mongoDbQuery, { [v]: { '$regex': `${query[v]}`, '$options': 'i' }})
+            } else {
+              Object.assign(mongoDbQuery, { [v]: query[v] })
+            }
           })
         }
 
