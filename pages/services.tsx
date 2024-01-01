@@ -1,35 +1,38 @@
-  import { useEffect, useState } from "react";
-  import styles from "../styles/pages/services.module.scss";
-  import styles1 from "../styles/pages/home.module.scss";
-  import DentistLayout from "../layouts/DentistLayout";
-  import useAuthGuard from "../guards/auth.guard";
-  import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-  import {
-    faArchive,
-    faBoxArchive,
-    faChevronDown,
-    faChevronLeft,
-    faChevronRight,
-    faFileArchive,
-    faFolder,
-    faPencil,
-    faSearch,
-  } from "@fortawesome/free-solid-svg-icons";
-  import { handleFormDataChange, handleFormEnter } from "../utils/form-handles";
-  import Modal from "../components/Modal";
-  import EditButton from "../components/EditButton";
-  import CancelButton from "../components/CancelButton";
-  import ArchiveButton from "../components/ArchiveButton";
-  import Button from "../components/Button";
-  import { isAddServicesFormValid } from '../validations/add-service';
-  import {
-    AddServicesFormData,
-    ErrorAddServicesFormData,
-    UpdateServicesFormData,
-  } from "../types/services";
-  import { toast, ToastContainer } from "react-toastify";
-  import "react-toastify/dist/ReactToastify.css";
-  import { useRouter } from 'next/router';
+import { useEffect, useState } from "react";
+import styles from "../styles/pages/services.module.scss";
+import styles1 from "../styles/pages/home.module.scss";
+import DentistLayout from "../layouts/DentistLayout";
+import useAuthGuard from "../guards/auth.guard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArchive,
+  faBoxArchive,
+  faChevronDown,
+  faChevronLeft,
+  faChevronRight,
+  faFileArchive,
+  faFolder,
+  faPencil,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
+import { handleFormDataChange, handleFormEnter } from "../utils/form-handles";
+import Modal from "../components/Modal";
+import EditButton from "../components/EditButton";
+import CancelButton from "../components/CancelButton";
+import ArchiveButton from "../components/ArchiveButton";
+import Button from "../components/Button";
+import {
+  AddServicesFormData,
+  UpdateServicesFormData,
+  ErrorFormData,
+} from "../types/services";
+import {
+  isServiceFormValid
+} from "../validations/add-service"
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+
 
 
   interface Service {
@@ -55,18 +58,13 @@
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedFilter, setSelectedFilter] = useState("");
 
-    const initialErrorState: ErrorAddServicesFormData = {
+    const initialErrorState: ErrorFormData = {
       name: { error: false, message: null },
       price: { error: false, message: null },
       description: { error: false, message: null },
     };
 
-    const [errorFormData, setErrorFormData] = useState<ErrorAddServicesFormData>({
-      name: { error: false, message: null },
-      price: { error: false, message: null },
-      description: { error: false, message: null },
-    });
-
+    const [errorFormData, setErrorFormData] = useState<ErrorFormData>({ ...initialErrorState });
     const [serviceFormData, setServiceFormData] = useState<AddServicesFormData>({
       name: "",
       price: "",
@@ -265,162 +263,172 @@
 
     const router = useRouter();
 
-    // FOR ADD SERVICE
-    const addService = async (e: any) => {
-      e.preventDefault();
-    
-      // Use the validation function
-      const isValid = isAddServicesFormValid(serviceFormData, errorFormData, setErrorFormData);
-    
-      console.log("Form validity:", isValid);
-    
-      if (isValid) {
-        try {
-          const apiUrl = "/api/dentist/dentist-service";
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(serviceFormData),
-          });
-    
-          if (!response.ok) {
-            throw new Error("Registration failed");
-          }
-    
-          const responseData = await response.json();
-          console.log("Service registered:", responseData);
-          setShowAddService(false);
-          toast.success('Service added successfully!');
+// FOR ADD SERVICE
+const addService = async (e: any) => {
+  e.preventDefault();
 
-          router.push('/services');
+  // Use the validation function
+  const isValid = isServiceFormValid(serviceFormData, errorFormData, setErrorFormData);
 
-          setTimeout(() => {
-            window.location.href = '/services';
-          }, 1000);
-          // Check if the service is added to the services state
-          setServices((prevServices) => [...prevServices, responseData]);
-    
-          // Calculate the total number of pages based on the updated services
-          const updatedTotalPages = Math.max(
-            Math.ceil((services.length + 1) / itemsPerPage),
-            1
-          );
-    
-          setSortedServices((prevSortedServices) => [
-            ...prevSortedServices,
-            responseData,
-          ]);
-    
-          setCurrentPage(updatedTotalPages);
-    
-          console.log("Updated Services:", services);
-          console.log("Updated Sorted Services:", sortedServices);
-    
-          clearModal();
-    
-          setServices([...services, responseData]);
-        } catch (error) {
-          toast.error("Adding Service failed");
-          console.error("Error adding service:", error);
-        }
-      } else {
-        console.log("Form is not valid. Service not added.");
+  console.log("Form validity:", isValid);
+
+  if (isValid) {
+    try {
+      const apiUrl = "/api/dentist/dentist-service";
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(serviceFormData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Registration failed");
       }
-    };
 
-    //FOR UPDATE SERVICE
-    const updateService = async (e: any) => {
-      e.preventDefault();
-      const isValid = isAddServicesFormValid(serviceFormData, errorFormData, setErrorFormData);
-    
-      console.log("Form validity:", isValid);
+      // Store the response body in a variable
+      const responseBody = await response.text();
 
-      if (isValid) {
-      try {
-        const response = await fetch(`/api/dentist/dentist-service`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updateServiceFormData),
-        });
+      // Log the API response and response body
+      console.log("API Response:", response);
+      console.log("Response Body:", responseBody);
 
-        if (!response.ok) {
-          const error = await response.json();
-          toast.error("Update failed: " + JSON.stringify(error));
-        } else {
-          const updatedService = await response.json();
-          console.log("Service updated: ", updatedService);
-          toast.success ('Service updated successfully!');
-          setShowUpdateService(false);
+      const responseData = JSON.parse(responseBody); // Assuming the response body is JSON
 
-          // Update the services array
-          setServices((prevServices) =>
-            prevServices.map((prevService) =>
-              prevService._id === updatedService._id
-                ? updatedService
-                : prevService
-            )
-          );
+      console.log("Service registered:", responseData);
+      setShowAddService(false);
+      toast.success('Service added successfully!');
 
-          // Update the sortedServices array and apply sorting
-          let updatedSortedServices = [...sortedServices];
-          updatedSortedServices = updatedSortedServices.map((prevService) =>
-            prevService._id === updatedService._id ? updatedService : prevService
-          );
+      router.push('/services');
 
-          switch (selectedFilter) {
-            case "Oldest to Latest":
-              updatedSortedServices.sort(
-                (a, b) =>
-                  new Date(a.createdAt).getTime() -
-                  new Date(b.createdAt).getTime()
-              );
-              break;
-            case "Latest to Oldest":
-              updatedSortedServices.sort(
-                (a, b) =>
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
-              );
-              break;
-            case "Alphabetical (A-Z)":
-              updatedSortedServices.sort((a, b) => a.name.localeCompare(b.name));
-              break;
-            case "Alphabetical (Z-A)":
-              updatedSortedServices.sort((a, b) => b.name.localeCompare(a.name));
-              break;
-            case "Price (Lowest to Highest)":
-              updatedSortedServices.sort(
-                (a, b) => parseFloat(a.price) - parseFloat(b.price)
-              );
-              break;
-            case "Price (Highest to Lowest)":
-              updatedSortedServices.sort(
-                (a, b) => parseFloat(b.price) - parseFloat(a.price)
-              );
-              break;
-            default:
-              break;
-          }
+      setTimeout(() => {
+        window.location.href = '/services';
+      }, 1000);
+      // Check if the service is added to the services state
+      setServices((prevServices) => [...prevServices, responseData]);
 
-          setSortedServices(updatedSortedServices);
+      // Calculate the total number of pages based on the updated services
+      const updatedTotalPages = Math.max(
+        Math.ceil((services.length + 1) / itemsPerPage),
+        1
+      );
 
-          clearModal();
+      setSortedServices((prevSortedServices) => [
+        ...prevSortedServices,
+        responseData,
+      ]);
 
-          toast.success("Service updated successfully!");
-          setTimeout(() => {
-            window.location.href = '/services';
-          }, 5000);
-        }
-      } catch (error) {
-        toast.error("Updating service failed");
-        console.error("Error updating service:", error);
-      }
+      setCurrentPage(updatedTotalPages);
+
+      console.log("Updated Services:", services);
+      console.log("Updated Sorted Services:", sortedServices);
+
+      clearModal();
+
+      setServices([...services, responseData]);
+    } catch (error) {
+      toast.error("Adding service failed");
+      console.error("Error adding service:", error);
     }
-    };
+  } else {
+    console.log("Form is not valid. Service not added.");
+    toast.error('Form is invalid. Service not added.')
+  }
+};
+
+
+// FOR UPDATE SERVICE
+const updateService = async (e: any) => {
+  e.preventDefault();
+  const isValid = isServiceFormValid(serviceFormData, errorFormData, setErrorFormData);
+
+  console.log("Form validity:", isValid);
+
+  if (isValid) {
+    try {
+      const response = await fetch(`/api/dentist/dentist-service`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateServiceFormData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        toast.error("Update failed: " + JSON.stringify(error));
+      } else {
+        const updatedService = await response.json();
+        console.log("Service updated: ", updatedService);
+        toast.success('Service updated successfully!');
+        setShowUpdateService(false);
+
+        // Update the services array
+        setServices((prevServices) =>
+          prevServices.map((prevService) =>
+            prevService._id === updatedService._id
+              ? updatedService
+              : prevService
+          )
+        );
+
+        // Update the sortedServices array and apply sorting
+        let updatedSortedServices = [...sortedServices];
+        updatedSortedServices = updatedSortedServices.map((prevService) =>
+          prevService._id === updatedService._id ? updatedService : prevService
+        );
+
+        switch (selectedFilter) {
+          case "Oldest to Latest":
+            updatedSortedServices.sort(
+              (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
+            );
+            break;
+          case "Latest to Oldest":
+            updatedSortedServices.sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            );
+            break;
+          case "Alphabetical (A-Z)":
+            updatedSortedServices.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+          case "Alphabetical (Z-A)":
+            updatedSortedServices.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+          case "Price (Lowest to Highest)":
+            updatedSortedServices.sort(
+              (a, b) => parseFloat(a.price) - parseFloat(b.price)
+            );
+            break;
+          case "Price (Highest to Lowest)":
+            updatedSortedServices.sort(
+              (a, b) => parseFloat(b.price) - parseFloat(a.price)
+            );
+            break;
+          default:
+            break;
+        }
+
+        setSortedServices(updatedSortedServices);
+
+        clearModal();
+
+        toast.success("Service updated successfully!");
+        setTimeout(() => {
+          window.location.href = '/services';
+        }, 1000);
+      }
+    } catch (error) {
+      toast.error("Updating service failed");
+      console.error("Error updating service:", error);
+    }
+  }
+};
 
     const filterBy = [
       "Oldest to Latest",

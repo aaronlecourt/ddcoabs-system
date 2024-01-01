@@ -1,22 +1,22 @@
 import {
-    isServiceNameValid,
-    isServiceDescriptionValid,
-    isPriceValid,
-  } from '../utils/service_validation_rules';
-  import { AddServicesFormData, ErrorAddServicesFormData } from '../types/services';
-  import { Dispatch, SetStateAction } from 'react';
-  
- // Example isAddServicesFormValid implementation
-export const isAddServicesFormValid = (
-  formData: AddServicesFormData,
-  errorData: ErrorAddServicesFormData,
-  setErrorData: React.Dispatch<React.SetStateAction<ErrorAddServicesFormData>>
+  isServiceNameValid,
+  isServiceDescriptionValid,
+  isPriceValid,
+} from '../utils/service_validation_rules';
+import { AddServicesFormData, UpdateServicesFormData,  ErrorAddServicesFormData, ErrorFormData, ErrorUpdateServicesFormData } from '../types/services';
+import { Dispatch, SetStateAction } from 'react';
+
+// Validation function for both add and update services
+export const isServiceFormValid = (
+  formData: AddServicesFormData | UpdateServicesFormData,
+  errorData: ErrorFormData,
+  setErrorData: React.Dispatch<React.SetStateAction<ErrorFormData>>
 ): boolean => {
   let isValid = true;
 
   // Validate 'name'
   const nameField = 'name';
-  if (!formData[nameField].trim()) {
+  if (!isServiceNameValid(formData[nameField])) {
     setErrorData((prevErrorData) => ({
       ...prevErrorData,
       [nameField]: { error: true, message: 'Name is required.' },
@@ -31,7 +31,7 @@ export const isAddServicesFormValid = (
 
   // Validate 'price'
   const priceField = 'price';
-  if (!formData[priceField].trim()) {
+  if (!isPriceValid(formData[priceField])) {
     setErrorData((prevErrorData) => ({
       ...prevErrorData,
       [priceField]: { error: true, message: 'Price is required.' },
@@ -45,8 +45,9 @@ export const isAddServicesFormValid = (
   }
 
   // Validate 'description'
-  const descriptionField = 'description';
-  if (!formData[descriptionField].trim()) {
+   const descriptionField = 'description';
+  console.log('Description Value:', formData[descriptionField]); // Add this line
+  if (!isServiceDescriptionValid(formData[descriptionField])) {
     setErrorData((prevErrorData) => ({
       ...prevErrorData,
       [descriptionField]: { error: true, message: 'Description is required.' },
@@ -59,6 +60,6 @@ export const isAddServicesFormValid = (
     }));
   }
 
+  console.log('isValid:', isValid); 
   return isValid;
 };
-
