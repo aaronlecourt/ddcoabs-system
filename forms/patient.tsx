@@ -457,19 +457,6 @@ const BookPatientForm = forwardRef(({}: any, ref) => {
   const next = (e: any) => {
     e.preventDefault();
 
-    // const isOthersValid = formData.others.length === 1;
-
-    // // Update the error status for 'others' based on its validity
-    // setErrorFormData((prevValue:any) => ({
-    //   ...prevValue,
-    //   others: {
-    //     optional: false,
-    //     error: !isOthersValid,
-    //     message: !isOthersValid ? 'Please select at least one option' : null,
-    //   }
-    // }));
-
-    // Perform the initial check after the "Next" button is clicked
     // Perform the initial check after the "Next" button is clicked
     const selectedSymptoms = checkboxList
       .flatMap((row) => row.filter((checkbox) => checkbox.value))
