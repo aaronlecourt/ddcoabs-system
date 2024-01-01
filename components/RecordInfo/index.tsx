@@ -10,6 +10,9 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   const [appointments, setAppointments] = useState([])
   const [activeAppointmentId, setActiveAppointmentId] = useState(null)
 
+  const sortBy= ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
+  const [selectedSort, setSelectedSort] = useState('');
+
   const formatDate = (date: any) => {
     const d = new Date(date)
     const options: any = {
@@ -68,6 +71,36 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
     let titleCaseString = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     return titleCaseString;
   }
+
+  const handleSortChange = (sort: any) => {
+
+    setSelectedSort(sort);
+    let sortedAppointments = [...appointments]
+
+      if (sortedAppointments.length) {
+        switch(sort){
+          case 'Oldest to Latest':
+            sortedAppointments.sort((a, b) => {
+              return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            });
+            break;
+          case 'Latest to Oldest':
+            sortedAppointments.sort((a, b) => {
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            break;
+          case 'Alphabetical (A-Z)':
+            sortedAppointments.sort((a, b) => (`${a.dentistService}`).localeCompare(`${b.dentistService}`));
+            break;
+          case 'Alphabetical (Z-A)':
+            sortedAppointments.sort((a, b) => (`${b.dentistService}`).localeCompare(`${a.dentistService}`));
+            break;
+          default:
+            break;
+        }
+        setAppointments(sortedAppointments);
+      }
+  };
 
   const renderPatientInfo = () => {
     return (
@@ -267,7 +300,17 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
         <div className={styles.appointment__filter__row}>
           <span>Sort By: </span>
           <div className={styles.appointment__filter__dropdown}>
-            <span>Latest</span>
+            <select
+              id = "sortSelect"
+              value={selectedSort}
+              onChange={(e) => handleSortChange(e.target.value)}
+            >
+              {sortBy.map((sort) => (
+              <option key = {sort} value = {sort}>
+                  {sort}
+              </option>
+              ))}
+            </select>
             <FontAwesomeIcon
               icon={faChevronDown}
               width={24}
