@@ -1,0 +1,119 @@
+@import '../../styles/variables.scss';
+
+.title {
+  color: $text;
+  font-size: 28px;
+  font-family: 'Poppins-Bold';
+  font-weight: 700;
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+
+  &>.tab {
+    border-radius: 10px;
+    border: 1px solid $grey;
+    background: $white;
+    color: $text;
+    font-size: 20px;
+    cursor: pointer;
+    padding: .5rem 1rem;
+
+    &:first-child {
+      margin-right: 1rem;
+    }
+
+    &.active {
+      background: #8a8a8a;
+      color: $white;
+    }
+  }
+
+  &>.buttonTab {
+    margin-left: auto;
+  }
+}
+
+.information {
+  position: relative;
+  padding: 1rem;
+  margin: 2rem 0;
+  border: 1px solid $grey;
+  border-radius: 10px;
+  background-color: $white;
+
+  &Appointments {
+    height: 500px;
+    overflow: auto;
+  }
+
+  &__appointment {
+    border: 1px solid $grey;
+    padding: 1rem;
+    margin: 1rem 0;
+
+    &__details {
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &__body {
+      padding-top: 1rem;
+      margin-top: 1rem;
+      border-top: 1px dashed $text;
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__title {
+    position: absolute;
+    top: -15px;
+    color: $text;
+    font-size: 18px;
+    font-family: 'Poppins-Bold';
+    font-weight: 700;
+    padding: 0 .5rem;
+    background-color: $white;
+  }
+
+  &__row {
+    margin-bottom: 2rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__content {
+    &Title {
+      font-family: 'Poppins-Bold';
+      font-weight: 700;
+    }
+
+    &Row {
+      display: flex;
+      justify-content: space-between;
+      margin: .5rem 1rem;
+
+      div {
+        flex: 1;
+      }
+    }
+  }
+
+  &__data {
+    color: $text;
+    font-size: 17px;
+
+    label {
+      font-family: 'Poppins-Bold';
+      font-weight: 700;
+    }
+  }
+}

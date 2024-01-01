@@ -14,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import User from '../models/User';
 import CancelButton from '../components/CancelButton';
+import RecordInfo from '../components/RecordInfo';
 
 interface User {
   _id: string;
@@ -304,6 +305,14 @@ export default function Accounts() {
         console.error('Error updating service:', error);
       });
   }
+
+  const [showRecordInfo, setShowRecordInfo] = useState(false)
+  const [recordInfo, setRecordInfo] = useState(null)
+
+  const showPatientRecord = (user: any) => {
+    setRecordInfo(user)
+    setShowRecordInfo(true)
+  }
   
 
   const renderContent = () => {
@@ -341,6 +350,9 @@ export default function Accounts() {
             <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type = "submit">Yes</Button>
           </div>
         </Modal>
+
+        {/* MODAL FOR RECORD INFO */}
+        <RecordInfo open={showRecordInfo} setOpen={setShowRecordInfo} recordInfo={recordInfo} />
 
       <section className={styles1.main}>
         <div className={styles1.servicecrud}>
@@ -442,7 +454,7 @@ export default function Accounts() {
                             ))}
                           </select>
                         </td>
-                        <td>
+                        <td onClick={() => showPatientRecord(user)}>
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
                             <CancelButton> Show More </CancelButton>
                           )}
@@ -520,7 +532,7 @@ export default function Accounts() {
                             ))}
                           </select>
                       </td>
-                      <td>
+                      <td onClick={() => showPatientRecord(user)}>
                           {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
                             <CancelButton> Show More </CancelButton>
                           )}
