@@ -80,20 +80,20 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
       if (sortedAppointments.length) {
         switch(sort){
           case 'Oldest to Latest':
-            sortedAppointments.sort((a, b) => {
+            sortedAppointments.sort((a: any, b: any) => {
               return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
             });
             break;
           case 'Latest to Oldest':
-            sortedAppointments.sort((a, b) => {
+            sortedAppointments.sort((a: any, b: any) => {
               return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
             });
             break;
           case 'Alphabetical (A-Z)':
-            sortedAppointments.sort((a, b) => (`${a.dentistService}`).localeCompare(`${b.dentistService}`));
+            sortedAppointments.sort((a: any, b: any) => (`${a.dentistService}`).localeCompare(`${b.dentistService}`));
             break;
           case 'Alphabetical (Z-A)':
-            sortedAppointments.sort((a, b) => (`${b.dentistService}`).localeCompare(`${a.dentistService}`));
+            sortedAppointments.sort((a: any, b: any) => (`${b.dentistService}`).localeCompare(`${a.dentistService}`));
             break;
           default:
             break;
@@ -114,7 +114,7 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
     return `${queryString ? `${queryString}` : ''}`;
   }
 
-  const [filterData, setFilterData] = useState({})
+  const [filterData, setFilterData] = useState<any>({})
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -132,6 +132,8 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
         throw new Error("Failed to fetch appointments");
       }
       const data = await response.json();
+      console.log(filterData)
+      if (filterData.startdate)
       setAppointments(data)
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -146,7 +148,7 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
     clearTimeout(timeout);
 
     timeout = setTimeout(() => {
-      setFilterData(prev => ({
+      setFilterData((prev: any) => ({
         ...prev,
         [name]: value
       }))
