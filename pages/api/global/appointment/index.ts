@@ -23,19 +23,18 @@ export default async function userHandler (
         let mongoDbQuery = {};
 
         if (query) {
-          if (query.status) {
-            if (!Object.values(APPOINTMENT_STATUS).find(a => a == query.status)) {
+          Object.keys(query).map(v => {
+            if (v == 'status' && !Object.values(APPOINTMENT_STATUS).find(a => a == query.status)) {
               res.status(417).json(`status should be in ${Object.values(APPOINTMENT_STATUS)}`);
             }
 
-            Object.assign(mongoDbQuery, { status: query.status });
-
-          }
+            Object.assign(mongoDbQuery, { [v]: query[v] })
+          })
         }
 
-        const appointment = await Appointment.find();
+        const appointment = await Appointment.find(mongoDbQuery);
         res.status(200).json(appointment);
-        break
+        break;
 
       // for patient role only.   
       case 'POST':
