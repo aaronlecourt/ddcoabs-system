@@ -45,8 +45,7 @@ export const isServiceFormValid = (
   }
 
   // Validate 'description'
-   const descriptionField = 'description';
-  console.log('Description Value:', formData[descriptionField]); // Add this line
+  const descriptionField = 'description';
   if (!isServiceDescriptionValid(formData[descriptionField])) {
     setErrorData((prevErrorData) => ({
       ...prevErrorData,
@@ -60,6 +59,8 @@ export const isServiceFormValid = (
     }));
   }
 
-  console.log('isValid:', isValid); 
+  console.log('isValid:', isValid);
+
   return isValid;
 };
+
