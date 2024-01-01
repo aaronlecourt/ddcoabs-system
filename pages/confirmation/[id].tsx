@@ -147,11 +147,11 @@ export default function Confirmation() {
             </div>
             <div className={styles.container__row}>
               <strong>Select Time</strong>
-              {errors && errors.length > 0 && errors.map((error, index) => (
+              {/* {errors && errors.length > 0 && errors.map((error, index) => (
                 <div key={index}>
                   <span style={{ color: 'red', textTransform: 'uppercase' }}>{error}</span>
                 </div>
-              ))}
+              ))} */}
               <div className={styles.timeContainer}>
                 <div className={styles.timePicker}>
                   <strong className={styles.timePicker__label}>Start</strong>
