@@ -142,7 +142,8 @@ export default async function userHandler (
             dentistScheduleConflict.map(sched => {
               for (let i=body.startTime; i<body.endTime; i++) {
                 if (sched.timeSlots[i]) {
-                  errorMessages.push(`Dentist time slot conflict with appointment id ${appointment._id} at ${i} ${appointment.timeUnit}`);
+                  // errorMessages.push(`Dentist time slot conflict with appointment id ${appointment._id} at ${i} ${appointment.timeUnit}`);
+                  errorMessages.push(`Dentist time slot conflict at ${i} ${appointment.timeUnit}`);
                 }
               }
             });
