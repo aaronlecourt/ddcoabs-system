@@ -1,7 +1,39 @@
 import { PatientFormData, PatientErrorFormData, PatientFormDataDentist, PatientErrorFormDataDentist } from '../types/book';
 import { Dispatch, SetStateAction } from 'react';
+import { isInput50Chars, isInput25Chars, atLeast5Chars} from '../utils/validation-rules';
 
-export const isPatientFormValid = (formData: PatientFormData, errorFormData: PatientErrorFormData, setErrorFormData: Dispatch<SetStateAction<PatientErrorFormData>>) => {
+const atLeast5Char: Array<keyof PatientFormData> = [
+  'physicianName',
+  'officeAddress',
+  'medicalTreatmentValue',
+  'illnessValue',
+  'hospitalizedValue',
+  'medicationValue',
+  'allergyValue',
+  'previousDentist',
+  'specialty',
+  'previousTreatment'
+];
+
+const keysRequiring50CharsValidation: Array<keyof PatientFormData> = [
+  'physicianName',
+  'officeAddress',
+  'medicalTreatmentValue',
+  'illnessValue',
+  'hospitalizedValue',
+  'medicationValue',
+  'allergyValue',
+  'previousDentist',
+];
+
+const keysRequiring25CharsValidation: Array<keyof PatientFormData> = [
+  'specialty',
+  'previousTreatment'
+];
+
+export const isPatientFormValid = (
+  formData: PatientFormData, 
+  errorFormData: PatientErrorFormData, setErrorFormData: Dispatch<SetStateAction<PatientErrorFormData>>) => {
   let result = true;
 
   console.log(formData);
@@ -22,6 +54,62 @@ export const isPatientFormValid = (formData: PatientFormData, errorFormData: Pat
     }
   }
 
+  // Validation for at least 5 characters
+  atLeast5Char.forEach((key) => {
+    const fieldValue = formData[key];
+    if (fieldValue && !atLeast5Chars(fieldValue as string)) {
+      setErrorFormData((prevErrorFormData) => ({
+        ...prevErrorFormData,
+        [key]: {
+          error: true,
+          message: `Input must be at least 5 characters long`,
+        },
+      }));
+      result = false;
+    }
+  });
+
+  // Validation for 50 character length
+  keysRequiring50CharsValidation.forEach((key) => {
+    const fieldValue = formData[key];
+    if (fieldValue && !isInput50Chars(fieldValue as string)) {
+      setErrorFormData((prevErrorFormData) => ({
+        ...prevErrorFormData,
+        [key]: {
+          error: true,
+          message: `Input can only be 50 characters long`,
+        },
+      }));
+      result = false;
+    }
+  });
+
+  // Validation for 25 character length
+  keysRequiring25CharsValidation.forEach((key) => {
+    const fieldValue = formData[key];
+    if (fieldValue && !isInput25Chars(fieldValue as string)) {
+      setErrorFormData((prevErrorFormData) => ({
+        ...prevErrorFormData,
+        [key]: {
+          error: true,
+          message: `'${key}' input can only be 25 characters long`,
+        },
+      }));
+      result = false;
+    }
+  });
+
+  // Check if formData.others length is not 0
+  if (formData.others && formData.others.length === 0) {
+    setErrorFormData((prevErrorFormData) => ({
+      ...prevErrorFormData,
+      others: {
+        error: true,
+        message: 'Please select at least one option or fill in Others',
+      },
+    }));
+    result = false;
+  }
   return result;
 }
 
