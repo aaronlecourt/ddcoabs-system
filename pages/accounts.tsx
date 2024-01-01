@@ -497,7 +497,7 @@ export default function Accounts() {
                   sortedUser.map((user, index) => (
                     <tr key={user._id}>
                       <td>{index + 1}</td>
-                      <td>{`${user.firstName} ${user.lastName}`}</td>
+                      <td>{`${user.firstName || ''} ${user.lastName || ''}`}</td>
                       <td>{user.contactNumber}</td>
                       <td>{user.email}</td>
                       <td> {user.age }</td>
