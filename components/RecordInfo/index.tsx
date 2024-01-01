@@ -53,6 +53,9 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
     delete details.officeAddress;
     delete details.specialty;
     delete details.officeNumber;
+    delete details.previousDentist;
+    delete details.previousTreatment;
+    delete details.lastDentalVisit;
     if (Array.isArray(details.others)) {
       details.others = details.others.join(', ');
     }
@@ -131,6 +134,7 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   const renderAppointments = () => {
     return (
       <div className={`${styles.information} ${styles.informationAppointments}`}>
+
         {appointments.length > 0 ? appointments.map((appointment: any) =>
           <div key={appointment._id}
             className={styles.information__appointment} onClick={() => changeActiveAppointment(appointment._id)}>
@@ -202,6 +206,25 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
                   </div>
                 )}
               </div>
+              <div className={styles.information__content}>
+                <div className={styles.information__contentTitle}>Dental History</div>
+                <div className={styles.information__contentRow}>
+                  <div className={styles.information__data}>
+                    <label>Previous Dentist: </label>
+                    <span>{appointment.details.previousDentist}</span>
+                  </div>
+                  <div className={styles.information__data}>
+                    <label>Service Availed: </label>
+                    <span>{appointment.details.previousTreatment}</span>
+                  </div>
+                </div>
+                <div className={styles.information__contentRow}>
+                  <div className={styles.information__data}>
+                    <label>Last Dental Visit: </label>
+                    <span>{appointment.details.lastDentalVisit}</span>
+                  </div>
+                </div>
+              </div>
             </div>}
           </div>) : <>No Appointments</>}
       </div>
@@ -209,7 +232,7 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   }
 
   return (
-    <Modal open={open} setOpen={setOpen} modalWidth={700} modalRadius={10}>
+    <Modal open={open} setOpen={setOpen} modalWidth={900} modalRadius={10}>
       <h3 className={styles.title}>Patient Record</h3>
       <div className={styles.actions}>
         <div onClick={() => setActiveTab('Patient Info')}
@@ -220,6 +243,41 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
           <Button>Generate Report</Button>
         </div>
       </div>
+      {activeTab === 'Appointments' && <div className={styles.appointment__filter}>
+        <div className={styles.appointment__filter__row}>Filter By: </div>
+        <div className={styles.appointment__filter__row}>
+          <div className={styles.appointment__filter__field}>
+            <div>
+              <span>Service: </span>
+              <input type='text' placeholder='ex. consultation' />
+            </div>
+            <div></div>
+          </div>
+          <div className={styles.appointment__filter__field}>
+            <div>
+              <span>Start Date: </span>
+              <input type='date' />
+            </div>
+            <div>
+              <span>End Date: </span>
+              <input type='date' />
+            </div>
+          </div>
+        </div>
+        <div className={styles.appointment__filter__row}>
+          <span>Sort By: </span>
+          <div className={styles.appointment__filter__dropdown}>
+            <span>Latest</span>
+            <FontAwesomeIcon
+              icon={faChevronDown}
+              width={24}
+              height={24}
+              color={"#737373"}
+            />
+          </div>
+        </div>
+      </div>
+    }
       {recordInfo &&
         <>
           {activeTab === 'Patient Info' ? renderPatientInfo() : renderAppointments()}

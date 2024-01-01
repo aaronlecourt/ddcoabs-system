@@ -35,6 +35,55 @@
   }
 }
 
+.appointment__filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .5rem 2rem;
+  margin: 1rem 0;
+  
+  &__row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__field {
+    display: flex;
+    margin: .5rem 0;
+
+    & > div {
+      display: flex;
+      justify-content: center;
+      margin: .5rem 1rem;
+    }
+  }
+
+  input {
+    padding: .2rem .5rem;
+    margin-left: 1rem;
+    border-radius: 10px;
+    border: 1px solid $grey;
+    background: #FAFAFA;
+  }
+
+  &__dropdown {
+    cursor: pointer;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem .7rem;
+    border-radius: 10px;
+    border: 1px solid $grey;
+    background: #FAFAFA;
+
+    span {
+      margin-right: 2rem;
+    }
+  }
+}
+
+
 .information {
   position: relative;
   padding: 1rem;
