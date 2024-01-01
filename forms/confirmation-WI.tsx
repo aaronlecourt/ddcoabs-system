@@ -74,7 +74,7 @@ const BookWalkInConfirmationForm = forwardRef(({ }, ref) => {
         const responseMsg = await response.json();
         toast.error('Booking failed: ' + JSON.stringify(responseMsg), { autoClose: false });
       } else {
-        toast.success('Appointment Booked Successfully!', { autoClose: false });
+        toast.success('Appointment booked successfully!', { autoClose: false });
         console.log('appointment booked ', await response.json());
         window.location.href = '/';
       }

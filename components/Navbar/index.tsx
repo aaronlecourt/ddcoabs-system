@@ -102,6 +102,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
           }
         }))
         console.error('Error comparison of old password to existing password:', error);
+        toast.error('Error in comparing old password to existing password. ')
       });
     }
   }
@@ -137,6 +138,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
       })  
       .catch(error => {
         console.error('Error updating password:', error);
+        toast.error ('Error updating password.')
       })
       .then(() => {
         resetForm();

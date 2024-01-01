@@ -94,7 +94,8 @@ export default function Reschedule() {
         if (!response.ok) {
           const errorMsgs: any = new Set(responseMsg);
           setErrors([...errorMsgs]);
-          toast.error('Appointment reschedule failed: ' + JSON.stringify(responseMsg));
+          console.error('Appointment reschedule failed: ' + JSON.stringify(responseMsg));
+          toast.error('Rescheduling appointment failed.');
         } else {
           toast.success('Appointment rescheduled successfully!');
           setTimeout(() => {

@@ -279,7 +279,7 @@ export default function Services() {
       toast.success ('Service added successfully!')
       setTimeout(() => {
         window.location.href = '/services';
-      }, 5000);
+      }, 1000);
       // Check if the service is added to the services state
       setServices((prevServices) => {
         const updatedServices = [...prevServices, responseData];
@@ -390,7 +390,7 @@ export default function Services() {
         toast.success("Service updated successfully!");
         setTimeout(() => {
           window.location.href = '/services';
-        }, 5000);
+        }, 1000);
       }
     } catch (error) {
       toast.error("Updating service failed");
