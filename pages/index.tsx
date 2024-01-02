@@ -314,12 +314,9 @@ export default function Home() {
                 appointment.patientName
                   ?.toLowerCase()
                   .includes(searchTermInput.toLowerCase()))
-              // Add other fields as needed for search
-              // ...
             );
           })
         : appointments.filter((appointment: IAppointment) => {
-            // Filter appointments based only on the search term when no filter is applied
             return (
               appointment.dentistService
                 ?.toLowerCase()
@@ -327,38 +324,35 @@ export default function Home() {
               appointment.patientName
                 ?.toLowerCase()
                 .includes(searchTermInput.toLowerCase())
-              // Add other fields as needed for search
-              // ...
             );
           });
 
-      // Update the state with the filtered appointments
       setAppointments(filteredAppointments);
     };
 
     const handleStatusFilter = async (status: string) => {
       try {
         setLoading(true);
-
+        setCurrentPage(1); // Reset currentPage to 1 when filter changes
+    
         const response = await fetch(
           `/api/global/appointment?status=${status}&search=${searchTerm}`
         );
-
+    
         if (!response.ok) {
           throw new Error("Failed to fetch appointments");
         }
-
+    
         const data = await response.json();
         setAppointments(data);
         setLoading(false);
-
         setCurrentFilter(status);
       } catch (error) {
         console.error("Error fetching appointments:", error);
         setLoading(false);
       }
     };
-
+    
     const statusStyles: Record<string, string> = {
       All: styles.appointments__filtersItemAll,
       Today: styles.appointments__filtersItemToday,
@@ -367,7 +361,6 @@ export default function Home() {
       Rescheduled: styles.appointments__filtersItemRescheduled,
       Canceled: styles.appointments__filtersItemCanceled,
       Done: styles.appointments__filtersItemDone,
-      // ... other statuses
     };
 
     const statusBoxes = [
