@@ -186,6 +186,11 @@
     justify-content: flex-start;
     align-items: center;
     margin: 1rem 0;
+    
+    &__statusFilters {
+      display: flex;
+      position: relative;
+    }
 
     &Item {
       text-align: center;

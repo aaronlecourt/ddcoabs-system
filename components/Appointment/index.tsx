@@ -153,6 +153,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           <div className={styles.apptDetails_Header}>
             <div>
               <h3>{selectedAppointmentDetails.dentistService}</h3>
+              <h2>{selectedAppointmentDetails.patientId}</h2>
               {selectedAppointmentDetails.concern && <h5>Concern: "{selectedAppointmentDetails.concern}" </h5>}
             </div>
             <div className={`${styles.appointments__status} 
