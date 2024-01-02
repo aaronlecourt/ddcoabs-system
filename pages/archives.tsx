@@ -276,7 +276,7 @@ const deleteAccount = async (userId: string) => {
     }else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      toast.success("SUCCESSFULLY DELETED ACCOUNT")
+      toast.success("Successfully deleted that account.")
       // If deletion is successful, update the services state by removing the deleted service
       setShowDeleteAccount(false);
       setAccounts((prevAccount) =>
@@ -304,7 +304,7 @@ const restoreAccount = async (userId: string) => {
     } else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      toast.success("SUCCESSFULLY RESTORED ACCOUNT")
+      toast.success("Successfully restored that account.")
       // If deletion is successful, update the services state by removing the deleted service
       setShowRestoreAccount(false);
       setAccounts((prevAccount) =>
@@ -332,7 +332,7 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to delete service');
       } else {
-        toast.success("SUCCESSFULLY DELETED THE SERVICE")
+        toast.success("Successfully deleted that service.")
 
         // If deletion is successful, update the services state by removing the deleted service
         setShowDeleteService(false);
@@ -360,7 +360,7 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to restore service');
       } else {
-        toast.success("SUCCESSFULLY RESTORED SERVICE")
+        toast.success("Service successfully restored.")
         // If deletion is successful, update the services state by removing the deleted service
         setShowRestoreService(false);
         setServices((prevServices) =>
@@ -468,7 +468,7 @@ const renderContent = () => {
                       <td> {account.name} </td>
                       <td> {account.email} </td>
                       <td> {account.contactNumber} </td>
-                      <td> {account.sex} </td>
+                      <td> {account.sex == 'M' ? 'Male' : 'Female'} </td>
                       <td> {renderDateOfBirth(account.dateOfBirth)} </td>
                       <td> {account.address} </td>
                       <td className={styles1.cancelActions}> 
@@ -516,7 +516,7 @@ const renderContent = () => {
                     <tr key={service._id}>
                       <td>{index + 1}</td>
                       <td>{service.name}</td>
-                      <td>₱ {service.price.toFixed(2)}</td>
+                      <td> P{service.price.toFixed(2)}</td>
                       <td> {service.type} </td>
                       <td>{service.description}</td>
                       <td className={styles1.cancelActions}> 
