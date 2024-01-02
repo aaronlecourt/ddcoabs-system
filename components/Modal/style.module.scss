@@ -24,6 +24,13 @@
   z-index: 1;
 }
 
+.modalClose {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  cursor: pointer;
+}
+
 .modal {
   display: block;
   position: relative;
