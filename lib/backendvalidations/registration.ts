@@ -1,5 +1,6 @@
 import User from '../../models/User';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const validateRegistrationRequest = async (body: any) => {
     let errorMessages: string[] = [];
@@ -36,7 +37,7 @@ export const validateRegistrationRequest = async (body: any) => {
 
     // validation of matching password and confirmPassword
     if (body.password !== body.confirmPassword) {
-        errorMessages.push('password and confirmPassword does not match');
+        toast.error('Password and Confirm Password do not match');
     }
     
     return {

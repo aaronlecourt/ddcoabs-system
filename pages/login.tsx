@@ -106,15 +106,17 @@ export default function Login({
   useEffect(() => {
     // Check for saved notifications in localStorage
     const savedNotification = localStorage.getItem('loginNotification');
-
+  
     if (savedNotification) {
       // Display the saved notification
-      toast.success(savedNotification);
-
-      // Clear the saved notification from localStorage
-      localStorage.removeItem('loginNotification');
+      toast.success(savedNotification, {
+        onClose: () => {
+          // Clear the saved notification from localStorage after it's closed
+          localStorage.removeItem('loginNotification');
+        },
+      });
     }
-  }, []); // Run this effect only once when the component mounts
+  }, []); // Run this effect only once when the component mounts  
 
   useEffect(() => {
     // Save notification to localStorage when a new notification is created

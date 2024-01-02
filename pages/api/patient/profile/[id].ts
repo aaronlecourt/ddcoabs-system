@@ -60,7 +60,6 @@ export default async function userHandler (
         if (body.age && body.age < 18) {
           if (!body.guardianName) errorMessages.push('guardianName is required.');
           if (!body.guardianMobile) errorMessages.push('guardianMobile is required.');
-          if (!body.validID) errorMessages.push('validID is required.');
         }
 
         // validation of duplicate email

@@ -138,14 +138,14 @@ export default function Profile({
           .then(async (response) => {
             const responseMsg = await response.json()
             if (!response.ok) {
-              toast.error('Profile Update Failed: ' + JSON.stringify(responseMsg))
+              toast.error('Profile update failed: ' + JSON.stringify(responseMsg))
             } else {
-              toast.success('User Successfully Updated');
+              toast.success('Profile updated successfully!');
               console.log('updated user ', responseMsg); // Handle the response from the API
             }
           })
           .catch(error => {
-            toast.error('User Update Failed');
+            toast.error('User update failed');
             console.error('Error updating data:', error);
           });
       }

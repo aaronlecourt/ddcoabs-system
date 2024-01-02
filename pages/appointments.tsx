@@ -125,7 +125,8 @@ export default function Home({
           .then(async (response) => {
             const responseMsg = await response.json();
             if (!response.ok) {
-              toast.error("Appointment cancel failed: " + JSON.stringify(responseMsg));
+              console.error("Appointment cancel failed: " + JSON.stringify(responseMsg));
+              toast.error('Cancelling appointment failed.')
             } else {
               toast.success("Appointment successfully canceled");
               setTimeout(() => {
