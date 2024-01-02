@@ -1,5 +1,9 @@
 @import './variables.scss';
 
+@media print {
+  body {-webkit-print-color-adjust: exact;}
+}
+
 body {
   font-family: 'Poppins';
   margin: 0;

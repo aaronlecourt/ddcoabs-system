@@ -4,11 +4,12 @@ import styles from './style.module.scss'
 import Button from '../Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import Image from 'next/image'
 
 export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   const [activeTab, setActiveTab] = useState('Patient Info')
   const [appointments, setAppointments] = useState([])
-  const [activeAppointmentId, setActiveAppointmentId] = useState(null)
+  const [activeAppointmentId, setActiveAppointmentId] = useState<any>(null)
 
   const sortBy = ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
   const [selectedSort, setSelectedSort] = useState('');
@@ -159,7 +160,6 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
         [name]: value
       }))
     }, 1500)
-
   }
 
   const renderPatientInfo = () => {
@@ -326,62 +326,265 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
     )
   }
 
+  const [isGenerateReport, setIsGenerateReport] = useState(false)
+  const print = () => {
+    const contentToPrint = document.getElementById('printable');
+
+    if (contentToPrint) {
+      const printContents = contentToPrint.innerHTML;
+      const originalContents = document.body.innerHTML;
+
+      document.body.innerHTML = printContents;
+      window.print();
+      location.reload();
+    }
+
+  }
+
+  const onClose = () => {
+    if (isGenerateReport) setIsGenerateReport(false)
+    else setOpen(false)
+  }
+
+  const renderPrintable = () => {
+    return (
+      <div className={styles.printable__container}>
+        <div id='printable' className={styles.printable}>
+          <div className={styles.printable__header}>
+            <Image
+              className={styles.printable__logo}
+              src='/logo.png'
+              alt='logo'
+              width={250}
+              height={0}
+            />
+            <div>Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City</div>
+            <div>Contact No: +639123456789</div>
+            <div>Email: dentalfix@dentalfix.com</div>
+          </div>
+          <div>
+            <h3 className={styles.title}>Patient Information Record</h3>
+            <div className={styles.information__content}>
+              <div className={styles.information__contentRow}>
+                <div className={styles.information__data}>
+                  <label>Name: </label>
+                  <span>{recordInfo.lastName}, {recordInfo.firstName}</span>
+                </div>
+                <div className={styles.information__data}>
+                  <label>Contact Number: </label>
+                  <span>{recordInfo.contactNumber}</span>
+                </div>
+              </div>
+              <div className={styles.information__contentRow}>
+                <div className={styles.information__data}>
+                  <label>Sex: </label>
+                  <span>{recordInfo.sex == 'M' ? 'Male' : 'Female'}</span>
+                </div>
+                <div className={styles.information__data}>
+                  <label>Email: </label>
+                  <span>{recordInfo.email}</span>
+                </div>
+              </div>
+              <div className={styles.information__contentRow}>
+                <div className={styles.information__data}>
+                  <label>Date of Birth: </label>
+                  <span>{formatDate(recordInfo.dateOfBirth)}</span>
+                </div>
+                <div className={styles.information__data}>
+                  <label>Emergency Contact: </label>
+                  <span>{recordInfo.guardianName}</span>
+                </div>
+              </div>
+              <div className={styles.information__contentRow}>
+                <div className={styles.information__data}>
+                  <label>Age: </label>
+                  <span>{recordInfo.age}</span>
+                </div>
+                <div className={styles.information__data}>
+                  <label>Contact Number: </label>
+                  <span>{recordInfo.guardianContactNumber}</span>
+                </div>
+              </div>
+              <div className={styles.information__contentRow}>
+                <div className={styles.information__data}>
+                  <label>Religion: </label>
+                  <span>{recordInfo.religion}</span>
+                </div>
+              </div>
+              <div className={styles.information__contentRow}>
+                <div className={styles.information__data}>
+                  <label>Nationality: </label>
+                  <span>{recordInfo.nationality}</span>
+                </div>
+              </div>
+              <div className={styles.information__contentRow}>
+                <div className={styles.information__data}>
+                  <label>Home Address: </label>
+                  <span>{recordInfo.address}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 className={styles.title}>Appointment Record</h3>
+            <div className={`${styles.information} ${styles.informationAppointmentsPrintable}`}>
+              {appointments.length > 0 ? appointments.map((appointment: any) =>
+                <div key={appointment._id} className={styles.printable__information__appointment}>
+                  <div className={`${styles.information__appointment__body} ${styles.information__appointment__body__printable}`}>
+                    <div className={styles.information__content}>
+                      <div className={styles.information__contentTitle}>Appointment Details</div>
+                      <div className={styles.information__contentRow}>
+                        <div className={styles.information__data}>
+                          <label>Service: </label>
+                          <span>{appointment.dentistService}</span>
+                        </div>
+                        <div className={styles.information__data}>
+                          <label>Price: </label>
+                          <span>{appointment.price}</span>
+                        </div>
+                      </div>
+                      <div className={styles.information__contentRow}>
+                        <div className={styles.information__data}>
+                          <label>Date: </label>
+                          <span>{formatDate(appointment.date)}</span>
+                        </div>
+                        <div className={styles.information__data}>
+                          <label>Payment Method: </label>
+                          <span>{appointment.paymentMethod}</span>
+                        </div>
+                      </div>
+                      <div className={styles.information__contentRow}>
+                        <div className={styles.information__data}>
+                          <label>Time: </label>
+                          <span>{appointment.startTime}:00 {appointment.timeUnit} - {appointment.endTime}:00 {appointment.timeUnit}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.information__content}>
+                      <div className={styles.information__contentTitle}>Medical History</div>
+                      <div className={styles.information__contentRow}>
+                        <div className={styles.information__data}>
+                          <label>Name of Physician: </label>
+                          <span>{appointment.physicianName}</span>
+                        </div>
+                        <div className={styles.information__data}>
+                          <label>Specialty: </label>
+                          <span>{appointment.details.specialty}</span>
+                        </div>
+                      </div>
+                      <div className={styles.information__contentRow}>
+                        <div className={styles.information__data}>
+                          <label>Office Address: </label>
+                          <span>{appointment.details.officeAddress}</span>
+                        </div>
+                        <div className={styles.information__data}>
+                          <label>Office Number: </label>
+                          <span>N/A</span>
+                        </div>
+                      </div>
+                      {Object.keys(medicalHistory(appointment)).map((key, index) =>
+                        <div key={index}
+                          className={styles.information__contentRow}>
+                          <div className={styles.information__data}>
+                            <label>{index + 1}. {convertToTitleCase(key)}</label>
+                          </div>
+                          <div className={styles.information__data}>
+                            <span>{appointment.details[key].toString().toUpperCase()}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className={styles.information__content}>
+                      <div className={styles.information__contentTitle}>Dental History</div>
+                      <div className={styles.information__contentRow}>
+                        <div className={styles.information__data}>
+                          <label>Previous Dentist: </label>
+                          <span>{appointment.details.previousDentist}</span>
+                        </div>
+                        <div className={styles.information__data}>
+                          <label>Service Availed: </label>
+                          <span>{appointment.details.previousTreatment}</span>
+                        </div>
+                      </div>
+                      <div className={styles.information__contentRow}>
+                        <div className={styles.information__data}>
+                          <label>Last Dental Visit: </label>
+                          <span>{appointment.details.lastDentalVisit}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>) : <>No Appointments</>}
+            </div>
+          </div>
+        </div>
+        <div className={styles.printable__print}>
+          <Button type='secondary' onClick={print}>Print</Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <Modal open={open} setOpen={setOpen} modalWidth={900} modalRadius={10}>
-      <h3 className={styles.title}>Patient Record</h3>
-      <div className={styles.actions}>
-        <div onClick={() => setActiveTab('Patient Info')}
-          className={`${styles.tab} ${activeTab === 'Patient Info' ? styles.active : ''}`}>Patient Info</div>
-        <div onClick={() => setActiveTab('Appointments')}
-          className={`${styles.tab} ${activeTab === 'Appointments' ? styles.active : ''}`}>Appointments</div>
-        <div className={styles.buttonTab}>
-          <Button>Generate Report</Button>
-        </div>
-      </div>
-      {activeTab === 'Appointments' && <div className={styles.appointment__filter}>
-        <div className={styles.appointment__filter__row}>Filter By: </div>
-        <div className={styles.appointment__filter__row}>
-          <div className={styles.appointment__filter__field}>
-            <div>
-              <span>Service: </span>
-              <input type='text' placeholder='ex. consultation' name="dentistService" onChange={handleFilter} />
-            </div>
-            <div></div>
-          </div>
-          <div className={styles.appointment__filter__field}>
-            <div>
-              <span>Start Date: </span>
-              <input type='date' name="startDate" onChange={handleFilter} />
-            </div>
-            <div>
-              <span>End Date: </span>
-              <input type='date' name="endDate" onChange={handleFilter} />
-            </div>
-          </div>
-        </div>
-        <div className={styles.appointment__filter__row}>
-          <span>Sort By: </span>
-          <select
-            id="sortSelect"
-            value={selectedSort}
-            onChange={(e) => handleSortChange(e.target.value)}
-            className={styles.appointment__filter__dropdown}
-          >
-            {sortBy.map((sort) => (
-              <option key={sort} value={sort}>
-                {sort}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* <div className={styles.appointment__filter__action}>
-          <Button type='secondary' onClick={applyFilter}>Apply Filter</Button>
-        </div> */}
-      </div>
-      }
-      {recordInfo &&
+    <Modal open={open} setOpen={setOpen} withCloseButton onClose={onClose} modalHeight={700} modalRadius={10} padding={isGenerateReport ? '0' : '2rem'}>
+      {isGenerateReport && recordInfo ? renderPrintable() :
         <>
-          {activeTab === 'Patient Info' ? renderPatientInfo() : renderAppointments()}
+          <h3 className={styles.title}>Patient Record</h3>
+          <div className={styles.actions}>
+            <div onClick={() => setActiveTab('Patient Info')}
+              className={`${styles.tab} ${activeTab === 'Patient Info' ? styles.active : ''}`}>Patient Info</div>
+            <div onClick={() => setActiveTab('Appointments')}
+              className={`${styles.tab} ${activeTab === 'Appointments' ? styles.active : ''}`}>Appointments</div>
+            <div className={styles.buttonTab}>
+              <Button onClick={() => setIsGenerateReport(true)}>Generate Report</Button>
+            </div>
+          </div>
+          {activeTab === 'Appointments' && <div className={styles.appointment__filter}>
+            <div className={styles.appointment__filter__row}>Filter By: </div>
+            <div className={styles.appointment__filter__row}>
+              <div className={styles.appointment__filter__field}>
+                <div>
+                  <span>Service: </span>
+                  <input type='text' placeholder='ex. consultation' name="dentistService" onChange={handleFilter} />
+                </div>
+                <div></div>
+              </div>
+              <div className={styles.appointment__filter__field}>
+                <div>
+                  <span>Start Date: </span>
+                  <input type='date' name="startDate" onChange={handleFilter} />
+                </div>
+                <div>
+                  <span>End Date: </span>
+                  <input type='date' name="endDate" onChange={handleFilter} />
+                </div>
+              </div>
+            </div>
+            <div className={styles.appointment__filter__row}>
+              <span>Sort By: </span>
+              <select
+                id="sortSelect"
+                value={selectedSort}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className={styles.appointment__filter__dropdown}
+              >
+                {sortBy.map((sort) => (
+                  <option key={sort} value={sort}>
+                    {sort}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* <div className={styles.appointment__filter__action}>
+              <Button type='secondary' onClick={applyFilter}>Apply Filter</Button>
+            </div> */}
+          </div>
+          }
+          {recordInfo &&
+            <>
+              {activeTab === 'Patient Info' ? renderPatientInfo() : renderAppointments()}
+            </>
+          }
         </>
       }
     </Modal>
