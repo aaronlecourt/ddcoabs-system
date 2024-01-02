@@ -675,6 +675,18 @@ export default function Accounts() {
                 </div>
                 {session && (
                   <main id="printable-table">
+                    {isPrinting && <div className={printableStyles.printable__header}>
+                      <Image
+                        className={printableStyles.printable__logo}
+                        src='/logo.png'
+                        alt='logo'
+                        width={250}
+                        height={0}
+                      />
+                      <div>Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City</div>
+                      <div>Contact No: +639123456789</div>
+                      <div>Email: dentalfix@dentalfix.com</div>
+                    </div>}
                     <table className={styles.table}>
                       <thead>
                         <tr>
