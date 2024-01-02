@@ -5,6 +5,8 @@ import Button from "../components/Button";
 import { BookingFormContextDentist } from "../pages/walk-in";
 import CancelButton from "../components/CancelButton";
 import CustomCalendar from "../components/CustomCalendar";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
 
@@ -46,12 +48,12 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
           }
 
           if (selectedStartHour === 12) {
-            alert("Start time cannot be 12:00 PM!");
+            toast.error("Start time cannot be 12:00 PM!");
             return; 
           }
           
           if (selectedEndTime === selectedStartHour) {
-            alert("Start time and End time should not be THE SAME!")
+            toast.error("Start time and End time should not be THE SAME!")
             setSelectedEndTime(selectedStartHour + 1)
             return;
           }
@@ -63,7 +65,7 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
         const selectedEndHour = parseInt(e.target.value, 10);
 
         if (selectedStartTime === selectedEndHour) {
-          alert("Start time and End time should not be THE SAME!")
+          toast.error("Start time and End time should not be THE SAME!")
           return;
         }
     
@@ -94,7 +96,8 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
     const currentDate = new Date();
     const hours = currentDate.getHours();
     const timeUnit = hours >= 12 ? 'PM' : 'AM';
-  
+    
+    setSelectedEndTime( selectedEndTime + +1);
     setSelectedDate(currentDate);
     setSelectedStartTime(hours);
     setSelectedTimeUnit(timeUnit);
@@ -106,6 +109,7 @@ const BookWalkInScheduleForm = forwardRef(({ }: any, ref) => {
   
   return (
     <div className={styles.container}>
+      <ToastContainer />
       <div className={styles.form}>
         <div className={styles.form__container}>
           <strong style={{ marginBottom: '.5rem' }}>Select Date</strong>

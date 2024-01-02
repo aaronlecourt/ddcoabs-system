@@ -272,11 +272,14 @@ const deleteAccount = async (userId: string) => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to delete service');
+      throw new Error('Failed to delete account');
     }else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      toast.success("Successfully deleted that account.")
+      toast.success("Account successfully deleted")
+      setTimeout(() => {
+        window.location.href = '/archives';
+      }, 5000);
       // If deletion is successful, update the services state by removing the deleted service
       setShowDeleteAccount(false);
       setAccounts((prevAccount) =>
@@ -284,7 +287,7 @@ const deleteAccount = async (userId: string) => {
       );
     }
   } catch (error) {
-    console.error('Error deleting service:', error);
+    console.error('Error deleting account:', error);
   }
 };
 
@@ -304,7 +307,10 @@ const restoreAccount = async (userId: string) => {
     } else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      toast.success("Successfully restored that account.")
+      toast.success("Account restored successfully")
+      setTimeout(() => {
+        window.location.href = '/archives';
+      }, 5000);
       // If deletion is successful, update the services state by removing the deleted service
       setShowRestoreAccount(false);
       setAccounts((prevAccount) =>
@@ -332,8 +338,10 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to delete service');
       } else {
-        toast.success("Successfully deleted that service.")
-
+        toast.success("Service deleted successfully!")
+        setTimeout(() => {
+          window.location.href = '/archives';
+        }, 5000);
         // If deletion is successful, update the services state by removing the deleted service
         setShowDeleteService(false);
         setServices((prevServices) =>
@@ -360,7 +368,10 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to restore service');
       } else {
-        toast.success("Service successfully restored.")
+        toast.success("Service restored successfully!")
+        setTimeout(() => {
+          window.location.href = '/archives';
+        }, 5000);
         // If deletion is successful, update the services state by removing the deleted service
         setShowRestoreService(false);
         setServices((prevServices) =>

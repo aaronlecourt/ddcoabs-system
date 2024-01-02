@@ -2,7 +2,7 @@ import connectMongo from '../utils/connectMongo';
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { signIn } from 'next-auth/react'
 import { useRouter } from "next/router";
-import { useState } from 'react'
+import { useState , useEffect } from 'react'
 import Image from 'next/image'
 import styles from '../styles/pages/auth.module.scss';
 import pageStyles from '../styles/pages/login.module.scss';
@@ -62,11 +62,11 @@ export default function Login({
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
+  
     try {
       const { email, password } = formData;
       const res: any = await signIn('credentials', { email, password, redirect: false })
-
+  
       if (res.error) {
         console.log(res.error);
         if (res.status == 401) {
@@ -85,23 +85,54 @@ export default function Login({
       }
       
       console.log(res, 'Logged in!');
-      router.replace('/');
-      toast.success('Login successful!');
+      
+      // Introduce a delay before redirection
+      setTimeout(() => {
+        router.replace('/');
+        toast.success('Login successful!');
+      }, 900); // Adjust the delay as needed
     } catch (error) {
       console.log(error)
       toast.error('Login failed!');
     }
   }
-
+  
   const proceed = (e: any) => {
     e.preventDefault();
 
     if (isLoginFormValid(formData, errorFormData, setErrorFormData)) handleSubmit(e);
   }
 
+  useEffect(() => {
+    // Check for saved notifications in localStorage
+    const savedNotification = localStorage.getItem('loginNotification');
+
+    if (savedNotification) {
+      // Display the saved notification
+      toast.success(savedNotification);
+
+      // Clear the saved notification from localStorage
+      localStorage.removeItem('loginNotification');
+    }
+  }, []); // Run this effect only once when the component mounts
+
+  useEffect(() => {
+    // Save notification to localStorage when a new notification is created
+    const unsubscribe = toast.onChange((toast: { message?: string; type?: string }) => {
+      if (toast && toast.type === 'success' && toast.message) {
+        localStorage.setItem('loginNotification', toast.message);
+      }
+    });
+
+    return () => {
+      // Cleanup the subscription when the component unmounts
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <>
-    <ToastContainer />
+    <ToastContainer autoClose={5000} />
       {(status !== 'loading' && !session) && <AuthLayout>
         <div className={styles.container}>
           <div className={styles.header} style={{ marginBottom: '5rem' }}>

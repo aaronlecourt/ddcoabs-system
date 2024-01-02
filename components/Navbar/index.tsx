@@ -11,6 +11,8 @@ import { isChangePasswordFormValid } from '../../validations/changepassword';
 import Button from '../Button';
 import useAuthGuard from '../../guards/auth.guard';
 import { useRouter } from 'next/router';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Item {
   text: string,
@@ -127,9 +129,9 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
       .then(async (response) => {
         const responseMsg = await response.json()
         if (!response.ok) {
-          alert('password update failed! ' + JSON.stringify(responseMsg))
+          toast.error('Password update failed! ' + JSON.stringify(responseMsg))
         } else {
-          alert('password successfully updated!')
+          toast.success('Password successfully updated!')
         }
       })  
       .catch(error => {
@@ -154,6 +156,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
   const renderOldPassword = () => {
     return (
       <>
+      <ToastContainer />
         <div className={styles.formField}>
           <div className='formLabel'>
             <label>Enter your old password to proceed:</label>
@@ -178,6 +181,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
   const renderChangePassword = () => {
     return (
       <>
+      <ToastContainer />
         <div className={styles.formField}>
           <div className='formLabel'>
             <label>New Password</label>
@@ -216,6 +220,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
 
   return (
     <>
+      <ToastContainer />
       <Modal open={showChangePasswordModal} setOpen={setShowChangePasswordModal} modalWidth={500} modalRadius={10} onClose={cancel}>
         <h3>Change Password</h3>
         {!showChangePasswordField ? renderOldPassword() : renderChangePassword()} 
