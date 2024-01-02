@@ -279,7 +279,7 @@ const deleteAccount = async (userId: string) => {
       toast.success("Account successfully deleted")
       setTimeout(() => {
         window.location.href = '/archives';
-      }, 5000);
+      }, 3000);
       // If deletion is successful, update the services state by removing the deleted service
       setShowDeleteAccount(false);
       setAccounts((prevAccount) =>
@@ -310,7 +310,7 @@ const restoreAccount = async (userId: string) => {
       toast.success("Account restored successfully")
       setTimeout(() => {
         window.location.href = '/archives';
-      }, 5000);
+      }, 3000);
       // If deletion is successful, update the services state by removing the deleted service
       setShowRestoreAccount(false);
       setAccounts((prevAccount) =>
@@ -341,7 +341,7 @@ const restoreAccount = async (userId: string) => {
         toast.success("Service deleted successfully!")
         setTimeout(() => {
           window.location.href = '/archives';
-        }, 5000);
+        }, 3000);
         // If deletion is successful, update the services state by removing the deleted service
         setShowDeleteService(false);
         setServices((prevServices) =>
@@ -371,7 +371,7 @@ const restoreAccount = async (userId: string) => {
         toast.success("Service restored successfully!")
         setTimeout(() => {
           window.location.href = '/archives';
-        }, 5000);
+        }, 3000);
         // If deletion is successful, update the services state by removing the deleted service
         setShowRestoreService(false);
         setServices((prevServices) =>
