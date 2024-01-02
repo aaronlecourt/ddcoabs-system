@@ -399,13 +399,18 @@
 
 .cancelActions {
   display: flex;
-  // justify-content: center;
+  justify-content: center;
   align-items: center;
   padding-top: 1rem;
 
   &>div:first-child {
     margin-right: 0.5rem;
   }
+}
+
+.cancelSub {
+  text-align: center;
+  font-size: 16px;
 }
 
 .servicecrud {

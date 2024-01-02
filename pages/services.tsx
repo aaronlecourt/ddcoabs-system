@@ -122,14 +122,17 @@ import { useRouter } from "next/router";
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("api/dentist/dentist-service");
+        const queryParams = `?search=${searchQuery}&filter=${selectedFilter}`; // Include search and filter parameters
+        const response = await fetch(`api/dentist/dentist-service${queryParams}`);
+        
         if (!response.ok) {
           throw new Error("Failed to fetch services");
         }
+        
         const data: Service[] = await response.json();
         setServices(data);
         setSortedServices(data);
-
+  
         const totalPages = Math.max(Math.ceil(data.length / itemsPerPage), 1);
         if (currentPage > totalPages) {
           setCurrentPage(totalPages);
@@ -138,9 +141,10 @@ import { useRouter } from "next/router";
         console.error("Error fetching services:", error);
       }
     };
-
+  
     fetchServices();
-  }, []);
+  }, [searchQuery, selectedFilter, currentPage]);
+  
 
     useEffect(() => {
       const updateServices = () => {
@@ -489,7 +493,7 @@ import { useRouter } from "next/router";
                 <th>#</th>
                 <th>Service Name</th>
                 <th>Base Charge</th>
-                <th>Description</th>
+                <th colSpan={3}>Description</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -498,8 +502,8 @@ import { useRouter } from "next/router";
                 <tr key={service._id}>
                   <td>{startIndex + index + 1}</td>
                   <td>{service.name}</td>
-                  <td>₱ {Number(service.price).toFixed(2)}</td>
-                  <td>{service.description}</td>
+                  <td>P{Number(service.price).toFixed(2)}</td>
+                  <td colSpan={3}>{service.description}</td>
                   <td className={styles1.tableAction}>
                     <EditButton
                       onClick={() => onUpdateService(service, "update")}

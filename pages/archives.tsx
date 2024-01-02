@@ -5,6 +5,7 @@ import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Button from '../components/Button';
 import Button2 from '../components/Button2';
+import CancelButton from '../components/CancelButton';
 import DeleteButton from '../components/DeleteButton';
 import RestoreButton from '../components/RestoreButton';
 import Modal from '../components/Modal';
@@ -391,10 +392,10 @@ const renderContent = () => {
       {/* ACCOUNTS SERVICE */}
       <Modal open={showDeleteAccount} setOpen={setShowDeleteAccount} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to DELETE this account with their records?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to DELETE this account with their records?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
-            <Button type='secondary' onClick={() => setShowDeleteAccount(false)}>No</Button>
+            <CancelButton onClick={() => setShowDeleteAccount(false)}>No</CancelButton>
             <Button onClick={deleteAccount} type = "submit">Yes</Button>
           </div>
         </Modal>
@@ -402,10 +403,10 @@ const renderContent = () => {
         {/* ACCOUNTS SERVICE */}
       <Modal open={showRestoreAccount} setOpen={setShowRestoreAccount} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to RESTORE this account with their records?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to RESTORE this account with their records?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
-            <Button type='secondary' onClick={() => setShowRestoreAccount(false)}>No</Button>
+            <CancelButton onClick={() => setShowRestoreAccount(false)}>No</CancelButton>
             <Button onClick={restoreAccount} type = "submit">Yes</Button>
           </div>
         </Modal>
@@ -414,7 +415,7 @@ const renderContent = () => {
       {/* DELETE SERVICE */}
       <Modal open={showDeleteService} setOpen={setShowDeleteService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to DELETE this dental service?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to DELETE this dental service?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowDeleteService(false)}>No</Button>
@@ -425,7 +426,7 @@ const renderContent = () => {
         {/* RESTORE SERVICE */}
       <Modal open={showRestoreService} setOpen={setShowRestoreService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to RESTORE this dental service?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to RESTORE this dental service?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowRestoreService(false)}>No</Button>
