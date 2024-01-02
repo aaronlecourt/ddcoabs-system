@@ -452,7 +452,7 @@ export default function Accounts() {
             <div>
               <h3 className={printableStyles.title}>Appointment Record</h3>
               <div className={`${printableStyles.information} ${printableStyles.informationAppointmentsPrintable}`}>
-                {appointments.filter((i:any) => i.patientId == recordInfo._id).length > 0 ? appointments.filter((i:any) => i.patientId == recordInfo._id).map((appointment: any) =>
+                {appointments.filter((i: any) => i.patientId == recordInfo._id).length > 0 ? appointments.filter((i: any) => i.patientId == recordInfo._id).map((appointment: any) =>
                   <div key={appointment._id} className={printableStyles.printable__information__appointment}>
                     <div className={`${printableStyles.information__appointment__body} ${printableStyles.information__appointment__body__printable}`}>
                       <div className={printableStyles.information__content}>
@@ -551,7 +551,8 @@ export default function Accounts() {
   }
 
   const print = () => {
-    const contentToPrint = document.getElementById('printable');
+    // const contentToPrint = document.getElementById('printable');
+    const contentToPrint = document.getElementById('printable-table');
 
     if (contentToPrint) {
       const printContents = contentToPrint.innerHTML;
@@ -565,368 +566,395 @@ export default function Accounts() {
   }
 
   const [printableModal, setPrintableModal] = useState(true)
+  const [isPrinting, setIsPrinting] = useState(false)
   const onClosePrintable = () => {
     setIsGenerateReport(false)
     setPrintableModal(false)
   }
 
+  useEffect(() => {
+    if (isPrinting) print()
+
+  }, [isPrinting])
+
   const openPrintableModal = () => {
-    setIsGenerateReport(true)
-    setPrintableModal(true)
+    // setIsGenerateReport(true)
+    // setPrintableModal(true)
+    setIsPrinting(true)
   }
 
   const renderContent = () => {
     return (
       <>
-        {isGenerateReport ? 
-        <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
-          {renderPrintable(filteredBySelectedFilters.length > 0 ? filteredBySelectedFilters.filter((user) =>
-            (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
-          ) : sortedUser.length > 0 ? sortedUser : users)}
-        </Modal> : <>
-          {/* MODAL FOR ARCHIVE */}
-          <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
-            <h3 className={styles1.cancelTitle}> WARNING! </h3>
-            <p> Are you sure you want to archive this user?</p>
-            <input type='hidden' name="_id" value={updateUserFormData._id} />
-            <div className={styles1.cancelActions}>
-              <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
-              <Button onClick={archiveUser} type="submit">Yes</Button>
-            </div>
-          </Modal>
-
-          {/* MODAL FOR ADMIN/EMPLOYEE VALIDATION */}
-          <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
-            <h3 className={styles1.cancelTitle}> WARNING! </h3>
-            <p> Are you sure you want this user to be an admin or employee?</p>
-            <input type='hidden' name="_id" value={updateUserFormData._id} />
-            <div className={styles1.cancelActions}>
-              <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
-              <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type="submit">Yes</Button>
-            </div>
-          </Modal>
-
-          {/* MODAL FOR PATIENT VALIDATION */}
-          <Modal open={showValiUserPatient} setOpen={setShowValiUserPatient} modalWidth={400} modalRadius={10}>
-            <h3 className={styles1.cancelTitle}> WARNING! </h3>
-            <p> Are you sure you want this user to be a patient? </p>
-            <input type='hidden' name="_id" value={updateUserFormData._id} />
-            <div className={styles1.cancelActions}>
-              <Button type='secondary' onClick={() => setShowValiUserPatient(false)}>No</Button>
-              <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type="submit">Yes</Button>
-            </div>
-          </Modal>
-
-          {/* MODAL FOR RECORD INFO */}
-          <RecordInfo open={showRecordInfo} setOpen={setShowRecordInfo} recordInfo={recordInfo} />
-
-          <section className={styles1.main}>
-            <div className={styles1.servicecrud}>
-              <div className={styles1.filters}>
-                <div className={styles1.filters__search}>
-                  <input type='text' className={styles1.filters__searchInput} placeholder='Search account name...'
-                    value={searchQuery}
-                    onChange={handleSearchChange} />
-                  <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
-                </div>
-                <div className={styles1.filters__sort}>
-                  <span className={styles1.filters__sortTitle}>Sort By:</span>
-                  <div className={styles1.filters__sortDropdown}>
-                    <select
-                      id="sortSelect"
-                      value={selectedSort}
-                      onChange={(e) => handleSortChange(e.target.value)}
-                    >
-                      {sortBy.map((sort) => (
-                        <option key={sort} value={sort}>
-                          {sort}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className={styles1.filters__sort}>
-                  <span className={styles1.filters__sortTitle}>Filter:</span>
-                  <div className={styles1.filters__sortDetails}>
-                    {filterBy.map((filter) => (
-                      <label key={filter}>
-                        <input
-                          type="checkbox"
-                          value={filter}
-                          onChange={() => handleFilterSelection(filter)}
-                          checked={selectedFilters.includes(filter) || (filter === 'All' && selectedFilters.length === filterBy.length - 1)}
-                        />
-                        {filter}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                <div className={styles1.filters__sortGenrep}>
-                  <Button type='secondary' onClick={openPrintableModal}> Generate Report </Button>
-                </div>
+        {isGenerateReport ?
+          <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
+            {renderPrintable(filteredBySelectedFilters.length > 0 ? filteredBySelectedFilters.filter((user) =>
+              (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
+            ) : sortedUser.length > 0 ? sortedUser : users)}
+          </Modal> : <>
+            {/* MODAL FOR ARCHIVE */}
+            <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
+              <h3 className={styles1.cancelTitle}> WARNING! </h3>
+              <p> Are you sure you want to archive this user?</p>
+              <input type='hidden' name="_id" value={updateUserFormData._id} />
+              <div className={styles1.cancelActions}>
+                <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
+                <Button onClick={archiveUser} type="submit">Yes</Button>
               </div>
-              {session && (
-                <main>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Full Name</th>
-                        <th>Contact Number </th>
-                        <th>Email Address</th>
-                        <th>Age</th>
-                        <th>Sex</th>
-                        <th>User Role</th>
-                        <th>Appointment Record </th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* THIS IS FOR FILTER */}
-                      {filteredBySelectedFilters.length > 0 ? (
-                        filteredBySelectedFilters
-                          .filter((user) =>
-                            (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
-                          )
-                          .map((user, index) => (
-                            <tr key={user._id}>
-                              <td>{index + 1}</td>
-                              <td>{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''}</td>
-                              <td>{user.contactNumber}</td>
-                              <td>{user.email}</td>
-                              <td>{user.age}</td>
-                              <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
-                              <td className={styles1.filters__sortDropdown}>
-                                <select
-                                  // value={user.role}
-                                  value={
-                                    tempRoles[user._id] !== undefined
-                                      ? tempRoles[user._id]
-                                      : user.role
-                                  }
-                                  onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
-                                  onBlur={() => {
-                                    setTempRoles((prevRoles) => {
-                                      const updatedRoles = { ...prevRoles };
-                                      delete updatedRoles[user._id];
-                                      return updatedRoles;
-                                    });
-                                  }}
-                                >
-                                  {roles.map((role) => (
-                                    <option key={role} value={role}>
-                                      {role}
-                                    </option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                                  <CancelButton onClick={() => showPatientRecord(user)}> Show More </CancelButton>
-                                )}
-                              </td>
-                              <td className={styles1.tableAction}>
-                                <Button
-                                  type='secondary'
-                                  onClick={(e: any) => {
-                                    const userId = user._id;
-                                    const selectedRole = tempRoles[userId] || user.role;;
-                                    console.log("userId: ", userId)
-                                    console.log("selectedRole: ", selectedRole)
-                                    console.log("Temp role: ", tempRoles[userId])
+            </Modal>
 
-                                    if (selectedRole === 'dentist' || selectedRole === 'employee') {
-                                      console.log('Showing modal for admin or employee users');
-                                      setShowValiUser(true);
-                                      onUpdateUser(user, 'updateRole');
-                                    } else {
-                                      setShowValiUserPatient(true);
-                                      onUpdateUser(user, 'updateRolePatient');
+            {/* MODAL FOR ADMIN/EMPLOYEE VALIDATION */}
+            <Modal open={showValiUser} setOpen={setShowValiUser} modalWidth={400} modalRadius={10}>
+              <h3 className={styles1.cancelTitle}> WARNING! </h3>
+              <p> Are you sure you want this user to be an admin or employee?</p>
+              <input type='hidden' name="_id" value={updateUserFormData._id} />
+              <div className={styles1.cancelActions}>
+                <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
+                <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type="submit">Yes</Button>
+              </div>
+            </Modal>
+
+            {/* MODAL FOR PATIENT VALIDATION */}
+            <Modal open={showValiUserPatient} setOpen={setShowValiUserPatient} modalWidth={400} modalRadius={10}>
+              <h3 className={styles1.cancelTitle}> WARNING! </h3>
+              <p> Are you sure you want this user to be a patient? </p>
+              <input type='hidden' name="_id" value={updateUserFormData._id} />
+              <div className={styles1.cancelActions}>
+                <Button type='secondary' onClick={() => setShowValiUserPatient(false)}>No</Button>
+                <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type="submit">Yes</Button>
+              </div>
+            </Modal>
+
+            {/* MODAL FOR RECORD INFO */}
+            <RecordInfo open={showRecordInfo} setOpen={setShowRecordInfo} recordInfo={recordInfo} />
+
+            <section className={styles1.main}>
+              <div className={styles1.servicecrud}>
+                <div className={styles1.filters}>
+                  <div className={styles1.filters__search}>
+                    <input type='text' className={styles1.filters__searchInput} placeholder='Search account name...'
+                      value={searchQuery}
+                      onChange={handleSearchChange} />
+                    <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
+                  </div>
+                  <div className={styles1.filters__sort}>
+                    <span className={styles1.filters__sortTitle}>Sort By:</span>
+                    <div className={styles1.filters__sortDropdown}>
+                      <select
+                        id="sortSelect"
+                        value={selectedSort}
+                        onChange={(e) => handleSortChange(e.target.value)}
+                      >
+                        {sortBy.map((sort) => (
+                          <option key={sort} value={sort}>
+                            {sort}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles1.filters__sort}>
+                    <span className={styles1.filters__sortTitle}>Filter:</span>
+                    <div className={styles1.filters__sortDetails}>
+                      {filterBy.map((filter) => (
+                        <label key={filter}>
+                          <input
+                            type="checkbox"
+                            value={filter}
+                            onChange={() => handleFilterSelection(filter)}
+                            checked={selectedFilters.includes(filter) || (filter === 'All' && selectedFilters.length === filterBy.length - 1)}
+                          />
+                          {filter}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={styles1.filters__sortGenrep}>
+                    <Button type='secondary' onClick={openPrintableModal}> Generate Report </Button>
+                  </div>
+                </div>
+                {session && (
+                  <main id="printable-table">
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Full Name</th>
+                          <th>Contact Number </th>
+                          <th>Email Address</th>
+                          <th>Age</th>
+                          <th>Sex</th>
+                          <th>User Role</th>
+                          {!isPrinting && <th>Appointment Record </th>}
+                          {!isPrinting && <th>Action</th>}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* THIS IS FOR FILTER */}
+                        {filteredBySelectedFilters.length > 0 ? (
+                          filteredBySelectedFilters
+                            .filter((user) =>
+                              (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
+                            )
+                            .map((user, index) => (
+                              <tr key={user._id}>
+                                <td>{index + 1}</td>
+                                <td>{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''}</td>
+                                <td>{user.contactNumber}</td>
+                                <td>{user.email}</td>
+                                <td>{user.age}</td>
+                                <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
+                                {!isPrinting ? <td className={styles1.filters__sortDropdown}>
+                                  <select
+                                    // value={user.role}
+                                    value={
+                                      tempRoles[user._id] !== undefined
+                                        ? tempRoles[user._id]
+                                        : user.role
                                     }
-                                  }}
-                                >
-                                  Update Role
-                                </Button>
-                                {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                                  <ArchiveButton onClick={(e: any) => {
-                                    const selectedRole = e.target.value;
-                                    onUpdateUser(user, 'archiveUser')
-                                  }}>
-                                    <FontAwesomeIcon
-                                      icon={faFileArchive}
-                                      width={24}
-                                      height={24}
-                                      color={'#ffffff'}
-                                    />
-                                  </ArchiveButton>
-                                )}
+                                    onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                                    onBlur={() => {
+                                      setTempRoles((prevRoles) => {
+                                        const updatedRoles = { ...prevRoles };
+                                        delete updatedRoles[user._id];
+                                        return updatedRoles;
+                                      });
+                                    }}
+                                  >
+                                    {roles.map((role) => (
+                                      <option key={role} value={role}>
+                                        {role}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td> : <td>{tempRoles[user._id] !== undefined
+                                        ? tempRoles[user._id]
+                                        : user.role
+                                      }</td>}
+                                {!isPrinting &&
+                                  <>
+                                    <td>
+                                      {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                                        <CancelButton onClick={() => showPatientRecord(user)}> Show More </CancelButton>
+                                      )}
+                                    </td>
+                                    <td className={styles1.tableAction}>
+                                      <Button
+                                        type='secondary'
+                                        onClick={(e: any) => {
+                                          const userId = user._id;
+                                          const selectedRole = tempRoles[userId] || user.role;;
+                                          console.log("userId: ", userId)
+                                          console.log("selectedRole: ", selectedRole)
+                                          console.log("Temp role: ", tempRoles[userId])
 
-                              </td>
-                            </tr>
-                          ))
-                      ) :
-                        // THIS IS FOR SEARCHING - just named it sort
-                        sortedUser.length > 0 ? (
-                          sortedUser.map((user, index) => (
-                            <tr key={user._id}>
-                              <td>{index + 1}</td>
-                              <td>{`${user.firstName || ''} ${user.lastName || ''}`}</td>
-                              <td>{user.contactNumber}</td>
-                              <td>{user.email}</td>
-                              <td> {user.age}</td>
-                              <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
-                              <td className={styles1.filters__sortDropdown}>
-                                <select
-                                  // value={user.role}
-                                  value={
-                                    tempRoles[user._id] !== undefined
-                                      ? tempRoles[user._id]
-                                      : user.role
-                                  }
-                                  onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
-                                  onBlur={() => {
-                                    setTempRoles((prevRoles) => {
-                                      const updatedRoles = { ...prevRoles };
-                                      delete updatedRoles[user._id];
-                                      return updatedRoles;
-                                    });
-                                  }}
-                                >
-                                  {roles.map((role) => (
-                                    <option key={role} value={role}>
-                                      {role}
-                                    </option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                                  <CancelButton onClick={() => showPatientRecord(user)}> Show More </CancelButton>
-                                )}
-                              </td>
-                              <td className={styles1.tableAction}>
-                                <Button
-                                  type='secondary'
-                                  onClick={(e: any) => {
-                                    const userId = user._id;
-                                    const selectedRole = tempRoles[userId] || user.role;;
-                                    console.log("userId: ", userId)
-                                    console.log("selectedRole: ", selectedRole)
-                                    console.log("Temp role: ", tempRoles[userId])
+                                          if (selectedRole === 'dentist' || selectedRole === 'employee') {
+                                            console.log('Showing modal for admin or employee users');
+                                            setShowValiUser(true);
+                                            onUpdateUser(user, 'updateRole');
+                                          } else {
+                                            setShowValiUserPatient(true);
+                                            onUpdateUser(user, 'updateRolePatient');
+                                          }
+                                        }}
+                                      >
+                                        Update Role
+                                      </Button>
+                                      {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                                        <ArchiveButton onClick={(e: any) => {
+                                          const selectedRole = e.target.value;
+                                          onUpdateUser(user, 'archiveUser')
+                                        }}>
+                                          <FontAwesomeIcon
+                                            icon={faFileArchive}
+                                            width={24}
+                                            height={24}
+                                            color={'#ffffff'}
+                                          />
+                                        </ArchiveButton>
+                                      )}
 
-                                    if (selectedRole === 'dentist' || selectedRole === 'employee') {
-                                      console.log('Showing modal for admin or employee users');
-                                      setShowValiUser(true);
-                                      onUpdateUser(user, 'updateRole');
-                                    } else {
-                                      setShowValiUserPatient(true);
-                                      onUpdateUser(user, 'updateRolePatient');
+                                    </td>
+                                  </>}
+                              </tr>
+                            ))
+                        ) :
+                          // THIS IS FOR SEARCHING - just named it sort
+                          sortedUser.length > 0 ? (
+                            sortedUser.map((user, index) => (
+                              <tr key={user._id}>
+                                <td>{index + 1}</td>
+                                <td>{`${user.firstName || ''} ${user.lastName || ''}`}</td>
+                                <td>{user.contactNumber}</td>
+                                <td>{user.email}</td>
+                                <td> {user.age}</td>
+                                <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
+                                {!isPrinting ? <td className={styles1.filters__sortDropdown}>
+                                  <select
+                                    // value={user.role}
+                                    value={
+                                      tempRoles[user._id] !== undefined
+                                        ? tempRoles[user._id]
+                                        : user.role
                                     }
-                                  }}
-                                >
-                                  Update Role
-                                </Button>
-                                {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                                  <ArchiveButton onClick={(e: any) => {
-                                    const selectedRole = e.target.value;
-                                    onUpdateUser(user, 'archiveUser')
-                                  }}>
-                                    <FontAwesomeIcon
-                                      icon={faFileArchive}
-                                      width={24}
-                                      height={24}
-                                      color={'#ffffff'}
-                                    />
-                                  </ArchiveButton>
-                                )}
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          // GENERAL VIEWING
-                          users.map((user, index) => (
-                            <tr key={user._id}>
-                              <td>{index + 1}</td>
-                              <td>{`${user.firstName} ${user.lastName}`}</td>
-                              <td>{user.contactNumber}</td>
-                              <td>{user.email}</td>
-                              <td> {user.age}</td>
-                              <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
-                              <td className={styles1.filters__sortDropdown}>
-                                <select
-                                  // value={user.role}
-                                  value={
-                                    tempRoles[user._id] !== undefined
-                                      ? tempRoles[user._id]
-                                      : user.role
-                                  }
-                                  onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
-                                  onBlur={() => {
-                                    setTempRoles((prevRoles) => {
-                                      const updatedRoles = { ...prevRoles };
-                                      delete updatedRoles[user._id];
-                                      return updatedRoles;
-                                    });
-                                  }}
-                                >
-                                  {roles.map((role) => (
-                                    <option key={role} value={role}>
-                                      {role}
-                                    </option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                                  <CancelButton onClick={() => showPatientRecord(user)}> Show More </CancelButton>
-                                )}
-                              </td>
-                              <td className={styles1.tableAction}>
-                                <Button
-                                  type='secondary'
-                                  onClick={(e: any) => {
-                                    const userId = user._id;
-                                    const selectedRole = tempRoles[userId] || user.role;;
-                                    console.log("userId: ", userId)
-                                    console.log("selectedRole: ", selectedRole)
-                                    console.log("Temp role: ", tempRoles[userId])
+                                    onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                                    onBlur={() => {
+                                      setTempRoles((prevRoles) => {
+                                        const updatedRoles = { ...prevRoles };
+                                        delete updatedRoles[user._id];
+                                        return updatedRoles;
+                                      });
+                                    }}
+                                  >
+                                    {roles.map((role) => (
+                                      <option key={role} value={role}>
+                                        {role}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td> : <td>{tempRoles[user._id] !== undefined
+                                        ? tempRoles[user._id]
+                                        : user.role
+                                      }</td>}
+                                {!isPrinting &&
+                                  <>
+                                    <td>
+                                      {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                                        <CancelButton onClick={() => showPatientRecord(user)}> Show More </CancelButton>
+                                      )}
+                                    </td>
+                                    <td className={styles1.tableAction}>
+                                      <Button
+                                        type='secondary'
+                                        onClick={(e: any) => {
+                                          const userId = user._id;
+                                          const selectedRole = tempRoles[userId] || user.role;;
+                                          console.log("userId: ", userId)
+                                          console.log("selectedRole: ", selectedRole)
+                                          console.log("Temp role: ", tempRoles[userId])
 
-                                    if (selectedRole === 'dentist' || selectedRole === 'employee') {
-                                      console.log('Showing modal for admin or employee users');
-                                      setShowValiUser(true);
-                                      onUpdateUser(user, 'updateRole');
-                                    } else {
-                                      setShowValiUserPatient(true);
-                                      onUpdateUser(user, 'updateRolePatient');
+                                          if (selectedRole === 'dentist' || selectedRole === 'employee') {
+                                            console.log('Showing modal for admin or employee users');
+                                            setShowValiUser(true);
+                                            onUpdateUser(user, 'updateRole');
+                                          } else {
+                                            setShowValiUserPatient(true);
+                                            onUpdateUser(user, 'updateRolePatient');
+                                          }
+                                        }}
+                                      >
+                                        Update Role
+                                      </Button>
+                                      {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                                        <ArchiveButton onClick={(e: any) => {
+                                          const selectedRole = e.target.value;
+                                          onUpdateUser(user, 'archiveUser')
+                                        }}>
+                                          <FontAwesomeIcon
+                                            icon={faFileArchive}
+                                            width={24}
+                                            height={24}
+                                            color={'#ffffff'}
+                                          />
+                                        </ArchiveButton>
+                                      )}
+                                    </td>
+                                  </>
+                                }
+                              </tr>
+                            ))
+                          ) : (
+                            // GENERAL VIEWING
+                            users.map((user, index) => (
+                              <tr key={user._id}>
+                                <td>{index + 1}</td>
+                                <td>{`${user.firstName} ${user.lastName}`}</td>
+                                <td>{user.contactNumber}</td>
+                                <td>{user.email}</td>
+                                <td> {user.age}</td>
+                                <td> {user.sex === 'M' ? 'Male' : 'Female'}</td>
+                                {!isPrinting ? <td className={styles1.filters__sortDropdown}>
+                                  <select
+                                    // value={user.role}
+                                    value={
+                                      tempRoles[user._id] !== undefined
+                                        ? tempRoles[user._id]
+                                        : user.role
                                     }
-                                  }}
-                                >
-                                  Update Role
-                                </Button>
-                                {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
-                                  <ArchiveButton onClick={(e: any) => {
-                                    const selectedRole = e.target.value;
-                                    onUpdateUser(user, 'archiveUser')
-                                  }}>
-                                    <FontAwesomeIcon
-                                      icon={faFileArchive}
-                                      width={24}
-                                      height={24}
-                                      color={'#ffffff'}
-                                    />
-                                  </ArchiveButton>
-                                )}
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                    </tbody>
-                  </table>
-                </main>
-              )}
-            </div>
-          </section>
-        </>}
+                                    onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                                    onBlur={() => {
+                                      setTempRoles((prevRoles) => {
+                                        const updatedRoles = { ...prevRoles };
+                                        delete updatedRoles[user._id];
+                                        return updatedRoles;
+                                      });
+                                    }}
+                                  >
+                                    {roles.map((role) => (
+                                      <option key={role} value={role}>
+                                        {role}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td> : <td>{tempRoles[user._id] !== undefined
+                                        ? tempRoles[user._id]
+                                        : user.role
+                                      }</td>}
+                                {!isPrinting &&
+                                  <>
+                                    <td>
+                                      {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                                        <CancelButton onClick={() => showPatientRecord(user)}> Show More </CancelButton>
+                                      )}
+                                    </td>
+                                    <td className={styles1.tableAction}>
+                                      <Button
+                                        type='secondary'
+                                        onClick={(e: any) => {
+                                          const userId = user._id;
+                                          const selectedRole = tempRoles[userId] || user.role;;
+                                          console.log("userId: ", userId)
+                                          console.log("selectedRole: ", selectedRole)
+                                          console.log("Temp role: ", tempRoles[userId])
+
+                                          if (selectedRole === 'dentist' || selectedRole === 'employee') {
+                                            console.log('Showing modal for admin or employee users');
+                                            setShowValiUser(true);
+                                            onUpdateUser(user, 'updateRole');
+                                          } else {
+                                            setShowValiUserPatient(true);
+                                            onUpdateUser(user, 'updateRolePatient');
+                                          }
+                                        }}
+                                      >
+                                        Update Role
+                                      </Button>
+                                      {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                                        <ArchiveButton onClick={(e: any) => {
+                                          const selectedRole = e.target.value;
+                                          onUpdateUser(user, 'archiveUser')
+                                        }}>
+                                          <FontAwesomeIcon
+                                            icon={faFileArchive}
+                                            width={24}
+                                            height={24}
+                                            color={'#ffffff'}
+                                          />
+                                        </ArchiveButton>
+                                      )}
+                                    </td>
+                                  </>
+                                }
+                              </tr>
+                            ))
+                          )}
+                      </tbody>
+                    </table>
+                  </main>
+                )}
+              </div>
+            </section>
+          </>}
       </>
     )
   }
