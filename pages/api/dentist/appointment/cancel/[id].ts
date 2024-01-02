@@ -32,8 +32,8 @@ export default async function userHandler (
         }
 
         Object.assign(body, {
-          // status: APPOINTMENT_STATUS.canceled,
-          // cancelReason: req.body.cancelReason
+          status: APPOINTMENT_STATUS.canceled,
+          cancelReason: req.body.cancelReason
         });
 
         const appointmentCanceled = await Appointment

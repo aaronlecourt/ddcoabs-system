@@ -11,6 +11,9 @@ import { isChangePasswordFormValid } from '../../validations/changepassword';
 import Button from '../Button';
 import useAuthGuard from '../../guards/auth.guard';
 import { useRouter } from 'next/router';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from "react";
 
 interface Item {
   text: string,
@@ -19,8 +22,8 @@ interface Item {
 }
 
 export default function Navbar({ items = [] }: { items: Item[] }) {
-  const { session, status } = useAuthGuard();
   const router = useRouter();
+  const { session, status } = useAuthGuard();
   const user = session?.user;
 
   const [showDropdown, setShowDropdown] = useState(false)
@@ -99,6 +102,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
           }
         }))
         console.error('Error comparison of old password to existing password:', error);
+        toast.error('Error in comparing old password to existing password. ')
       });
     }
   }
@@ -127,13 +131,14 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
       .then(async (response) => {
         const responseMsg = await response.json()
         if (!response.ok) {
-          alert('password update failed! ' + JSON.stringify(responseMsg))
+          toast.error('Password update failed! ' + JSON.stringify(responseMsg))
         } else {
-          alert('password successfully updated!')
+          toast.success('Password successfully updated!')
         }
       })  
       .catch(error => {
         console.error('Error updating password:', error);
+        toast.error ('Error updating password.')
       })
       .then(() => {
         resetForm();
@@ -154,6 +159,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
   const renderOldPassword = () => {
     return (
       <>
+      <ToastContainer />
         <div className={styles.formField}>
           <div className='formLabel'>
             <label>Enter your old password to proceed:</label>
@@ -178,6 +184,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
   const renderChangePassword = () => {
     return (
       <>
+      <ToastContainer />
         <div className={styles.formField}>
           <div className='formLabel'>
             <label>New Password</label>
@@ -214,8 +221,43 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
     )
   }
 
+
+  const handleLogout = async () => {
+    // Add a delay before signing out
+    const delayTime = 1300; // Adjust the delay time as needed
+  
+    // Show notification
+    toast.success('You will be logged out in a sec', {
+      autoClose: delayTime,
+    });
+  
+    // Set a state to control the visibility of the notification
+    setShowLogoutNotification(true);
+  
+    setTimeout(async () => {
+      await signOut();
+      setShowLogoutNotification(false); // Hide the notification
+      router.push('/home'); // Redirect after signing out
+    }, delayTime);
+  };
+  
+  const [showLogoutNotification, setShowLogoutNotification] = useState(false);
+
+  useEffect(() => {
+    // Check for saved notifications in localStorage
+    const savedNotification = localStorage.getItem('logoutNotification');
+  
+    if (savedNotification) {
+      // Display the saved notification
+      toast.success(savedNotification);
+  
+      // Clear the saved notification from localStorage
+      localStorage.removeItem('logoutNotification');
+    }
+  }, []); // Run this effect only once when the component mounts
   return (
     <>
+      <ToastContainer autoClose={10000} />
       <Modal open={showChangePasswordModal} setOpen={setShowChangePasswordModal} modalWidth={500} modalRadius={10} onClose={cancel}>
         <h3>Change Password</h3>
         {!showChangePasswordField ? renderOldPassword() : renderChangePassword()} 
@@ -258,7 +300,7 @@ export default function Navbar({ items = [] }: { items: Item[] }) {
           <div className={styles.navbar__profileDropdown}>
             <a href='/profile'>Profile</a>
             <a href='#' onClick={openChangePasswordModal}>Change Password</a>
-            <a href='#' onClick={() => signOut()}>Sign Out</a>
+            <a href='#' onClick={handleLogout}>Sign Out</a>
           </div>
         }
       </nav>

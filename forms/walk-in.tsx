@@ -12,6 +12,8 @@ import styles from "../styles/forms/patient.module.scss";
 import { isWalkInPatientFormValid } from "../validations/patientform";
 import { BookingFormContextDentist } from "../pages/walk-in";
 import Button from "../components/Button";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const PatientWalkIn = {
   patientName: "",
@@ -33,6 +35,9 @@ export const ErrorPatientFormObjectDentist = {
 };
 
 const BookPatientFormDentist = forwardRef(({}: any, ref) => {
+  const [showGuardianNotification, setShowGuardianNotification] = useState(false); //for notif
+  const [isAgeInputTouched, setIsAgeInputTouched] = useState(false);
+
   const {
     patientFormDentist,
     setPatientFormDentist,
@@ -66,43 +71,81 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
     }
   }, []);
 
-// Validation logic for guardian details when age is less than 18
-useEffect(() => {
-  if (formData.age < 18) {
-    setErrorFormData((prevErrors: any) => ({
-      ...prevErrors,
-      guardianName: {
-        ...prevErrors.guardianName,
-        optional: false, // Not optional anymore
-        error: !formData.guardianName.trim(), // Set error if guardian name is empty
-        message: "Guardian name is required for minors.", // Error message
-      },
-      guardianNumber: {
-        ...prevErrors.guardianNumber,
-        optional: false, // Not optional anymore
-        error: !formData.guardianNumber.trim(), // Set error if guardian number is empty
-        message: "Guardian number is required for minors.", // Error message
-      },
-    }));
-  } else {
-    // If age is 18 or above, make guardian details optional
-    setErrorFormData((prevErrors: any) => ({
-      ...prevErrors,
-      guardianName: {
-        ...prevErrors.guardianName,
-        optional: true,
-        error: false,
-        message: null,
-      },
-      guardianNumber: {
-        ...prevErrors.guardianNumber,
-        optional: true,
-        error: false,
-        message: null,
-      },
-    }));
-  }
-}, [formData.age]);
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const next = (e: any) => {
+      e.preventDefault();
+    
+      // Check if the form is valid
+      if (!isWalkInPatientFormValid(formData, errorFormData, setErrorFormData)) {
+        // Form is not valid, do not proceed
+        return;
+      }
+    
+      // Check if Guardian details are required
+      if (isAgeInputTouched && formData.age < 18) {
+        setErrorFormData((prevErrors: any) => ({
+          ...prevErrors,
+          guardianName: {
+            ...prevErrors.guardianName,
+            optional: false,
+            error: !formData.guardianName.trim(),
+            message: "Guardian name is required for minors.",
+          },
+          guardianNumber: {
+            ...prevErrors.guardianNumber,
+            optional: false,
+            error: !formData.guardianNumber.trim(),
+            message: "Guardian number is required for minors.",
+          },
+        }));
+    
+        // Display toast notification only if it hasn't been shown yet
+        if (!showGuardianNotification) {
+          setShowGuardianNotification(true);
+          toast.error("Guardian details are required for minors.", {
+            position: "top-right",
+            autoClose: 5000, // 5 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+
+        return;
+      }
+    
+      // If age is 18 or above, make guardian details optional
+      setErrorFormData((prevErrors: any) => ({
+        ...prevErrors,
+        guardianName: {
+          ...prevErrors.guardianName,
+          optional: true,
+          error: false,
+          message: null,
+        },
+        guardianNumber: {
+          ...prevErrors.guardianNumber,
+          optional: true,
+          error: false,
+          message: null,
+        },
+      }));
+    
+      // Reset the notification flag when the age is updated
+      setShowGuardianNotification(false);
+    
+      // Proceed to the next step
+      console.log("Form Data:", formData);
+      onStepNext(e);
+    };
+
+    // Cleanup the timeout on component unmount or when the effect is re-executed
+    return () => clearTimeout(timeoutId);
+  }, [formData.age, isAgeInputTouched]);
 
   const next = (e: any) => {
     e.preventDefault();
@@ -161,15 +204,28 @@ useEffect(() => {
           </div>
           <div className={styles.form__Input}>
             <input
-              type="number"
+              type="text"
+              pattern="\d*"
+              inputMode="numeric"
               name="age"
-              onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
-              value={formData.age}
+              min="0"
+              max="150"
+              placeholder="Enter age"
+              onBlur={() => setIsAgeInputTouched(true)} 
+              onChange={(e) => {
+                const numericValue = parseInt(e.target.value.replace(/\D/g, ''), 10);
+                const clampedValue = Math.min(Math.max(numericValue, 0), 150);
+                handleFormDataChange(
+                  { target: { name: 'age', value: clampedValue } },
+                  setFormData,
+                  setErrorFormData
+                );
+              }}
+              value={formData.age ? formData.age.toString() : ''}
             />
           </div>
         </div>
         </div>
-        
         <div className={styles.form__row}>
         <div className={styles.form__row__field}>
           <div className={styles.form__row__field__label}>
@@ -239,7 +295,7 @@ useEffect(() => {
           </div>
         </div>
       </div>
-
+      <ToastContainer />
       <div className={styles.next}>
         <Button onClick={next}>Next</Button>
       </div>

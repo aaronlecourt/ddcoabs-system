@@ -18,3 +18,18 @@ export const isPasswordValid = (password: string): boolean => {
   const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+={}[\]:;'"<>,.?/\\|~-]).{8,}$/;
   return passwordRegex.test(password);
 };
+
+export const isInput50Chars = (input: string): boolean => {
+  return input.length <= 50;
+  //true or false output
+}
+
+export const isInput25Chars = (input: string): boolean => {
+  return input.length <= 25;
+  //true or false output
+}
+
+export const atLeast5Chars = (input: string): boolean => {
+  return input.length >= 5;
+  //true or false output
+}

@@ -92,10 +92,13 @@ export default function Confirmation() {
         if (!response.ok) {
           const errorMsgs: any = new Set(responseMsg);
           setErrors([...errorMsgs]);
-          toast.error('Appointment confirmation failed: ' + JSON.stringify(responseMsg));
+          console.error('Appointment confirmation failed: ' + JSON.stringify(responseMsg));
+          toast.error('Appoinment confirmation failed.')
         } else {
-          toast.success('Appointment Confirmation Successful');
-          window.location.href = '/';
+          toast.success('Appointment confirmed successfully!');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
         }
       } catch (error) {
         toast.error('Appointment confirmation failed');

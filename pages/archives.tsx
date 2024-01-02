@@ -5,6 +5,7 @@ import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Button from '../components/Button';
 import Button2 from '../components/Button2';
+import CancelButton from '../components/CancelButton';
 import DeleteButton from '../components/DeleteButton';
 import RestoreButton from '../components/RestoreButton';
 import Modal from '../components/Modal';
@@ -272,11 +273,14 @@ const deleteAccount = async (userId: string) => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to delete service');
+      throw new Error('Failed to delete account');
     }else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      toast.success("SUCCESSFULLY DELETED ACCOUNT")
+      toast.success("Account successfully deleted")
+      setTimeout(() => {
+        window.location.href = '/archives';
+      }, 1500);
       // If deletion is successful, update the services state by removing the deleted service
       setShowDeleteAccount(false);
       setAccounts((prevAccount) =>
@@ -284,7 +288,7 @@ const deleteAccount = async (userId: string) => {
       );
     }
   } catch (error) {
-    console.error('Error deleting service:', error);
+    console.error('Error deleting account:', error);
   }
 };
 
@@ -304,7 +308,10 @@ const restoreAccount = async (userId: string) => {
     } else {
       const restoredAccount = await response.json();
       console.log('Account restored: ', restoredAccount);
-      toast.success("SUCCESSFULLY RESTORED ACCOUNT")
+      toast.success("Account restored successfully")
+      setTimeout(() => {
+        window.location.href = '/archives';
+      }, 1500);
       // If deletion is successful, update the services state by removing the deleted service
       setShowRestoreAccount(false);
       setAccounts((prevAccount) =>
@@ -332,8 +339,10 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to delete service');
       } else {
-        toast.success("SUCCESSFULLY DELETED THE SERVICE")
-
+        toast.success("Service deleted successfully!")
+        setTimeout(() => {
+          window.location.href = '/archives';
+        }, 1500);
         // If deletion is successful, update the services state by removing the deleted service
         setShowDeleteService(false);
         setServices((prevServices) =>
@@ -360,7 +369,10 @@ const restoreAccount = async (userId: string) => {
       if (!response.ok) {
         throw new Error('Failed to restore service');
       } else {
-        toast.success("SUCCESSFULLY RESTORED SERVICE")
+        toast.success("Service restored successfully!")
+        setTimeout(() => {
+          window.location.href = '/archives';
+        }, 1500);
         // If deletion is successful, update the services state by removing the deleted service
         setShowRestoreService(false);
         setServices((prevServices) =>
@@ -369,7 +381,7 @@ const restoreAccount = async (userId: string) => {
       }
 
     } catch (error) {
-      console.error('Error deleting service:', error);
+      console.error('Error restoring service:', error);
     }
   };
   
@@ -380,10 +392,10 @@ const renderContent = () => {
       {/* ACCOUNTS SERVICE */}
       <Modal open={showDeleteAccount} setOpen={setShowDeleteAccount} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to DELETE this account with their records?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to DELETE this account with their records?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
-            <Button type='secondary' onClick={() => setShowDeleteAccount(false)}>No</Button>
+            <CancelButton onClick={() => setShowDeleteAccount(false)}>No</CancelButton>
             <Button onClick={deleteAccount} type = "submit">Yes</Button>
           </div>
         </Modal>
@@ -391,10 +403,10 @@ const renderContent = () => {
         {/* ACCOUNTS SERVICE */}
       <Modal open={showRestoreAccount} setOpen={setShowRestoreAccount} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to RESTORE this account with their records?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to RESTORE this account with their records?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
-            <Button type='secondary' onClick={() => setShowRestoreAccount(false)}>No</Button>
+            <CancelButton onClick={() => setShowRestoreAccount(false)}>No</CancelButton>
             <Button onClick={restoreAccount} type = "submit">Yes</Button>
           </div>
         </Modal>
@@ -403,7 +415,7 @@ const renderContent = () => {
       {/* DELETE SERVICE */}
       <Modal open={showDeleteService} setOpen={setShowDeleteService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to DELETE this dental service?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to DELETE this dental service?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowDeleteService(false)}>No</Button>
@@ -414,7 +426,7 @@ const renderContent = () => {
         {/* RESTORE SERVICE */}
       <Modal open={showRestoreService} setOpen={setShowRestoreService} modalWidth={400} modalRadius={10}>
           <h3 className={styles1.cancelTitle}> WARNING! </h3>
-          <p> Are you sure you want to RESTORE this dental service?</p>
+          <p className={styles1.cancelSub}> Are you sure you want to RESTORE this dental service?</p>
           <input type='hidden' name = "_id" value={updateServiceFormData._id}/>
           <div className={styles1.cancelActions}>
             <Button type='secondary' onClick={() => setShowRestoreService(false)}>No</Button>
@@ -427,8 +439,18 @@ const renderContent = () => {
           <div className={styles1.servicecrud}>
           <div className={styles1.filters1}> 
             <h4 className={styles1.filters__sortTitle}> Record Type: </h4>
-            <Button2 onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button2>
-            <Button2 onClick={() => handleRecordTypeChange('services')}> Services </Button2>
+            {showAccountsTable ? (
+              <>
+              <Button2 type="secondary" onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button2>
+              <Button2 onClick={() => handleRecordTypeChange('services')}> Services </Button2>
+              </>
+            ): (
+              <>
+              <Button2 onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button2>
+              <Button2 type="secondary" onClick={() => handleRecordTypeChange('services')}> Services </Button2>
+              </>
+            )}
+            
 
             <h4 className={styles1.filters__sortTitle}> Sort By: </h4>
             <div className={styles1.filters__sortDropdown}>
@@ -468,7 +490,7 @@ const renderContent = () => {
                       <td> {account.name} </td>
                       <td> {account.email} </td>
                       <td> {account.contactNumber} </td>
-                      <td> {account.sex} </td>
+                      <td> {account.sex == 'M' ? 'Male' : 'Female'} </td>
                       <td> {renderDateOfBirth(account.dateOfBirth)} </td>
                       <td> {account.address} </td>
                       <td className={styles1.cancelActions}> 
@@ -505,9 +527,9 @@ const renderContent = () => {
                     <th>#</th>
                     <th>Service Name</th>
                     <th>Base Charge</th>
-                    <th> Type </th>
-                    <th>Description</th>
-                    <th> Action </th>
+                    <th>Type</th>
+                    <th colSpan={2}>Description</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -516,12 +538,26 @@ const renderContent = () => {
                     <tr key={service._id}>
                       <td>{index + 1}</td>
                       <td>{service.name}</td>
-                      <td>₱ {service.price.toFixed(2)}</td>
+                      <td> P{service.price.toFixed(2)}</td>
                       <td> {service.type} </td>
-                      <td>{service.description}</td>
-                      <td> 
-                        <Button onClick={() => onUpdateService(service, 'delete')}> DELETE </Button>
-                        <Button onClick={() => onUpdateService(service, 'restore')}> RESTORE </Button>
+                      <td colSpan={2}>{service.description}</td>
+                      <td className={styles1.cancelActions}> 
+                        <RestoreButton onClick={() => onUpdateService(service, 'restore')} title="Restore Record">
+                          <FontAwesomeIcon
+                          icon={faRefresh}
+                          width={24}
+                          height={24}
+                          color={"#ffffff"}
+                          />
+                        </RestoreButton>
+                        <DeleteButton onClick={() => onUpdateService(service, 'delete')} title="Delete Record">
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            width={24}
+                            height={24}
+                            color={"#ffffff"}
+                            />
+                        </DeleteButton>
                       </td>
                     </tr>
                     ))

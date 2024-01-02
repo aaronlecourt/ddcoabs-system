@@ -10,6 +10,7 @@
   border: 1px solid $grey;
   align-items: center;
   display: flex;
+  cursor: pointer;
 
   &:hover {
     background: rgba($color: $green, $alpha: 0.25);
@@ -17,11 +18,12 @@
   }
 
   &Secondary {
-    background: $green;
-    color: white;
+    background: rgba($color: $green, $alpha: 0.25);
+    border: 1px solid $green;
 
     &:hover {
-      background: $darkgreen;
+      background: rgba($color: $green, $alpha: 0.4);
+
     }
   }
 }

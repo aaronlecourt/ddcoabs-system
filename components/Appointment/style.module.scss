@@ -96,6 +96,11 @@
     justify-content: space-between;
   }
 
+  &__walkIn{
+    border: 1px solid $green;
+    background-color: rgba($color: $green, $alpha: 0.05);
+  }
+
   &__title {
     font-size: 16px;
     color: $text;

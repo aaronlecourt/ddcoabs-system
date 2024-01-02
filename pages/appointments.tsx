@@ -125,14 +125,17 @@ export default function Home({
           .then(async (response) => {
             const responseMsg = await response.json();
             if (!response.ok) {
-              alert("appointment cancel failed: " + JSON.stringify(responseMsg));
+              console.error("Appointment cancel failed: " + JSON.stringify(responseMsg));
+              toast.error('Cancelling appointment failed.')
             } else {
-              alert("Appointment Cancel Successful");
-              window.location.href = "/";
+              toast.success("Appointment successfully canceled");
+              setTimeout(() => {
+                window.location.href = '/';
+              }, 1500);
             }
           })
           .catch((error) => {
-            alert("Appointment Cancel Failed");
+            toast.error("Appointment cancel dailed");
             console.error("Error updating data:", error);
           });
       }

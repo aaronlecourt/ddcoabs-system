@@ -7,6 +7,8 @@ import APPOINTMENT_STATUS from "../../constants/appointmentStatus";
 import { IAppointment } from '../../pages/interfaces/IAppointment';
 import Modal from '../Modal';
 import Button from '../Button';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Appointment({ appointment, onCancelAppointment, isPatient }: any) {
   const [collapse, setCollapse] = useState(true);
@@ -110,14 +112,14 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
       });
   
       if (response.ok) {
-        alert('Appointment marked as done!');
+        toast.success('Appointment marked as done!');
         // Optionally, you can update the UI to reflect the change to 'done'
       } else {
-        alert('Failed to mark appointment as done');
+        toast.error('Failed to mark appointment as done');
       }
     } catch (error) {
       console.error('Error marking appointment as done:', error);
-      alert('Failed to mark appointment as done');
+      toast.error('Failed to mark appointment as done');
     } finally {
       toggleConfirmationModal();
     }
@@ -130,20 +132,21 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
       });
   
       if (response.ok) {
-        alert('Appointment confirmed!');
+        toast.success('Appointment confirmed!');
       } else {
-        alert('Failed to confirm appointment');
+        toast.error('Failed to confirm appointment');
       }
     } catch (error) {
       console.error('Error marking appointment as cofirmed:', error);
-      alert('Failed to mark appointment as cofirmed');
+      toast.error('Failed to mark appointment as cofirmed');
     } finally {
       toggleAgreeModal();
     }
   };
 
   return (
-    <div className={styles.appointments__itemContainer}>
+    <div className={`${styles.appointments__itemContainer} ${appointment.isWalkIn ? styles.appointments__walkIn : ''}`}>
+      <ToastContainer />
       {showModal && selectedAppointmentDetails && (
         <Modal open={toggleModal} setOpen={toggleModal} modalWidth={900} modalRadius={10}>
           {/* Render appointment details here */}
@@ -203,9 +206,10 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             
           </div>
 
-        <hr className={styles.apptDetails_Divide}/>
-          
-          <div className={styles.apptDetails_OtherDetails}>
+          {!appointment.isWalkIn && (
+            <>
+            <hr className={styles.apptDetails_Divide}/>
+            <div className={styles.apptDetails_OtherDetails}>
             <p><b>Name of Physician:</b> {selectedAppointmentDetails.details.physicianName}</p>
             {selectedAppointmentDetails.details.specialty ? (
               <p><b>Specialty:</b> {selectedAppointmentDetails.details.specialty}</p>
@@ -220,66 +224,70 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           </div>
 
           <div className={styles.apptDetails_More}>
-            <div className={styles.apptDetails_Sub}>
-              <h3>Medical History</h3>
-              <p>Good Health: {selectedAppointmentDetails.details.goodHealth}</p>
-              <p>Medical Treatment: {selectedAppointmentDetails.details.medicalTreatment}</p>
-                {selectedAppointmentDetails.details.medicalTreatment === 'yes' && (
-                  <span>{selectedAppointmentDetails.details.medicalTreatmentValue}</span>
-                )}
-              <p>Illness: {selectedAppointmentDetails.details.illness}</p>
-                {selectedAppointmentDetails.details.illness === 'yes' && (
-                  <span>{selectedAppointmentDetails.details.illnessValue}</span>
-                )}
-              <p>Hospitalized: {selectedAppointmentDetails.details.hospitalized}</p>
-                {selectedAppointmentDetails.details.hospitalized === 'yes' && (
-                  <span>{selectedAppointmentDetails.details.hospitalizedValue}</span>
-                )}
-              <p>Medication: {selectedAppointmentDetails.details.medication}</p>
-                {selectedAppointmentDetails.details.medication === 'yes' && (
-                  <span>{selectedAppointmentDetails.details.medicationValue}</span>
-                )}
-              <p>Tobacco: {selectedAppointmentDetails.details.tobacco}</p>
-              <p>Alcohol: {selectedAppointmentDetails.details.alchohol}</p>
-              <p>Allergy: {selectedAppointmentDetails.details.allergy}</p>
-                {selectedAppointmentDetails.details.allergy === 'yes' && (
-                  <span>{selectedAppointmentDetails.details.allergyValue}</span>
-                )}                
-              {sex === 'F' && (
-                <>
-                <p>Pregnant: {selectedAppointmentDetails.details.pregnant}</p>
-                <p>Nursing: {selectedAppointmentDetails.details.nursing}</p>
-                <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
-                </>
+          <div className={styles.apptDetails_Sub}>
+            <h3>Medical History</h3>
+            <p>Good Health: {selectedAppointmentDetails.details.goodHealth}</p>
+            <p>Medical Treatment: {selectedAppointmentDetails.details.medicalTreatment}</p>
+              {selectedAppointmentDetails.details.medicalTreatment === 'yes' && (
+                <span>{selectedAppointmentDetails.details.medicalTreatmentValue}</span>
               )}
-              
-              {selectedAppointmentDetails.details.others && !isPatient && (
-                <>
-                <br />
-                  <h3>Have or has had:</h3>
-                  {selectedAppointmentDetails.details.others ? (
-                    selectedAppointmentDetails.details.others.includes('Select this if nothing applies') ? (
-                      <li>None</li>
-                    ) : (
-                      selectedAppointmentDetails.details.others.map((item: string, index: number) => (
-                        <li key={index}>{item}</li>
-                      ))
-                    )
-                  ) : (
+            <p>Illness: {selectedAppointmentDetails.details.illness}</p>
+              {selectedAppointmentDetails.details.illness === 'yes' && (
+                <span>{selectedAppointmentDetails.details.illnessValue}</span>
+              )}
+            <p>Hospitalized: {selectedAppointmentDetails.details.hospitalized}</p>
+              {selectedAppointmentDetails.details.hospitalized === 'yes' && (
+                <span>{selectedAppointmentDetails.details.hospitalizedValue}</span>
+              )}
+            <p>Medication: {selectedAppointmentDetails.details.medication}</p>
+              {selectedAppointmentDetails.details.medication === 'yes' && (
+                <span>{selectedAppointmentDetails.details.medicationValue}</span>
+              )}
+            <p>Tobacco: {selectedAppointmentDetails.details.tobacco}</p>
+            <p>Alcohol: {selectedAppointmentDetails.details.alchohol}</p>
+            <p>Allergy: {selectedAppointmentDetails.details.allergy}</p>
+              {selectedAppointmentDetails.details.allergy === 'yes' && (
+                <span>{selectedAppointmentDetails.details.allergyValue}</span>
+              )}                
+            {sex === 'F' && (
+              <>
+              <p>Pregnant: {selectedAppointmentDetails.details.pregnant}</p>
+              <p>Nursing: {selectedAppointmentDetails.details.nursing}</p>
+              <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
+              </>
+            )}
+            
+            {selectedAppointmentDetails.details.others && !isPatient && (
+              <>
+              <br />
+                <h3>Have or has had:</h3>
+                {selectedAppointmentDetails.details.others ? (
+                  selectedAppointmentDetails.details.others.includes('Select this if nothing applies') ? (
                     <li>None</li>
-                  )}
-                </>
-              )}
-              
-                  
-            </div>
-            <div className={styles.apptDetails_Sub}>
-              <h3>Dental History</h3>
-              <p>Previous Dentist: {selectedAppointmentDetails.details.previousDentist || 'N/A'}</p>
-              <p>Previous Treatment: {selectedAppointmentDetails.details.previousTreatment || 'N/A'}</p>
-              <p>Last Dental Visit: {selectedAppointmentDetails.details.lastDentalVisit || 'N/A'}</p>
-            </div>
+                  ) : (
+                    selectedAppointmentDetails.details.others.map((item: string, index: number) => (
+                      <li key={index}>{item}</li>
+                    ))
+                  )
+                ) : (
+                  <li>None</li>
+                )}
+              </>
+            )}
+            
+                
           </div>
+          <div className={styles.apptDetails_Sub}>
+            <h3>Dental History</h3>
+            <p>Previous Dentist: {selectedAppointmentDetails.details.previousDentist || 'N/A'}</p>
+            <p>Previous Treatment: {selectedAppointmentDetails.details.previousTreatment || 'N/A'}</p>
+            <p>Last Dental Visit: {selectedAppointmentDetails.details.lastDentalVisit || 'N/A'}</p>
+          </div>
+          </div>
+            </>
+          )}
+
+          
         </Modal>
       )}
 
@@ -349,7 +357,11 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
           </div>
         </Modal>
       )}
-      <div className={styles.appointments__item} onClick={openAppointment}>
+      
+      <div 
+        className={`${styles.appointments__item}`}
+        onClick={openAppointment}
+      >
         <div className={styles.appointments__title}>{appointment.dentistService || 'Consultation'}</div>
         {!isPatient && <div className={styles.appointments__user}>
           <FontAwesomeIcon icon={faUser} width={15} height={15} color={'#c3c3c3'} />
@@ -403,7 +415,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
             </div>
           </>
         }
-        {appointment.status == APPOINTMENT_STATUS.confirmed && !isPatient &&
+        {appointment.status == APPOINTMENT_STATUS.confirmed && !isPatient && !appointment.isWalkIn &&
           <>
             <div className={styles.appointments__details__separator}></div>
             <div className={styles.appointments__details__row2}>
@@ -414,6 +426,21 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={reschedule}>
                 <FontAwesomeIcon icon={faPencil} color={'#FFE72E'} width={15} />
                 <span>Reschedule</span>
+              </div>
+              {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
+              <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>
+                <div className={styles.mainAction} onClick={toggleConfirmationModal}>MARK AS DONE</div>
+              </div>
+            </div>
+          </>
+        }
+        {appointment.status == APPOINTMENT_STATUS.confirmed && !isPatient && appointment.isWalkIn &&
+          <>
+            <div className={styles.appointments__details__separator}></div>
+            <div className={styles.appointments__details__row2}>
+            <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={toggleModal}>
+                <FontAwesomeIcon icon={faEye} color={'#606060'} width={15} />
+                <span>Show Details</span>
               </div>
               {/* <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`} onClick={done}> */}
               <div className={`${styles.appointments__details__rowItem} ${styles.appointments__details__rowItemClickable}`}>

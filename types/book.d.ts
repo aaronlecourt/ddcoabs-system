@@ -36,28 +36,28 @@ export interface Question {
 }
 
 export interface PatientFormData {
-  physicianName: string;
-  officeAddress: string;
-  specialty: string;
+  physicianName: string; //50
+  officeAddress: string; //50
+  specialty: string; //25
   goodHealth: string;
   medicalTreatment: string;
-  medicalTreatmentValue: string;
+  medicalTreatmentValue: string;  //50
   illness: string;
-  illnessValue: string;
+  illnessValue: string; //50
   hospitalized: string;
-  hospitalizedValue: string;
+  hospitalizedValue: string; //50
   medication: string;
-  medicationValue: string;
+  medicationValue: string; //50
   tobacco: string;
   alchohol: string;
   allergy: string;
-  allergyValue: string;
+  allergyValue: string; //50
   pregnant: string;
   nursing: string;
   birthControl: string;
   others: string[];
-  previousDentist: string;
-  previousTreatment: string;
+  previousDentist: string; //50
+  previousTreatment: string; //25
   lastDentalVisit: string;
 }
 

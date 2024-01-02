@@ -14,6 +14,14 @@
   border-radius: 10px;
   border: 1px solid $grey;
   background-color: #FAFAFA;
+  table-layout: fixed;
+
+  &2 {
+    width: 100%;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid $grey;
+  background-color: #FAFAFA;
 
   th {
     color: $text;
@@ -21,7 +29,8 @@
     font-weight: 700;
     border-bottom: 1px dashed $grey;
     padding-bottom: 1rem;
-
+    text-align: left;
+    padding-left: 1rem;
   }
 
   tr {
@@ -31,7 +40,35 @@
   td {
     color: $text;
     border-bottom: 1px dashed $grey;
-    padding: 0.4rem 1rem;
+    padding: 0.3rem 1rem;
     text-align: left;
+  }
+  }
+
+  th {
+    color: $text;
+    font-family: 'Poppins-Bold';
+    font-weight: 700;
+    border-bottom: 1px dashed $grey;
+    padding-bottom: 1rem;
+    text-align: left;
+    padding-left: 1rem;
+  }
+
+  tr {
+    height: 20px;
+  }
+
+  td {
+    color: $text;
+    border-bottom: 1px dashed $grey;
+    padding: 0.3rem 1rem;
+    text-align: left;
+  }
+  
+  .formInput__errorMessage {
+    color: red;
+    margin-top: 5px;
+    font-size: 12px;
   }
 }

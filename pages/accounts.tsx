@@ -238,13 +238,16 @@ export default function Accounts() {
   
       if (!response.ok) {
         const error = await response.json();
-        alert('Update failed: ' + JSON.stringify(error));
+        toast.error('Update role failed: ' + JSON.stringify(error));
       } else {
         const updatedUser = await response.json();
         console.log('User role updated: ', updatedUser);
         setShowValiUser(false);
         setShowValiUserPatient(false);
-  
+        toast.success ('User role updated successfully!')
+        setTimeout(() => {
+          window.location.href = '/accounts';
+        }, 5000);
         setUsers((prevServices) =>
           prevServices.map((prevService) =>
             prevService._id === updatedUser._id ? updatedUser : prevService
@@ -252,8 +255,8 @@ export default function Accounts() {
         );
       }
     } catch (error) {
-      alert('Update failed');
-      console.error('Error updating service:', error);
+      toast.error('Update role failed');
+      console.error('Error updating role:', error);
     }
 
   };
@@ -279,12 +282,15 @@ export default function Accounts() {
       .then(async (response) => {
         if (!response.ok) {
           const error = await response.json();
-          alert('Update failed: ' + JSON.stringify(error));
+          toast.error('Archiving failed: ' + JSON.stringify(error));
         } else {
           const updatedUser = await response.json();
           console.log('User updated: ', updatedUser);
           setShowArchiveUser(false); 
-
+          toast.success ('User archived successfully!')
+          setTimeout(() => {
+            window.location.href = '/accounts';
+          }, 5000);
             setUsers((prevUsers) =>
             prevUsers.map((prevUser) =>
               prevUser._id === updatedUser._id ? updatedUser : prevUser
@@ -298,7 +304,7 @@ export default function Accounts() {
         }
       })
       .catch((error) => {
-        alert('Update failed');
+        toast.error('Update failed');
         console.error('Error updating service:', error);
       });
   }
@@ -387,7 +393,7 @@ export default function Accounts() {
         </div>
         {session && (
           <main>
-            <table className={styles.table}>
+            <table className={styles.table2}>
               <thead>
                 <tr>
                   <th>#</th>

@@ -73,7 +73,7 @@ export default function Register({
   }
 
   const signup = () => {
-    if (!isCheckedTerms) return alert('Please Agree to the Terms & Conditions');
+    if (!isCheckedTerms) return toast.error('Please Agree to the Terms & Conditions');
 
     // Include isArchived in the formData before sending
     const formDataWithArchived = {
@@ -98,7 +98,7 @@ export default function Register({
           console.log('registered user ', data); // Handle the response from the API
   
           if (Array.isArray(data)) {
-            alert(data[0]);
+            toast.error(data[0]);
             if (data[0] === 'Email address already exists') {
               setErrorFormData(prevValue => ({
                 ...prevValue,
