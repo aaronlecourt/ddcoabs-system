@@ -526,7 +526,7 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
   }
 
   return (
-    <Modal open={open} setOpen={setOpen} withCloseButton onClose={onClose} modalHeight={700} modalRadius={10} padding={isGenerateReport ? '0' : '2rem'}>
+    <Modal open={open} setOpen={setOpen} withCloseButton onClose={onClose} modalHeight={700} modalWidth={900} modalRadius={10} padding={isGenerateReport ? '0' : '2rem'}>
       {isGenerateReport && recordInfo ? renderPrintable() :
         <>
           <h3 className={styles.title}>Patient Record</h3>

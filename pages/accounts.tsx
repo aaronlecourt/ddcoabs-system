@@ -585,7 +585,7 @@ export default function Accounts() {
     return (
       <>
         {isGenerateReport ? 
-        <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalRadius={10} padding={'0'}>
+        <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
           {renderPrintable(filteredBySelectedFilters.length > 0 ? filteredBySelectedFilters.filter((user) =>
             (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
           ) : sortedUser.length > 0 ? sortedUser : users)}
