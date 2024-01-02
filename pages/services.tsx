@@ -94,58 +94,38 @@ export default function Services() {
     1
   );
 
-  const handleFilterChange = (filter: any) => {
+  const handleFilterChange = async (filter: any) => {
     setSelectedFilter(filter);
-
-    let filterServices = [...services];
-
-    switch (filter) {
-      case "Oldest to Latest":
-        filterServices.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        break;
-      case "Latest to Oldest":
-        filterServices.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case "Alphabetical (A-Z)":
-        filterServices.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "Alphabetical (Z-A)":
-        filterServices.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "Price (Lowest to Highest)":
-        filterServices.sort(
-          (a, b) => parseFloat(a.price) - parseFloat(b.price)
-        );
-        break;
-      case "Price (Highest to Lowest)":
-        filterServices.sort(
-          (a, b) => parseFloat(b.price) - parseFloat(a.price)
-        );
-        break;
-      default:
-        break;
+  
+    try {
+      const response = await fetch(`api/dentist/dentist-service?filter=${filter}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch services with filter: ${filter}`);
+      }
+  
+      const data: Service[] = await response.json();
+  
+      setSortedServices(data);
+    } catch (error) {
+      console.error("Error fetching filtered services:", error);
     }
-
-    setSortedServices(filterServices);
   };
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("api/dentist/dentist-service");
+        const queryParams = `?search=${searchQuery}&filter=${selectedFilter}`; // Include search and filter parameters
+        const response = await fetch(`api/dentist/dentist-service${queryParams}`);
+        
         if (!response.ok) {
           throw new Error("Failed to fetch services");
         }
+        
         const data: Service[] = await response.json();
         setServices(data);
         setSortedServices(data);
-
+  
         const totalPages = Math.max(Math.ceil(data.length / itemsPerPage), 1);
         if (currentPage > totalPages) {
           setCurrentPage(totalPages);
@@ -154,9 +134,10 @@ export default function Services() {
         console.error("Error fetching services:", error);
       }
     };
-
+  
     fetchServices();
-  }, []);
+  }, [searchQuery, selectedFilter, currentPage]);
+  
 
   useEffect(() => {
     const updateServices = () => {
