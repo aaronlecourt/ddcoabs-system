@@ -447,7 +447,7 @@ export default function Services() {
                 <th>#</th>
                 <th>Service Name</th>
                 <th>Base Charge</th>
-                <th>Description</th>
+                <th colSpan={3}>Description</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -456,8 +456,8 @@ export default function Services() {
                 <tr key={service._id}>
                   <td>{startIndex + index + 1}</td>
                   <td>{service.name}</td>
-                  <td>₱ {Number(service.price).toFixed(2)}</td>
-                  <td>{service.description}</td>
+                  <td>P{Number(service.price).toFixed(2)}</td>
+                  <td colSpan={3}>{service.description}</td>
                   <td className={styles1.tableAction}>
                     <EditButton
                       onClick={() => onUpdateService(service, "update")}

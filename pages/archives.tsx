@@ -427,8 +427,18 @@ const renderContent = () => {
           <div className={styles1.servicecrud}>
           <div className={styles1.filters1}> 
             <h4 className={styles1.filters__sortTitle}> Record Type: </h4>
-            <Button2 onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button2>
-            <Button2 onClick={() => handleRecordTypeChange('services')}> Services </Button2>
+            {showAccountsTable ? (
+              <>
+              <Button2 type="secondary" onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button2>
+              <Button2 onClick={() => handleRecordTypeChange('services')}> Services </Button2>
+              </>
+            ): (
+              <>
+              <Button2 onClick={() => handleRecordTypeChange('accounts')}> Accounts </Button2>
+              <Button2 type="secondary" onClick={() => handleRecordTypeChange('services')}> Services </Button2>
+              </>
+            )}
+            
 
             <h4 className={styles1.filters__sortTitle}> Sort By: </h4>
             <div className={styles1.filters__sortDropdown}>
@@ -506,7 +516,7 @@ const renderContent = () => {
                     <th>Service Name</th>
                     <th>Base Charge</th>
                     <th>Type</th>
-                    <th>Description</th>
+                    <th colSpan={2}>Description</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -518,7 +528,7 @@ const renderContent = () => {
                       <td>{service.name}</td>
                       <td> P{service.price.toFixed(2)}</td>
                       <td> {service.type} </td>
-                      <td>{service.description}</td>
+                      <td colSpan={2}>{service.description}</td>
                       <td className={styles1.cancelActions}> 
                         <RestoreButton onClick={() => onUpdateService(service, 'restore')} title="Restore Record">
                           <FontAwesomeIcon

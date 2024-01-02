@@ -387,7 +387,7 @@ export default function Accounts() {
         </div>
         {session && (
           <main>
-            <table className={styles.table}>
+            <table className={styles.table2}>
               <thead>
                 <tr>
                   <th>#</th>
