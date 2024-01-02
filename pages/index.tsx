@@ -34,8 +34,17 @@ export default function Home() {
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentFilter, setCurrentFilter] = useState<string>("Today");
+  const [selectedSort, setSelectedSort] = useState<string>("Oldest to Latest");
 
   const router = useRouter();
+
+  const sortBy = [
+    "Oldest to Latest",
+    "Latest to Oldest",
+    "Alphabetical (A-Z)",
+    "Alphabetical (Z-A)",
+    "Pending First",
+  ];
 
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +67,7 @@ export default function Home() {
   const fetchAppointments = async () => {
     try {
       setLoading(true);
-      const url = `/api/global/appointment?status=${currentFilter}&search=${searchTerm}`;
+      const url = `/api/global/appointment?status=${currentFilter}&search=${searchTerm}&sortBy=${selectedSort}`;
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -391,6 +400,31 @@ export default function Home() {
       });
     };
 
+    const handleSortChange = async (sortOption: string) => {
+      try {
+        setLoading(true);
+        let url = `/api/global/appointment?status=${currentFilter}&search=${searchTerm}&sortBy=${sortOption}`;
+
+        if (sortOption === "Pending First") {
+          url = `/api/global/appointment?status=${currentFilter}&search=${searchTerm}&sortBy=${sortOption}`;
+        }
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch appointments");
+        }
+
+        const data = await response.json();
+        setAppointments(data);
+        setLoading(false);
+        setSelectedSort(sortOption);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+        setLoading(false);
+      }
+    };
+
     return (
       <>
         {/* CANCEL MODAL */}
@@ -466,13 +500,15 @@ export default function Home() {
                   <div className={styles.filters__sort}>
                     <span className={styles.filters__sortTitle}>Sort By:</span>
                     <div className={styles.filters__sortDropdown}>
-                      {/* <select onChange={(e) => handleSortChange(e.target.value)}>
-                      {sortBy.map((option, index) => (
-                        <option key={index} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select> */}
+                      <select
+                        onChange={(e) => handleSortChange(e.target.value)}
+                      >
+                        {sortBy.map((option, index) => (
+                          <option key={index} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>
