@@ -113,7 +113,7 @@ export default function Appointment({ appointment, onCancelAppointment, isPatien
   
       if (response.ok) {
         toast.success('Appointment marked as done!');
-        // Optionally, you can update the UI to reflect the change to 'done'
+        window.location.reload();
       } else {
         toast.error('Failed to mark appointment as done');
       }
