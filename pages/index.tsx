@@ -36,6 +36,9 @@ export default function Home() {
   const [currentFilter, setCurrentFilter] = useState<string>("Today");
   const [selectedSort, setSelectedSort] = useState<string>("Oldest to Latest");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [appointmentsPerPage] = useState(5); // Change the value as needed
+
   const router = useRouter();
 
   const sortBy = [
@@ -178,6 +181,14 @@ export default function Home() {
         });
     }
   };
+
+  const indexOfLastAppointment = currentPage * appointmentsPerPage;
+  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+  const currentAppointments = appointments.slice(
+    indexOfFirstAppointment,
+    indexOfLastAppointment
+  );
+  const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
 
   const renderContent = () => {
     return (
@@ -369,6 +380,53 @@ export default function Home() {
       "All",
     ];
 
+    const renderPagination = () => {
+      const pageNumbers = Array.from(
+        { length: totalPages },
+        (_, index) => index + 1
+      );
+
+      const handlePageChange = (pageNumber: any) => {
+        setCurrentPage(pageNumber);
+      };
+
+      return (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+              width={16}
+              height={16}
+              color={"#737373"}
+            />
+          </button>
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => handlePageChange(number)}
+              className={currentPage === number ? styles.active : ""}
+            >
+              {number}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <FontAwesomeIcon
+              icon={faChevronRight}
+              width={16}
+              height={16}
+              color={"#737373"}
+            />
+          </button>
+        </div>
+      );
+    };
+
     const renderStatusFilters = () => {
       const appointmentCountToday = countAppointmentsForToday();
 
@@ -523,12 +581,12 @@ export default function Home() {
                   </div>
                   <div>
                     {/* Appointment chart here */}
-                    {appointments.length === 0 ? (
+                    {currentAppointments.length === 0 ? (
                       <div className={styles.appointments__empty}>
                         No matching appointments were found.
                       </div>
                     ) : (
-                      appointments.map(
+                      currentAppointments.map(
                         (appointment: IAppointment, index: number) => (
                           <Appointment
                             key={index}
@@ -538,6 +596,7 @@ export default function Home() {
                         )
                       )
                     )}
+                    {renderPagination()}
                   </div>
                 </div>
               </section>
