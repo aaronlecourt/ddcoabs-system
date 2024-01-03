@@ -11,7 +11,9 @@ export const handleFormDataChange = (e: any, setFormData: any, setErrorFormData:
     [name]: val
   }))
   
-  localStorage.setItem('selectedSex', value);
+  if (name === 'sex') {
+    localStorage.setItem('selectedSex', value);
+  }
 
   setErrorFormData((prevErrorFormData: any) => ({
     ...prevErrorFormData,

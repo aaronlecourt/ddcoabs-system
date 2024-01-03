@@ -1,6 +1,6 @@
 import { PatientFormData, PatientErrorFormData, PatientFormDataDentist, PatientErrorFormDataDentist } from '../types/book';
 import { Dispatch, SetStateAction } from 'react';
-import { isInput50Chars, isInput25Chars, atLeast5Chars} from '../utils/validation-rules';
+import { isInput50Chars, isInput25Chars, atLeast5Chars, isFirstNameValid, isMobileNumberValid} from '../utils/validation-rules';
 
 const atLeast5Char: Array<keyof PatientFormData> = [
   'physicianName',
@@ -113,7 +113,7 @@ export const isPatientFormValid = (
   return result;
 }
 
-export const isWalkInPatientFormValid = (formData: PatientFormDataDentist, errorFormData: PatientErrorFormDataDentist, setErrorFormData: Dispatch<SetStateAction<PatientErrorFormData>>) => {
+export const isWalkInPatientFormValid = (formData: PatientFormDataDentist, errorFormData: PatientErrorFormDataDentist, setErrorFormData: Dispatch<SetStateAction<PatientErrorFormDataDentist>>) => {
   let result = true;
 
   console.log(formData);
@@ -132,6 +132,60 @@ export const isWalkInPatientFormValid = (formData: PatientFormDataDentist, error
 
       result = false;
     }
+  }
+
+
+  // First Name Validation
+  if (formData.firstName && !isFirstNameValid(formData.firstName)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['firstName']: {
+        error: true,
+        message: 'Must be minimum of 2 characters.'
+      }
+    }))
+
+    result = false;
+  }
+
+  // Last Name Validation
+  if (formData.lastName && !isFirstNameValid(formData.lastName)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['lastName']: {
+        error: true,
+        message: 'Must be minimum of 2 characters.'
+      }
+    }))
+
+    result = false;
+  }
+
+  // Mobile Number Validation
+  if (formData.contactNumber && !isMobileNumberValid(formData.contactNumber)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['contactNumber']: {
+        error: true,
+        message: 'Mobile Number is invalid'
+      }
+    }))
+
+    result = false;
+  }
+
+  // Mobile Number Validation
+  if (formData.guardianNumber && !isMobileNumberValid(formData.guardianNumber)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['guardianNumber']: {
+        optional: errorFormData.guardianNumber.optional || false,
+        error: true,
+        message: 'Mobile Number is invalid'
+      }
+    }))
+
+    result = false;
   }
 
   return result;

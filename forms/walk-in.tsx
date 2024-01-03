@@ -16,7 +16,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const PatientWalkIn = {
-  patientName: '',
   firstName: '',
   lastName: '',
   age: 0,
@@ -169,8 +168,30 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
           <div className={styles.form__row__field__label}>
             <label> First Name: </label>
           </div>
-          <div className={styles.form__Input}>
-            
+          <div
+            className={`formInput ${
+              errorFormData.firstName.error ? "formInput--error" : ""
+            }`}
+          >
+            {errorFormData.firstName.error && (
+              <span className="formInput__errorMessage">
+                {errorFormData.firstName.message}
+              </span>
+            )}
+
+            <input
+              type="text"
+              name="firstName"
+              placeholder="Jane or John"
+              onKeyDown={(e) => handleFormEnter(e, next)}
+              onChange={(e) => {
+                handleFormDataChange(e, setFormData, setErrorFormData);
+                updatePatientName(e);
+              }}
+              value={formData.firstName}
+            />
+          </div>
+          {/* <div className={styles.form__Input}>
             <input
               type="text"
               name="firstName"
@@ -181,13 +202,36 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
               }}
               value={formData.firstName}
             />
-          </div>
+          </div> */}
         </div>
         <div className={styles.form__row__field}>
           <div className={styles.form__row__field__label}>
             <label> Last Name: </label>
           </div>
-          <div className={styles.form__Input}>
+          <div
+            className={`formInput ${
+              errorFormData.lastName.error ? "formInput--error" : ""
+            }`}
+          >
+            {errorFormData.firstName.error && (
+              <span className="formInput__errorMessage">
+                {errorFormData.lastName.message}
+              </span>
+            )}
+
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Doe"
+              onKeyDown={(e) => handleFormEnter(e, next)}
+              onChange={(e) => {
+                handleFormDataChange(e, setFormData, setErrorFormData);
+                updatePatientName(e);
+              }}
+              value={formData.lastName}
+            />
+          </div>
+          {/* <div className={styles.form__Input}>
             <input
               type="text"
               name="lastName"
@@ -198,13 +242,46 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
               }}
               value={formData.lastName}
             />
-          </div>
+          </div> */}
         </div>
         <div className={styles.form__row__field}>
           <div className={styles.form__row__field__label}>
             <label> Age: </label>
           </div>
-          <div className={styles.form__Input}>
+          <div
+            className={`formInput ${
+              errorFormData.age.error ? "formInput--error" : ""
+            }`}
+          >
+            {errorFormData.firstName.error && (
+              <span className="formInput__errorMessage">
+                {errorFormData.age.message}
+              </span>
+            )}
+
+            <input
+              type="text"
+              pattern="\d*"
+              inputMode="numeric"
+              name="age"
+              min="0"
+              max="150"
+              placeholder="Enter age"
+              onKeyDown={(e) => handleFormEnter(e, next)}
+              onBlur={() => setIsAgeInputTouched(true)} 
+              onChange={(e) => {
+                const numericValue = parseInt(e.target.value.replace(/\D/g, ''), 10);
+                const clampedValue = Math.min(Math.max(numericValue, 0), 150);
+                handleFormDataChange(
+                  { target: { name: 'age', value: clampedValue } },
+                  setFormData,
+                  setErrorFormData
+                );
+              }}
+              value={formData.age ? formData.age.toString() : ''}
+            />
+          </div>
+          {/* <div className={styles.form__Input}>
             <input
               type="text"
               pattern="\d*"
@@ -225,19 +302,27 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
               }}
               value={formData.age ? formData.age.toString() : ''}
             />
-          </div>
+          </div> */}
         </div>
         </div>
         <div className={styles.form__row}>
         <div className={styles.form__row__field}>
           <div className={styles.form__row__field__label}>
             <label> Sex: </label>
+            {errorFormData.sex.error && (
+              <span className="formLabel__errorMessage">
+                {errorFormData.sex.message}
+              </span>
+            )}
           </div>
           <input
             type="radio"
             id="female"
             name="sex"
             value="Female"
+            className={
+              errorFormData.sex.error ? "error" : ""
+            }
             checked={formData.sex === 'Female'}
             onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
           />
@@ -247,6 +332,9 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
             id="male"
             name="sex"
             value="Male"
+            className={
+              errorFormData.sex.error ? "error" : ""
+            }
             checked={formData.sex === 'Male'}
             onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
           />
@@ -256,7 +344,27 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
           <div className={styles.form__row__field__label}>
             <label> Contact Number: </label>
           </div>
-          <div className={styles.form__Input}>
+          <div
+            className={`formInput ${
+              errorFormData.contactNumber.error ? "formInput--error" : ""
+            }`}
+          >
+            {errorFormData.contactNumber.error && (
+              <span className="formInput__errorMessage">
+                {errorFormData.contactNumber.message}
+              </span>
+            )}
+
+            <input
+              type="text"
+              placeholder="09123456789"
+              name="contactNumber"
+              onKeyDown={(e) => handleFormEnter(e, next)}
+              onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
+              value={formData.contactNumber}
+            />
+          </div>
+          {/* <div className={styles.form__Input}>
             <input
               type="text"
               placeholder="09123456789"
@@ -264,7 +372,7 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
               onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
               value={formData.contactNumber}
             />
-          </div>
+          </div> */}
         </div>
         </div>
         <hr />
@@ -272,7 +380,27 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
           <div className={styles.form__row__field__label}>
             <label> Parent's or Guardians Name: </label>
           </div>
-          <div className={styles.form__Input}>
+          <div
+            className={`formInput ${
+              errorFormData.guardianName.error ? "formInput--error" : ""
+            }`}
+          >
+            {errorFormData.guardianName.error && (
+              <span className="formInput__errorMessage">
+                {errorFormData.guardianName.message}
+              </span>
+            )}
+
+            <input
+              type="text"
+              placeholder="N/A"
+              onKeyDown={(e) => handleFormEnter(e, next)}
+              onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
+              name="guardianName"
+              value={formData.guardianName}
+            />
+          </div>
+          {/* <div className={styles.form__Input}>
             <input
               type="text"
               placeholder="N/A"
@@ -280,13 +408,33 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
               name="guardianName"
               value={formData.guardianName}
             />
-          </div>
+          </div> */}
         </div>
         <div className={styles.form__row__field}>
           <div className={styles.form__row__field__label}>
             <label> Guardian Contact Number: </label>
           </div>
-          <div className={styles.form__Input}>
+          <div
+            className={`formInput ${
+              errorFormData.guardianNumber.error ? "formInput--error" : ""
+            }`}
+          >
+            {errorFormData.guardianNumber.error && (
+              <span className="formInput__errorMessage">
+                {errorFormData.guardianNumber.message}
+              </span>
+            )}
+
+            <input
+              type="text"
+              placeholder="09123456789"
+              name="guardianNumber"
+              onKeyDown={(e) => handleFormEnter(e, next)}
+              onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
+              value={formData.guardianNumber}
+            />
+          </div>
+          {/* <div className={styles.form__Input}>
             <input
               type="text"
               placeholder="09123456789"
@@ -294,7 +442,7 @@ const BookPatientFormDentist = forwardRef(({}: any, ref) => {
               onChange={(e) => handleFormDataChange(e, setFormData, setErrorFormData)}
               value={formData.guardianNumber}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <ToastContainer />

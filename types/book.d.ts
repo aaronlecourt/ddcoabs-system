@@ -106,7 +106,6 @@ export interface ServicesErrorFormData {
 }
 
 export interface PatientFormDataDentist {
-  patientName: string;
   firstName: string;
   lastName: string;
   age: number;
@@ -122,4 +121,6 @@ export interface PatientErrorFormDataDentist {
   age: ErrorFormDataField;
   sex: ErrorFormDataField;
   contactNumber: ErrorFormDataField;
+  guardianName: ErrorFormDataField;
+  guardianNumber: ErrorFormDataField;
 }
