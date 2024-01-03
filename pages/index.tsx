@@ -49,6 +49,12 @@ export default function Home() {
     "Pending First",
   ];
 
+  useEffect(() => {
+    if (session) {
+      setCurrentFilter(session.user.role === 'patient' ? 'All' : 'Today')
+    }
+  }, [session])
+
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 

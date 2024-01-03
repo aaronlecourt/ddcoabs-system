@@ -609,7 +609,7 @@ import { useRouter } from "next/router";
         setOpen={setShowAddService}
         modalWidth={400}
         modalRadius={10}
-        onOpen={() => setErrorFormData(initialErrorState)} // Clear errors on open
+        onClose={() => { setErrorFormData(initialErrorState); setShowAddService(false) }} // Clear errors on close
       >
         <h3 className={styles1.cancelTitle}> Add Service </h3>
 
@@ -711,7 +711,7 @@ import { useRouter } from "next/router";
       <Modal
         open={showUpdateService}
         setOpen={setShowUpdateService}
-        onOpen={() => setErrorFormData(initialErrorState)} 
+        onClose={() => { setErrorFormData(initialErrorState); setShowUpdateService(false) }} // Clear errors on close
         modalWidth={400}
         modalRadius={10}
       >
