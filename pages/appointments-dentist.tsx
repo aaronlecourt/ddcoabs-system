@@ -396,12 +396,6 @@ export default function Home() {
 
   }
 
-  const convertToTitleCase = (str: string) => {
-    let words = str.match(/[A-Z]?[a-z]+/g) || [];
-    let titleCaseString = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    return titleCaseString;
-  }
-
   const renderPrintable = (data: any) => {
     return (
       <div className={printableStyles.printable__container}>
@@ -451,7 +445,6 @@ export default function Home() {
 
     return (
       <>
-        {/* MODAL FOR RECORD INFO */}
         {showModal && selectedAppointmentDetails && (
           <Modal
             open={toggleModal}
@@ -459,7 +452,6 @@ export default function Home() {
             modalWidth={900}
             modalRadius={10}
           >
-            {/* Render appointment details here */}
             <div className={styles2.apptDetails_Header}>
               <div>
                 <h3>{selectedAppointmentDetails.dentistService}</h3>
@@ -532,6 +524,8 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </Modal>
+        )},
 
         {isGenerateReport ?
           <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
@@ -685,7 +679,6 @@ export default function Home() {
                         </tr>
                       </thead>
                       <tbody>
-                        {/* THIS IS FOR FILTER */}
                         {searchQuery.length > 0 ? (
                           searchedAppointment
                             .filter((appointment) =>
@@ -729,67 +722,8 @@ export default function Home() {
           </>}
       </>
     )
-  }
-
-  {/* const renderPagination = () => {
-  //   const pageNumbers = Array.from(
-  //     { length: totalPages },
-  //     (_, index) => index + 1
-  //   );
-
-  //   const handlePageChange = (pageNumber: any) => {
-  //     setCurrentPage(pageNumber);
-  //   };
-
-  //   return (
-  //     <div className={styles.pagination}>
-  //       <button
-  //         onClick={() => handlePageChange(currentPage - 1)}
-  //         disabled={currentPage === 1}
-  //       >
-  //         <FontAwesomeIcon
-  //           icon={faChevronLeft}
-  //           width={16}
-  //           height={16}
-  //           color={"#737373"}
-  //         />
-  //       </button>
-  //       {pageNumbers.map((number) => (
-  //         <button
-  //           key={number}
-  //           onClick={() => handlePageChange(number)}
-  //           className={currentPage === number ? styles.active : ""}
-  //         >
-  //           {number}
-  //         </button>
-  //       ))}
-  //       <button
-  //         onClick={() => handlePageChange(currentPage + 1)}
-  //         disabled={currentPage === totalPages}
-  //       >
-  //         <FontAwesomeIcon
-  //           icon={faChevronRight}
-  //           width={16}
-  //           height={16}
-  //           color={"#737373"}
-  //         />
-  //       </button>
-  //     </div>
-  //   );
-  // }; */}
- 
   
-    return (
-      <>
-      <ToastContainer />
-        {status !== "loading" &&
-          session &&
-            <DentistLayout>{renderContent()}</DentistLayout>
-          }
-      </>
-    );
-  };
-
+}
   return (
     <>
       <ToastContainer />
