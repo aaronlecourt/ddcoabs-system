@@ -4,7 +4,7 @@ import connectMongo from "../utils/connectMongo";
 import { getSession } from "next-auth/react";
 import styles from "../styles/pages/home.module.scss";
 import styles1 from "../styles/pages/services.module.scss";
-import styles2 from '../components/Appointment/style.module.scss';
+import styles2 from "../components/Appointment/style.module.scss";
 import DentistLayout from "../layouts/DentistLayout";
 import useAuthGuard from "../guards/auth.guard";
 import Appointment from "../components/Appointment";
@@ -15,8 +15,45 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 import RecordInfo from "../components/RecordInfo";
-import { faCalendar, faCancel, faCheckCircle, faCheckDouble, faChevronDown, faChevronRight, faClock, faEye, faFemale, faMale, faMoneyBill, faNoteSticky, faPencil, faUser, faWallet, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCalendar,
+  faCancel,
+  faCheckCircle,
+  faCheckDouble,
+  faChevronDown,
+  faChevronRight,
+  faClock,
+  faEye,
+  faFemale,
+  faMale,
+  faMoneyBill,
+  faNoteSticky,
+  faPencil,
+  faUser,
+  faWallet,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 import APPOINTMENT_STATUS from "../constants/appointmentStatus";
+
+interface AppointmentDetails {
+  goodHealth: string;
+  medicalTreatment: string;
+  medicalTreatmentValue: string;
+  illness: string;
+  illnessValue: string;
+  hospitalized: string;
+  hospitalizedValue: string;
+  medication: string;
+  medicationValue: string;
+  tobacco: string;
+  alchohol: string;
+  allergy: string;
+  allergyValue: string;
+  previousDentist: string;
+  previousTreatment: string;
+  lastDentalVisit: string;
+  // Add more properties as per your object structure
+}
 
 interface Appointments {
   _id: string;
@@ -27,9 +64,12 @@ interface Appointments {
   timeUnit: string;
   dentistService: number;
   contactNumber: string;
+  details: AppointmentDetails;
   status: string;
   createdAt: string;
   isWalkIn: boolean;
+  paymentMethod: string;
+  price: string;
 }
 
 export default function Home() {
@@ -278,9 +318,30 @@ export default function Home() {
   }, []);
 
   // FOR SHOW DETAILS
-  const toggleModal = (appointment: Appointments) => {
+  const toggleModal = (appointment: any) => {
     setSelectedAppointmentDetails(appointment);
     setShowModal(!showModal);
+  };
+
+  const formattedDate = (appointmentDate: Date) => {
+    return appointmentDate.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const formattedTime = (appointment: any) => {
+    const { status, startTime, endTime } = appointment;
+    let { timeUnit } = appointment;
+    timeUnit = timeUnit.toLowerCase();
+    return status == APPOINTMENT_STATUS.pending || (!startTime && !endTime)
+      ? timeUnit.toUpperCase()
+      : timeUnit == "am"
+      ? `${startTime}:00${timeUnit}-${endTime}:00${endTime == 12 ? "pm" : "am"}`
+      : `${startTime == 12 ? 12 : startTime - 12}:00${timeUnit}-${
+          endTime - 12
+        }:00${timeUnit}`;
   };
 
   const formatDate = (date: any) => {
@@ -302,30 +363,148 @@ export default function Home() {
       <>
         {/* MODAL FOR RECORD INFO */}
         {showModal && selectedAppointmentDetails && (
-        <Modal open={toggleModal} setOpen={toggleModal} modalWidth={900} modalRadius={10}>
-          {/* Render appointment details here */}
-          <div className={styles.apptDetails_Header}>
-            <div>
-              <h3>{selectedAppointmentDetails.dentistService}</h3>
-              {/* <h2>{selectedAppointmentDetails.patientId}</h2> */}
-              {selectedAppointmentDetails.concern && <h5>Concern: "{selectedAppointmentDetails.concern}" </h5>}
+          <Modal
+            open={toggleModal}
+            setOpen={toggleModal}
+            modalWidth={900}
+            modalRadius={10}
+          >
+            {/* Render appointment details here */}
+            <div className={styles2.apptDetails_Header}>
+              <div>
+                <h3>{selectedAppointmentDetails.dentistService}</h3>
+              </div>
+              <div
+                className={`${styles2.appointments__status} 
+              ${
+                selectedAppointmentDetails.status ==
+                APPOINTMENT_STATUS.confirmed
+                  ? styles2.appointments__statusConfirmed
+                  : selectedAppointmentDetails.status ==
+                    APPOINTMENT_STATUS.canceled
+                  ? styles2.appointments__statusCanceled
+                  : selectedAppointmentDetails.status == APPOINTMENT_STATUS.done
+                  ? styles2.appointments__statusDone
+                  : selectedAppointmentDetails.status ==
+                    APPOINTMENT_STATUS.rescheduled
+                  ? styles2.appointments__statusRescheduled
+                  : styles2.appointments__statusPending
+              }`}
+              >
+                {selectedAppointmentDetails.status}
+              </div>
+              <div className={styles.apptDetails_User}>
+                <div>
+                  <FontAwesomeIcon icon={faUser} color={"#3AB286"} width={15} />
+                  <span>
+                    {" "}
+                    {selectedAppointmentDetails.patientName || name || ""}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className={`${styles2.appointments__status} 
-              ${selectedAppointmentDetails.status == APPOINTMENT_STATUS.confirmed ? styles2.appointments__statusConfirmed 
-              : selectedAppointmentDetails.status == APPOINTMENT_STATUS.canceled ? styles2.appointments__statusCanceled
-              : selectedAppointmentDetails.status == APPOINTMENT_STATUS.done ? styles2.appointments__statusDone 
-              : selectedAppointmentDetails.status == APPOINTMENT_STATUS.rescheduled ? styles2.appointments__statusRescheduled 
-              : styles2.appointments__statusPending}`}>{selectedAppointmentDetails.status}
+
+            <div className={styles2.apptDetails_Dateprice}>
+              <div className={styles2.appointments__details__row}>
+                <div className={styles2.appointments__details__rowItem}>
+                  <FontAwesomeIcon
+                    icon={faCalendar}
+                    color={"#3AB286"}
+                    width={15}
+                  />
+                  <span>
+                    {formattedDate(new Date(selectedAppointmentDetails.date))}
+                  </span>
+                </div>
+                <div className={styles2.appointments__details__rowItem}>
+                  <FontAwesomeIcon
+                    icon={faClock}
+                    color={"#3AB286"}
+                    width={15}
+                  />
+                  <span>{formattedTime(selectedAppointmentDetails)}</span>
+                </div>
+                <div className={styles2.appointments__details__rowItem}>
+                  <FontAwesomeIcon
+                    icon={faWallet}
+                    color={"#3AB286"}
+                    width={15}
+                  />
+                  <span>{selectedAppointmentDetails.paymentMethod}</span>
+                </div>
+                <div className={styles2.appointments__details__rowItem}>
+                  <FontAwesomeIcon
+                    icon={faMoneyBill}
+                    color={"#3AB286"}
+                    width={15}
+                  />
+                  <span>P{selectedAppointmentDetails.price}</span>
+                </div>
+              </div>
+
+              {/* <div className={styles.apptDetails_More}>
+          <div className={styles.apptDetails_Sub}>
+            <h3>Medical History</h3>
+            <p>Good Health: {selectedAppointmentDetails.details.goodHealth}</p>
+            <p>Medical Treatment: {selectedAppointmentDetails.details.medicalTreatment}</p>
+              {selectedAppointmentDetails.details.medicalTreatment === 'yes' && (
+                <span>{selectedAppointmentDetails.details.medicalTreatmentValue}</span>
+              )}
+            <p>Illness: {selectedAppointmentDetails.details.illness}</p>
+              {selectedAppointmentDetails.details.illness === 'yes' && (
+                <span>{selectedAppointmentDetails.details.illnessValue}</span>
+              )}
+            <p>Hospitalized: {selectedAppointmentDetails.details.hospitalized}</p>
+              {selectedAppointmentDetails.details.hospitalized === 'yes' && (
+                <span>{selectedAppointmentDetails.details.hospitalizedValue}</span>
+              )}
+            <p>Medication: {selectedAppointmentDetails.details.medication}</p>
+              {selectedAppointmentDetails.details.medication === 'yes' && (
+                <span>{selectedAppointmentDetails.details.medicationValue}</span>
+              )}
+            <p>Tobacco: {selectedAppointmentDetails.details.tobacco}</p>
+            <p>Alcohol: {selectedAppointmentDetails.details.alchohol}</p>
+            <p>Allergy: {selectedAppointmentDetails.details.allergy}</p>
+              {selectedAppointmentDetails.details.allergy === 'yes' && (
+                <span>{selectedAppointmentDetails.details.allergyValue}</span>
+              )}                 */}
+              {/* {sex === 'F' && (
+              <>
+              <p>Pregnant: {selectedAppointmentDetails.details.pregnant}</p>
+              <p>Nursing: {selectedAppointmentDetails.details.nursing}</p>
+              <p>Birth Control: {selectedAppointmentDetails.details.birthControl}</p>  
+              </>
+            )} */}
+
+              {/* {selectedAppointmentDetails.details.others && !isPatient && (
+              <>
+              <br />
+                <h3>Have or has had:</h3>
+                {selectedAppointmentDetails.details.others ? (
+                  selectedAppointmentDetails.details.others.includes('Select this if nothing applies') ? (
+                    <li>None</li>
+                  ) : (
+                    selectedAppointmentDetails.details.others.map((item: string, index: number) => (
+                      <li key={index}>{item}</li>
+                    ))
+                  )
+                ) : (
+                  <li>None</li>
+                )}
+              </>
+            )} */}
+
+              {/* </div>
+          <div className={styles.apptDetails_Sub}>
+            <h3>Dental History</h3>
+            <p>Previous Dentist: {selectedAppointmentDetails.details.previousDentist || 'N/A'}</p>
+            <p>Previous Treatment: {selectedAppointmentDetails.details.previousTreatment || 'N/A'}</p>
+            <p>Last Dental Visit: {selectedAppointmentDetails.details.lastDentalVisit || 'N/A'}</p>
+          </div> */}
+              {/* </div> */}
             </div>
-            
-          </div>
-            {/* </> */}
-          {/* )} */}
-
-          
-        </Modal>
-      )}
-
+          </Modal>
+        )}
 
         {session && (
           <main className={styles.main2}>
@@ -366,7 +545,6 @@ export default function Home() {
                   <div className={styles.filters__sort}>
                     <span className={styles.filters__sortTitle}>Filter:</span>
                     <div className={styles.filters__sortDetails}>
-
                       {filterBy.map((filter, index) => (
                         <div key={index}>
                           {typeof filter === "string" ? (
@@ -493,9 +671,7 @@ export default function Home() {
                             <td>
                               <Button
                                 type="secondary"
-                                onClick={() =>
-                                  toggleModal(appointment)
-                                }
+                                onClick={() => toggleModal(appointment)}
                               >
                                 Show More
                               </Button>
@@ -522,11 +698,9 @@ export default function Home() {
                             <td>{appointment.contactNumber}</td>
                             <td>{appointment.status}</td>
                             <td>
-                            <Button
+                              <Button
                                 type="secondary"
-                                onClick={() =>
-                                  toggleModal(appointment)
-                                }
+                                onClick={() => toggleModal(appointment)}
                               >
                                 Show More
                               </Button>
