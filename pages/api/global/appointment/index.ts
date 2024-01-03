@@ -1,3 +1,5 @@
+
+// ORIGINAL API from newly rebased branch
 import connectMongo from "../../../../utils/connectMongo";
 import Appointment from "../../../../models/Appointment";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -16,43 +18,43 @@ export default async function appointmentHandler(
       case "GET":
         try {
           let appointments = [];
-          // let appointmentQuery = {}; // Initialize query object
-          let appointmentQuery: { date?: any, status?: any, dentistService?:any } = {};
-
 
           if (query) {
+            let appointmentQuery = {};
             const { status = "All", search, sortBy } = query;
 
-            // Prepare the query based on status and search parameters
-            if (status === "Today") {
-              const today = new Date();
-              appointmentQuery.date = {
-                $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-                $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
-              };
-            } else if (status !== "All") {
-              appointmentQuery.status = status;
-            }
+            Object.keys(query).map(v => {
+              if (v == 'status' && status) {
+                // Prepare the query based on status and search parameters
+                if (status === "Today") {
+                  const today = new Date();
+                  Object.assign(appointmentQuery, {
+                    date: {
+                      $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+                      $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
+                    },
+                  })
+                } else if (status !== "All") {
+                  Object.assign(appointmentQuery, { status });
+                }
+              } else if (v == 'search' && search) {
+                const searchQuery = {
+                  $or: [
+                    { patientName: { $regex: search, $options: "i" } },
+                    { dentistService: { $regex: search, $options: "i" } },
+                    // Add more fields here based on your Appointment model
+                  ],
+                };
 
-            if (search) {
-              const searchQuery = {
-                $or: [
-                  { patientName: { $regex: search, $options: "i" } },
-                  { dentistService: { $regex: search, $options: "i" } },
-                  // Add more fields here based on your Appointment model
-                ],
-              };
-
-              appointmentQuery = status === "All"
-                ? { ...searchQuery }
-                : { ...appointmentQuery, ...searchQuery };
-            }
-
-            if (query.dentistService) {
-              appointmentQuery.dentistService = { '$regex': `${query.dentistService}`, '$options': 'i' };
-            }
-
-            // Do not handle sortBy within the query construction
+                appointmentQuery = status === "All"
+                  ? { ...searchQuery }
+                  : { ...appointmentQuery, ...searchQuery };
+              } else if (v == 'dentistService') {
+                Object.assign(appointmentQuery, { [v]: { '$regex': `${query[v]}`, '$options': 'i' } })
+              } else if (v != 'sortBy') {
+                Object.assign(appointmentQuery, { [v]: query[v] })
+              }
+            })
 
             appointments = await Appointment.find(appointmentQuery);
 
@@ -116,7 +118,7 @@ export default async function appointmentHandler(
     res.status(500).json({ error: "Server error" });
   }
 }
-// ORIGINAL API from newly rebased branch
+
 // import connectMongo from "../../../../utils/connectMongo";
 // import Appointment from "../../../../models/Appointment";
 // import type { NextApiRequest, NextApiResponse } from "next";
@@ -135,43 +137,43 @@ export default async function appointmentHandler(
 //       case "GET":
 //         try {
 //           let appointments = [];
+//           // let appointmentQuery = {}; // Initialize query object
+//           let appointmentQuery: { date?: any, status?: any, dentistService?:any } = {};
+
 
 //           if (query) {
-//             let appointmentQuery = {};
 //             const { status = "All", search, sortBy } = query;
 
-//             Object.keys(query).map(v => {
-//               if (v == 'status' && status) {
-//                 // Prepare the query based on status and search parameters
-//                 if (status === "Today") {
-//                   const today = new Date();
-//                   Object.assign(appointmentQuery, {
-//                     date: {
-//                       $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-//                       $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
-//                     },
-//                   })
-//                 } else if (status !== "All") {
-//                   Object.assign(appointmentQuery, { status });
-//                 }
-//               } else if (v == 'search' && search) {
-//                 const searchQuery = {
-//                   $or: [
-//                     { patientName: { $regex: search, $options: "i" } },
-//                     { dentistService: { $regex: search, $options: "i" } },
-//                     // Add more fields here based on your Appointment model
-//                   ],
-//                 };
+//             // Prepare the query based on status and search parameters
+//             if (status === "Today") {
+//               const today = new Date();
+//               appointmentQuery.date = {
+//                 $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+//                 $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
+//               };
+//             } else if (status !== "All") {
+//               appointmentQuery.status = status;
+//             }
 
-//                 appointmentQuery = status === "All"
-//                   ? { ...searchQuery }
-//                   : { ...appointmentQuery, ...searchQuery };
-//               } else if (v == 'dentistService') {
-//                 Object.assign(appointmentQuery, { [v]: { '$regex': `${query[v]}`, '$options': 'i' } })
-//               } else if (v != 'sortBy') {
-//                 Object.assign(appointmentQuery, { [v]: query[v] })
-//               }
-//             })
+//             if (search) {
+//               const searchQuery = {
+//                 $or: [
+//                   { patientName: { $regex: search, $options: "i" } },
+//                   { dentistService: { $regex: search, $options: "i" } },
+//                   // Add more fields here based on your Appointment model
+//                 ],
+//               };
+
+//               appointmentQuery = status === "All"
+//                 ? { ...searchQuery }
+//                 : { ...appointmentQuery, ...searchQuery };
+//             }
+
+//             if (query.dentistService) {
+//               appointmentQuery.dentistService = { '$regex': `${query.dentistService}`, '$options': 'i' };
+//             }
+
+//             // Do not handle sortBy within the query construction
 
 //             appointments = await Appointment.find(appointmentQuery);
 
