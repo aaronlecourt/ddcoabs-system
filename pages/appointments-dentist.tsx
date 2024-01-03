@@ -531,6 +531,7 @@ export default function Home() {
                   <span>P{selectedAppointmentDetails.price}</span>
                 </div>
               </div>
+            </div>
 
         {isGenerateReport ?
           <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
@@ -730,7 +731,7 @@ export default function Home() {
     )
   }
 
-  // const renderPagination = () => {
+  {/* const renderPagination = () => {
   //   const pageNumbers = Array.from(
   //     { length: totalPages },
   //     (_, index) => index + 1
@@ -775,7 +776,7 @@ export default function Home() {
   //       </button>
   //     </div>
   //   );
-  // };
+  // }; */}
  
   
     return (
