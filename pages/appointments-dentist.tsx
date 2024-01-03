@@ -87,8 +87,8 @@ import 'react-toastify/dist/ReactToastify.css';
     console.log('Searched Data:', searchedAppointment);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-        console.log('Search Query:', e.target.value);
+      setSearchQuery(e.target.value);
+      console.log('Search Query:', e.target.value);
     }; 
       
     //FILTER
@@ -281,7 +281,7 @@ import 'react-toastify/dist/ReactToastify.css';
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredBySelectedFilters.length > 0
+                        {/* {filteredBySelectedFilters.length > 0
                             ? filteredBySelectedFilters.map((appointment: any, index: any) => (
                                 <tr key={appointment._id}>
                                 <td>{index + 1}</td>
@@ -303,8 +303,31 @@ import 'react-toastify/dist/ReactToastify.css';
                             <td>{appointment.contactNumber}</td>
                             <td><Button> Show More </Button></td>
                             </tr>
-                        ))}
+                        ))} */}
                         
+                        {searchQuery
+                          ? searchedAppointment.map((appointment: any, index: any) => (
+                              <tr key={appointment._id}>
+                                <td>{index + 1}</td>
+                                <td>{appointment.patientName}</td>
+                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
+                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
+                                <td>{appointment.dentistService}</td>
+                                <td>{appointment.contactNumber}</td>
+                                <td><Button> Show More </Button></td>
+                              </tr>
+                            ))
+                          : filteredBySelectedFilters.map((appointment: any, index: any) => (
+                              <tr key={appointment._id}>
+                                <td>{index + 1}</td>
+                                <td>{appointment.patientName}</td>
+                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
+                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
+                                <td>{appointment.dentistService}</td>
+                                <td>{appointment.contactNumber}</td>
+                                <td><Button> Show More </Button></td>
+                              </tr>
+                            ))}
                     </tbody>
 
                 </table>
