@@ -354,8 +354,8 @@ export default function Home() {
     return d.toLocaleDateString("en", options);
   };
 
-  const [showRecordInfo, setShowRecordInfo] = useState(false)
-  const [recordInfo, setRecordInfo] = useState(null)
+  const [showRecordInfo, setShowRecordInfo] = useState(false);
+  const [recordInfo, setRecordInfo] = useState(null);
 
   const fetchAppointments = async () => {
     try {
@@ -364,8 +364,8 @@ export default function Home() {
         throw new Error("Failed to fetch appointments");
       }
       const data = await response.json();
-      console.log(data)
-      setAppointments(data)
+      console.log(data);
+      setAppointments(data);
     } catch (error) {
       console.error("Error fetching appointments:", error);
     } finally {
@@ -373,17 +373,17 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchAppointments()
-  }, [])
+    fetchAppointments();
+  }, []);
 
   const showPatientRecord = (user: any) => {
-    setRecordInfo(user)
-    setShowRecordInfo(true)
-  }
+    setRecordInfo(user);
+    setShowRecordInfo(true);
+  };
 
   const print = () => {
     // const contentToPrint = document.getElementById('printable');
-    const contentToPrint = document.getElementById('printable-table');
+    const contentToPrint = document.getElementById("printable-table");
 
     if (contentToPrint) {
       const printContents = contentToPrint.innerHTML;
@@ -393,50 +393,52 @@ export default function Home() {
       window.print();
       location.reload();
     }
-
-  }
+  };
 
   const renderPrintable = (data: any) => {
     return (
       <div className={printableStyles.printable__container}>
-        <div id='printable' className={printableStyles.printable}>
+        <div id="printable" className={printableStyles.printable}>
           <div className={printableStyles.printable__header}>
             <Image
               className={printableStyles.printable__logo}
-              src='/logo.png'
-              alt='logo'
+              src="/logo.png"
+              alt="logo"
               width={250}
               height={0}
             />
-            <div>Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City</div>
+            <div>
+              Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City
+            </div>
             <div>Contact No: +639123456789</div>
             <div>Email: dentalfix@dentalfix.com</div>
           </div>
         </div>
         <div className={printableStyles.printable__print}>
-          <Button type='secondary' onClick={print}>Print</Button>
+          <Button type="secondary" onClick={print}>
+            Print
+          </Button>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
-  const [printableModal, setPrintableModal] = useState(true)
-  const [isPrinting, setIsPrinting] = useState(false)
+  const [printableModal, setPrintableModal] = useState(true);
+  const [isPrinting, setIsPrinting] = useState(false);
   const onClosePrintable = () => {
-    setIsGenerateReport(false)
-    setPrintableModal(false)
-  }
+    setIsGenerateReport(false);
+    setPrintableModal(false);
+  };
 
   useEffect(() => {
-    if (isPrinting) print()
+    if (isPrinting) print();
+  }, [isPrinting]);
 
-  }, [isPrinting])
-  
   const openPrintableModal = () => {
     // setIsGenerateReport(true)
     // setPrintableModal(true)
-    setIsPrinting(true)
-  }
+    setIsPrinting(true);
+  };
 
   const renderContent = () => {
     console.log("Appointments:", appointments);
@@ -525,26 +527,57 @@ export default function Home() {
               </div>
             </div>
           </Modal>
-        )},
-
-        {isGenerateReport ?
-          <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
-            {renderPrintable(filteredBySelectedFilters.length > 0 ? filteredBySelectedFilters.filter((user) =>
-              (`${user.patientName}`).toLowerCase().includes(searchQuery.toLowerCase())
-            ) : searchedAppointment.length > 0 ? searchedAppointment : appointments)}
-          </Modal> : <>
-
+        )}
+        ,
+        {isGenerateReport ? (
+          <Modal
+            open={printableModal}
+            setOpen={setPrintableModal}
+            withCloseButton
+            onClose={onClosePrintable}
+            modalHeight={700}
+            modalWidth={900}
+            modalRadius={10}
+            padding={"0"}
+          >
+            {renderPrintable(
+              filteredBySelectedFilters.length > 0
+                ? filteredBySelectedFilters.filter((user) =>
+                    `${user.patientName}`
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  )
+                : searchedAppointment.length > 0
+                ? searchedAppointment
+                : appointments
+            )}
+          </Modal>
+        ) : (
+          <>
             {/* MODAL FOR RECORD INFO */}
-            <RecordInfo open={showRecordInfo} setOpen={setShowRecordInfo} recordInfo={recordInfo} />
+            <RecordInfo
+              open={showRecordInfo}
+              setOpen={setShowRecordInfo}
+              recordInfo={recordInfo}
+            />
 
             <section className={styles.main}>
               <div className={styles.servicecrud}>
                 <div className={styles.filters}>
                   <div className={styles.filters__search}>
-                    <input type='text' className={styles.filters__searchInput} placeholder='Search appointment...'
+                    <input
+                      type="text"
+                      className={styles.filters__searchInput}
+                      placeholder="Search appointment..."
                       value={searchQuery}
-                      onChange={handleSearchChange} />
-                    <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
+                      onChange={handleSearchChange}
+                    />
+                    <FontAwesomeIcon
+                      icon={faSearch}
+                      width={24}
+                      height={24}
+                      color={"#737373"}
+                    />
                   </div>
                   <div className={styles.filters__sort}>
                     <span className={styles.filters__sortTitle}>Sort By:</span>
@@ -579,7 +612,7 @@ export default function Home() {
 
                       {filterBy.map((filter, index) => (
                         <div key={index}>
-                          {typeof filter === 'string' ? (
+                          {typeof filter === "string" ? (
                             <label>
                               <input
                                 type="checkbox"
@@ -587,29 +620,39 @@ export default function Home() {
                                 onChange={() => handleFilterSelection(filter)}
                                 checked={
                                   selectedFilters.includes(filter) ||
-                                  (filter === 'Select All' && selectedFilters.length === filterBy.filter(item => typeof item === 'string').length)
+                                  (filter === "Select All" &&
+                                    selectedFilters.length ===
+                                      filterBy.filter(
+                                        (item) => typeof item === "string"
+                                      ).length)
                                 }
                               />
                               {filter}
                             </label>
                           ) : (
                             <div>
-                              {filter.label === 'Start Date' && (
+                              {filter.label === "Start Date" && (
                                 <>
                                   <label>
                                     <input
                                       type="checkbox"
                                       id="startDateFilter"
-                                      checked={selectedFilters.includes(filter.label)}
-                                      onChange={() => handleFilterSelection(filter)}
+                                      checked={selectedFilters.includes(
+                                        filter.label
+                                      )}
+                                      onChange={() =>
+                                        handleFilterSelection(filter)
+                                      }
                                     />
                                     Start Date
                                   </label>
                                   {startDateVisible && (
                                     <input
-                                      type="date" 
-                                      value={startDate ?? ''}
-                                      onChange={(e) => setStartDate(e.target.value)}
+                                      type="date"
+                                      value={startDate ?? ""}
+                                      onChange={(e) =>
+                                        setStartDate(e.target.value)
+                                      }
                                       min={minDate}
                                       max={currentDate}
                                       disabled={startDateDisabled}
@@ -617,14 +660,18 @@ export default function Home() {
                                   )}
                                 </>
                               )}
-                              {filter.label === 'End Date' && (
+                              {filter.label === "End Date" && (
                                 <>
                                   <label>
                                     <input
                                       type="checkbox"
                                       id="endDateFilter"
-                                      checked={selectedFilters.includes(filter.label)}
-                                      onChange={() => handleFilterSelection(filter)}
+                                      checked={selectedFilters.includes(
+                                        filter.label
+                                      )}
+                                      onChange={() =>
+                                        handleFilterSelection(filter)
+                                      }
                                     />
                                     End Date
                                   </label>
@@ -649,24 +696,32 @@ export default function Home() {
                     </div>
                   </div>
                   <div className={styles.filters__sortGenrep}>
-                    <Button type='secondary' onClick={openPrintableModal}> Generate Report </Button>
+                    <Button type="secondary" onClick={openPrintableModal}>
+                      {" "}
+                      Generate Report{" "}
+                    </Button>
                   </div>
                 </div>
                 {session && (
                   <main id="printable-table">
-                    {isPrinting && <div className={printableStyles.printable__header}>
-                      <Image
-                        className={printableStyles.printable__logo}
-                        src='/logo.png'
-                        alt='logo'
-                        width={250}
-                        height={0}
-                      />
-                      <div>Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City</div>
-                      <div>Contact No: +639123456789</div>
-                      <div>Email: dentalfix@dentalfix.com</div>
-                    </div>}
-                    <table className={styles.table2}>
+                    {isPrinting && (
+                      <div className={printableStyles.printable__header}>
+                        <Image
+                          className={printableStyles.printable__logo}
+                          src="/logo.png"
+                          alt="logo"
+                          width={250}
+                          height={0}
+                        />
+                        <div>
+                          Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name,
+                          Baguio City
+                        </div>
+                        <div>Contact No: +639123456789</div>
+                        <div>Email: dentalfix@dentalfix.com</div>
+                      </div>
+                    )}
+                    <table className={styles1.table2}>
                       <thead>
                         <tr>
                           <th>#</th>
@@ -679,51 +734,86 @@ export default function Home() {
                         </tr>
                       </thead>
                       <tbody>
-                        {searchQuery.length > 0 ? (
-                          searchedAppointment
-                            .filter((appointment) =>
-                              (`${appointment.patientName}`).toLowerCase().includes(searchQuery.toLowerCase())
-                            )
-                            .map((appointment, index) => (
-                              <tr key={appointment._id}>
-                                <td>{index + 1}</td>
-                                <td>{appointment.patientName ? `${appointment.patientName}` : ''}</td>
-                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
+                        {searchQuery.length > 0
+                          ? searchedAppointment
+                              .filter((appointment) =>
+                                `${appointment.patientName}`
+                                  .toLowerCase()
+                                  .includes(searchQuery.toLowerCase())
+                              )
+                              .map((appointment, index) => (
+                                <tr key={appointment._id}>
+                                  <td>{index + 1}</td>
+                                  <td>
+                                    {appointment.patientName
+                                      ? `${appointment.patientName}`
+                                      : ""}
+                                  </td>
+                                  <td>
+                                    {new Intl.DateTimeFormat(
+                                      "en-US",
+                                      options
+                                    ).format(new Date(appointment.date))}
+                                  </td>
 
-                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
-                                <td>{appointment.dentistService}</td>
-                                <td>{appointment.contactNumber}</td>
-                            
-                                {!isPrinting && <td><Button> Show More </Button></td>}
+                                  <td>
+                                    {formatTime(appointment.startTime)} -{" "}
+                                    {formatTime(appointment.endTime)}{" "}
+                                    {appointment.timeUnit}
+                                  </td>
+                                  <td>{appointment.dentistService}</td>
+                                  <td>{appointment.contactNumber}</td>
 
-                              </tr>
-                            ))
-                        ) : (
-                            filteredBySelectedFilters.map((appointment, index) => (
-                              <tr key={appointment._id}>
-                                <td>{index + 1}</td>
-                                <td>{appointment.patientName ? `${appointment.patientName}` : ''}</td>
-                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
+                                  {!isPrinting && (
+                                    <td>
+                                      <Button> Show More </Button>
+                                    </td>
+                                  )}
+                                </tr>
+                              ))
+                          : filteredBySelectedFilters.map(
+                              (appointment, index) => (
+                                <tr key={appointment._id}>
+                                  <td>{index + 1}</td>
+                                  <td>
+                                    {appointment.patientName
+                                      ? `${appointment.patientName}`
+                                      : ""}
+                                  </td>
+                                  <td>
+                                    {new Intl.DateTimeFormat(
+                                      "en-US",
+                                      options
+                                    ).format(new Date(appointment.date))}
+                                  </td>
 
-                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
-                                <td>{appointment.dentistService}</td>
-                                <td>{appointment.contactNumber}</td>
-                            
-                                {!isPrinting && <td><Button> Show More </Button></td>}
-                              </tr>
-                            ))
-                          )}
+                                  <td>
+                                    {formatTime(appointment.startTime)} -{" "}
+                                    {formatTime(appointment.endTime)}{" "}
+                                    {appointment.timeUnit}
+                                  </td>
+                                  <td>{appointment.dentistService}</td>
+                                  <td>{appointment.contactNumber}</td>
+
+                                  {!isPrinting && (
+                                    <td>
+                                      <Button onClick={()=>showPatientRecord(appointment)}> Show More </Button>
+                                    </td>
+                                  )}
+                                </tr>
+                              )
+                            )}
                       </tbody>
                     </table>
                   </main>
                 )}
               </div>
             </section>
-          </>}
+          </>
+        )}
       </>
-    )
-  
-}
+    );
+  };
   return (
     <>
       <ToastContainer />
