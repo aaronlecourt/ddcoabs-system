@@ -10,6 +10,7 @@ export interface Service {
 export interface ErrorFormData {
   name: { error: boolean; message: string | null };
   price: { error: boolean; message: string | null };
+  type: { error: boolean; message: string | null };
   description: { error: boolean; message: string | null };
 }
 

@@ -1,7 +1,9 @@
 import {
   isServiceNameValid,
   isServiceDescriptionValid,
+  isServiceDescriptionEmpty,
   isPriceValid,
+  isPriceEmpty,
 } from '../utils/service_validation_rules';
 import { AddServicesFormData, UpdateServicesFormData,  ErrorAddServicesFormData, ErrorFormData, ErrorUpdateServicesFormData } from '../types/services';
 import { Dispatch, SetStateAction } from 'react';
@@ -34,6 +36,12 @@ export const isServiceFormValid = (
   if (!isPriceValid(formData[priceField])) {
     setErrorData((prevErrorData) => ({
       ...prevErrorData,
+      [priceField]: { error: true, message: 'Invalid price format.' },
+    }));
+    isValid = false;
+  } else if (isPriceEmpty(formData[priceField])) {
+    setErrorData((prevErrorData) => ({
+      ...prevErrorData,
       [priceField]: { error: true, message: 'Price is required.' },
     }));
     isValid = false;
@@ -49,6 +57,12 @@ export const isServiceFormValid = (
   if (!isServiceDescriptionValid(formData[descriptionField])) {
     setErrorData((prevErrorData) => ({
       ...prevErrorData,
+      [descriptionField]: { error: true, message: 'Description must be more than 10 but less than 255 characters.' },
+    }));
+    isValid = false;
+  } else if (isServiceDescriptionEmpty(formData[descriptionField])) {
+    setErrorData((prevErrorData) => ({
+      ...prevErrorData,
       [descriptionField]: { error: true, message: 'Description is required.' },
     }));
     isValid = false;
@@ -58,6 +72,21 @@ export const isServiceFormValid = (
       [descriptionField]: { error: false, message: null },
     }));
   }
+
+  // Validate 'type'
+const typeField = 'type'; // Assuming 'type' is the field name
+if (!formData[typeField]) { // Checking if it's not selected
+  setErrorData((prevErrorData) => ({
+    ...prevErrorData,
+    [typeField]: { error: true, message: 'Type is required.' },
+  }));
+  isValid = false;
+} else {
+  setErrorData((prevErrorData) => ({
+    ...prevErrorData,
+    [typeField]: { error: false, message: null },
+  }));
+}
 
   console.log('isValid:', isValid);
 

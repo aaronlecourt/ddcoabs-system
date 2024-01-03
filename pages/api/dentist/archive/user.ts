@@ -16,7 +16,7 @@ export default async function userHandler (
     switch (method) {
       case 'GET':
         try {
-          const users = await User.find({ isArchived: true }).select('_id name email contactNumber sex dateOfBirth address role updatedAt');;
+          const users = await User.find({ isArchived: true }).select('_id firstName lastName email contactNumber sex dateOfBirth address role updatedAt');;
 
           res.status(200).json(users);
         } catch (error: any) {
