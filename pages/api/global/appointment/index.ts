@@ -51,7 +51,7 @@ export default async function appointmentHandler(
                   : { ...appointmentQuery, ...searchQuery };
               } else if (v == 'dentistService') {
                 Object.assign(appointmentQuery, { [v]: { '$regex': `${query[v]}`, '$options': 'i' } })
-              } else if (v != 'sortBy') {
+              } else if (v != 'sortBy' && query[v]) {
                 Object.assign(appointmentQuery, { [v]: query[v] })
               }
             })
