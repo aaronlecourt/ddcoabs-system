@@ -525,7 +525,7 @@ export default function Home() {
               </div>
             </div>
           </Modal>
-        )},
+        )}
 
         {isGenerateReport ?
           <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
@@ -694,7 +694,7 @@ export default function Home() {
                                 <td>{appointment.dentistService}</td>
                                 <td>{appointment.contactNumber}</td>
                             
-                                {!isPrinting && <td><Button> Show More </Button></td>}
+                                {!isPrinting && <td><Button onClick={() => toggleModal(appointment)}> Show More </Button></td>}
 
                               </tr>
                             ))
@@ -709,7 +709,7 @@ export default function Home() {
                                 <td>{appointment.dentistService}</td>
                                 <td>{appointment.contactNumber}</td>
                             
-                                {!isPrinting && <td><Button> Show More </Button></td>}
+                                {!isPrinting && <td><Button onClick={() => toggleModal(appointment)}> Show More </Button></td>}
                               </tr>
                             ))
                           )}
