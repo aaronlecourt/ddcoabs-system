@@ -370,103 +370,108 @@ import RecordInfo from "../components/RecordInfo";
       return (
         <>
 
-        {/* MODAL FOR RECORD INFO */}
-        <RecordInfo open={showRecordInfo} setOpen={setShowRecordInfo} recordInfo={recordInfo} />
-        
-          {session && (
-            <main className={styles.main2}>
-              <h1 className={styles.title}>Appointments</h1>
-              <div className={styles.container}>
-                <section>
-                  <div className={styles.filters}>
-                    <div className={styles.filters__search}>
-                    <input
-                        type="text"
-                        className={styles.filters__searchInput}
-                        placeholder="Search appointment..."
-                        value={searchQuery} // Update this line
-                        onChange={handleSearchChange}
-                    />
+        {isGenerateReport ?
+          <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
+            {renderPrintable(filteredBySelectedFilters.length > 0 ? filteredBySelectedFilters.filter((user) =>
+              (`${user.patientName}`).toLowerCase().includes(searchQuery.toLowerCase())
+            ) : searchedAppointment.length > 0 ? searchedAppointment : appointments)}
+          </Modal> : <>
 
-                      <FontAwesomeIcon
-                        icon={faSearch}
-                        width={24}
-                        height={24}
-                        color={"#737373"}
-                      />
-                    </div>
-                    <div className={styles.filters__sort}>
-                      <span className={styles.filters__sortTitle}>Sort By:</span>
-                      <div className={styles.filters__sortDropdown}>
-                      <select onChange={(e) => handleSortChange(e.target.value)}>
-                        {sortBy.map((option, index) => (
-                          <option key={index} value={option}>
-                            {option}
+            {/* MODAL FOR RECORD INFO */}
+            <RecordInfo open={showRecordInfo} setOpen={setShowRecordInfo} recordInfo={recordInfo} />
+
+            <section className={styles.main}>
+              <div className={styles.servicecrud}>
+                <div className={styles.filters}>
+                  <div className={styles.filters__search}>
+                    <input type='text' className={styles.filters__searchInput} placeholder='Search appointment...'
+                      value={searchQuery}
+                      onChange={handleSearchChange} />
+                    <FontAwesomeIcon icon={faSearch} width={24} height={24} color={'#737373'} />
+                  </div>
+                  <div className={styles.filters__sort}>
+                    <span className={styles.filters__sortTitle}>Sort By:</span>
+                    <div className={styles.filters__sortDropdown}>
+                      <select
+                        id="sortSelect"
+                        value={selectedSort}
+                        onChange={(e) => handleSortChange(e.target.value)}
+                      >
+                        {sortBy.map((sort) => (
+                          <option key={sort} value={sort}>
+                            {sort}
                           </option>
                         ))}
                       </select>
-                      </div>
                     </div>
-                    <div className={styles.filters__sort}>
-                        <span className={styles.filters__sortTitle}>Filter:</span>
-                        <div className={styles.filters__sortDetails}>
-                            {/* {filterBy.map((filter) => (
-                                <label key={filter}>
-                                     {filter === 'Start Date' || filter === 'End Date' ? (
-                                        <input
-                                            type="date"
-                                            value={filter === 'Start Date' ? (startDate ?? '') : (endDate ?? '')}
-                                            onChange={(e) => {
-                                                filter === 'Start Date' ? setStartDate(e.target.value) : setEndDate(e.target.value);
-                                            }}
-                                            min={filter === 'Start Date' ? '' : startDate ?? ''}
-                                            style={{
-                                                display:
-                                                    selectedFilters.includes('Start Date') || selectedFilters.includes('End Date')
-                                                        ? 'inline-block'
-                                                        : 'none',
-                                            }}
-                                        />
-                                    ) : (
-                                        <input
-                                            type="checkbox"
-                                            value={filter}
-                                            onChange={() => handleFilterSelection(filter)}
-                                            checked={
-                                                selectedFilters.includes(filter) ||
-                                                (filter === 'All' && selectedFilters.length === filterBy.length - 1)
-                                            }
-                                        />
-                                    )}
-                                    {filter}
-                                </label>
-                            ))} */}
-                          {/* {filterBy.map((filter, index) => (
-                            <label key={index}>
-                              {typeof filter === 'string' ? (
-                                <input
-                                    type="checkbox"
-                                    value={filter}
-                                    onChange={() => handleFilterSelection(filter)}
-                                    checked={
-                                        selectedFilters.includes(filter) ||
-                                        (filter === 'All' && selectedFilters.length === filterBy.length - 1)
-                                    }
-                                />
-                              ) : (
-                                <div>
-                                  {filter.label === 'Start Date' && startDateVisible && (
+                  </div>
+                  <div className={styles.filters__sort}>
+                    <span className={styles.filters__sortTitle}>Filter:</span>
+                    <div className={styles.filters__sortDetails}>
+                      {/* {filterBy.map((filter) => (
+                        <label key={filter}>
+                          <input
+                            type="checkbox"
+                            value={filter}
+                            onChange={() => handleFilterSelection(filter)}
+                            checked={selectedFilters.includes(filter) || (filter === 'All' && selectedFilters.length === filterBy.length - 1)}
+                          />
+                          {filter}
+                        </label>
+                      ))} */}
+
+                      {filterBy.map((filter, index) => (
+                        <div key={index}>
+                          {typeof filter === 'string' ? (
+                            <label>
+                              <input
+                                type="checkbox"
+                                value={filter}
+                                onChange={() => handleFilterSelection(filter)}
+                                checked={
+                                  selectedFilters.includes(filter) ||
+                                  (filter === 'Select All' && selectedFilters.length === filterBy.filter(item => typeof item === 'string').length)
+                                }
+                              />
+                              {filter}
+                            </label>
+                          ) : (
+                            <div>
+                              {filter.label === 'Start Date' && (
+                                <>
+                                  <label>
                                     <input
-                                      type="date"
+                                      type="checkbox"
+                                      id="startDateFilter"
+                                      checked={selectedFilters.includes(filter.label)}
+                                      onChange={() => handleFilterSelection(filter)}
+                                    />
+                                    Start Date
+                                  </label>
+                                  {startDateVisible && (
+                                    <input
+                                      type="date" 
                                       value={startDate ?? ''}
                                       onChange={(e) => setStartDate(e.target.value)}
                                       min={minDate}
                                       max={currentDate}
                                       disabled={startDateDisabled}
-                                      // Add any other attributes you need here
                                     />
                                   )}
-                                  {filter.label === 'End Date' && endDateVisible && (
+                                </>
+                              )}
+                              {filter.label === 'End Date' && (
+                                <>
+                                  <label>
+                                    <input
+                                      type="checkbox"
+                                      id="endDateFilter"
+                                      checked={selectedFilters.includes(filter.label)}
+                                      onChange={() => handleFilterSelection(filter)}
+                                    />
+                                    End Date
+                                  </label>
+                                  {endDateVisible && (
                                     <input
                                       type="date"
                                       value={endDate ?? ''}
@@ -474,163 +479,140 @@ import RecordInfo from "../components/RecordInfo";
                                       min={minDate}
                                       max={currentDate}
                                       disabled={endDateDisabled}
-                                      // Add any other attributes you need here
                                     />
                                   )}
-                                </div>
+                                </>
                               )}
-                              {typeof filter === 'string' ? filter : filter.label}
-                            </label>
-                          ))} */}
-
-{filterBy.map((filter, index) => (
-  <div key={index}>
-    {typeof filter === 'string' ? (
-      <label>
-        <input
-          type="checkbox"
-          value={filter}
-          onChange={() => handleFilterSelection(filter)}
-          checked={
-            selectedFilters.includes(filter) ||
-            (filter === 'Select All' && selectedFilters.length === filterBy.filter(item => typeof item === 'string').length)
-          }
-        />
-        {filter}
-      </label>
-    ) : (
-      <div>
-        {filter.label === 'Start Date' && (
-          <>
-            <label>
-              <input
-                type="checkbox"
-                id="startDateFilter"
-                checked={selectedFilters.includes(filter.label)}
-                onChange={() => handleFilterSelection(filter)}
-              />
-              Start Date
-            </label>
-            {startDateVisible && (
-              <input
-                type="date" 
-                value={startDate ?? ''}
-                onChange={(e) => setStartDate(e.target.value)}
-                min={minDate}
-                max={currentDate}
-                disabled={startDateDisabled}
-              />
-            )}
-          </>
-        )}
-        {filter.label === 'End Date' && (
-          <>
-            <label>
-              <input
-                type="checkbox"
-                id="endDateFilter"
-                checked={selectedFilters.includes(filter.label)}
-                onChange={() => handleFilterSelection(filter)}
-              />
-              End Date
-            </label>
-            {endDateVisible && (
-              <input
-                type="date"
-                value={endDate ?? ''}
-                onChange={(e) => setEndDate(e.target.value)}
-                min={minDate}
-                max={currentDate}
-                disabled={endDateDisabled}
-              />
-            )}
-          </>
-        )}
-      </div>
-    )}
-  </div>
-))}
-
+                            </div>
+                          )}
                         </div>
+                      ))}
                     </div>
                   </div>
-                </section>
-              </div>
-
-              <section>
-                <table className={styles.table2}>
-                    <thead>
-                        <tr>
-                        <th>#</th>
-                        <th>Patient Name</th>
-                        <th>Date </th>
-                        <th>Time</th>
-                        <th>Service</th>
-                        <th>Contact Number</th>
-                        <th>Appointment Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {/* {filteredBySelectedFilters.length > 0
-                            ? filteredBySelectedFilters.map((appointment: any, index: any) => (
-                                <tr key={appointment._id}>
-                                <td>{index + 1}</td>
-                                <td>{appointment.patientName}</td>
-                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
-                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
-                                <td>{appointment.dentistService}</td>
-                                <td>{appointment.contactNumber}</td>
-                                <td><Button> Show More </Button></td>
-                                </tr>
-                            ))
-                            : searchedAppointment.map((appointment: any, index: any) => (
-                            <tr key={appointment._id}>
-                            <td>{index + 1}</td>
-                            <td>{appointment.patientName}</td>
-                            <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
-                            <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
-                            <td>{appointment.dentistService}</td>
-                            <td>{appointment.contactNumber}</td>
-                            <td><Button> Show More </Button></td>
-                            </tr>
-                        ))} */}
-                        
-                        {searchQuery
-                          ? searchedAppointment.map((appointment: any, index: any) => (
-                              <tr key={appointment._id}>
-                                <td>{index + 1}</td>
-                                <td>{appointment.patientName}</td>
-                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
-                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
-                                <td>{appointment.dentistService}</td>
-                                <td>{appointment.contactNumber}</td>
-                                <td><Button onClick={() => showAppointmentRecord(appointment)}> Show More </Button></td>
-                              </tr>
-                            ))
-                          : filteredBySelectedFilters.map((appointment: any, index: any) => (
-                              <tr key={appointment._id}>
-                                <td>{index + 1}</td>
-                                <td>{appointment.patientName}</td>
-                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
-                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
-                                <td>{appointment.dentistService}</td>
-                                <td>{appointment.contactNumber}</td>
-                                <td><Button> Show More </Button></td>
-                              </tr>
-                            ))}
-                    </tbody>
-
-                </table>
-              </section>
-
-              <div className={styles.filters__sortGenrep}>
-                  <Button type='secondary' onClick={openPrintableModal}> Generate Report </Button>
+                  <div className={styles.filters__sortGenrep}>
+                    <Button type='secondary' onClick={openPrintableModal}> Generate Report </Button>
+                  </div>
                 </div>
-            </main> 
-          )}
-        </>
-      );
-    };
+                {session && (
+                  <main id="printable-table">
+                    {isPrinting && <div className={printableStyles.printable__header}>
+                      <Image
+                        className={printableStyles.printable__logo}
+                        src='/logo.png'
+                        alt='logo'
+                        width={250}
+                        height={0}
+                      />
+                      <div>Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City</div>
+                      <div>Contact No: +639123456789</div>
+                      <div>Email: dentalfix@dentalfix.com</div>
+                    </div>}
+                    <table className={styles.table2}>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Patient Name</th>
+                          <th> Date </th>
+                          <th> Time </th>
+                          <th> Service </th>
+                          <th> Contact Number</th>
+                          {!isPrinting && <th>Appointment Details </th>}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* THIS IS FOR FILTER */}
+                        {searchQuery.length > 0 ? (
+                          searchedAppointment
+                            .filter((appointment) =>
+                              (`${appointment.patientName}`).toLowerCase().includes(searchQuery.toLowerCase())
+                            )
+                            .map((appointment, index) => (
+                              <tr key={appointment._id}>
+                                <td>{index + 1}</td>
+                                <td>{appointment.patientName ? `${appointment.patientName}` : ''}</td>
+                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
+
+                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
+                                <td>{appointment.dentistService}</td>
+                                <td>{appointment.contactNumber}</td>
+                            
+                                {!isPrinting && <td><Button> Show More </Button></td>}
+
+                              </tr>
+                            ))
+                        ) : (
+                            filteredBySelectedFilters.map((appointment, index) => (
+                              <tr key={appointment._id}>
+                                <td>{index + 1}</td>
+                                <td>{appointment.patientName ? `${appointment.patientName}` : ''}</td>
+                                <td>{new Intl.DateTimeFormat('en-US', options).format(new Date(appointment.date))}</td>
+
+                                <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
+                                <td>{appointment.dentistService}</td>
+                                <td>{appointment.contactNumber}</td>
+                            
+                                {!isPrinting && <td><Button> Show More </Button></td>}
+                              </tr>
+                            ))
+                          )}
+                      </tbody>
+                    </table>
+                  </main>
+                )}
+              </div>
+            </section>
+          </>}
+      </>
+    )
+  }
+
+  // const renderPagination = () => {
+  //   const pageNumbers = Array.from(
+  //     { length: totalPages },
+  //     (_, index) => index + 1
+  //   );
+
+  //   const handlePageChange = (pageNumber: any) => {
+  //     setCurrentPage(pageNumber);
+  //   };
+
+  //   return (
+  //     <div className={styles.pagination}>
+  //       <button
+  //         onClick={() => handlePageChange(currentPage - 1)}
+  //         disabled={currentPage === 1}
+  //       >
+  //         <FontAwesomeIcon
+  //           icon={faChevronLeft}
+  //           width={16}
+  //           height={16}
+  //           color={"#737373"}
+  //         />
+  //       </button>
+  //       {pageNumbers.map((number) => (
+  //         <button
+  //           key={number}
+  //           onClick={() => handlePageChange(number)}
+  //           className={currentPage === number ? styles.active : ""}
+  //         >
+  //           {number}
+  //         </button>
+  //       ))}
+  //       <button
+  //         onClick={() => handlePageChange(currentPage + 1)}
+  //         disabled={currentPage === totalPages}
+  //       >
+  //         <FontAwesomeIcon
+  //           icon={faChevronRight}
+  //           width={16}
+  //           height={16}
+  //           color={"#737373"}
+  //         />
+  //       </button>
+  //     </div>
+  //   );
+  // };
+ 
   
     return (
       <>

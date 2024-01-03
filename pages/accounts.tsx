@@ -6,7 +6,7 @@ import DentistLayout from '../layouts/DentistLayout';
 import useAuthGuard from '../guards/auth.guard';
 import Button from '../components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArchive, faBoxArchive, faChevronDown, faFileArchive, faFolder, faPencil, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faArchive, faBoxArchive, faChevronDown, faChevronLeft, faChevronRight, faFileArchive, faFolder, faPencil, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { UpdateProfileFormData } from '../types/profile';
 import Modal from '../components/Modal';
 import ArchiveButton from '../components/ArchiveButton';
@@ -35,20 +35,31 @@ interface User {
 export default function Accounts() {
   const { session, status } = useAuthGuard();
   const [users, setUsers] = useState<User[]>([])
+  const [sortedUsers, setSortedUsers] = useState<User[]>([])
   const roles = ['patient', 'dentist', 'employee'];
 
   // SEARCH
   const [searchQuery, setSearchQuery] = useState('');
 
-  const sortedUser = users.filter((user) =>
+  const searchedUser = users.filter((user) =>
     (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
   );
-  console.log('Filtered Users:', sortedUser);
+  console.log('Filtered Users:', searchedUser);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     console.log('Search Query:', e.target.value);
   };
+
+  // FOR PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
+  const totalPages = Math.max(
+    Math.ceil(searchedUser.length / itemsPerPage),
+    1
+  );
+
 
   // SORT BY
   const sortBy = ['Oldest to Latest', 'Latest to Oldest', 'Alphabetical (A-Z)', 'Alphabetical (Z-A)']
@@ -133,7 +144,30 @@ export default function Accounts() {
     }
   });
   
-
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const queryParams = `?search=${searchQuery}&filter=${selectedFilters}`; // Include search and filter parameters
+        const response = await fetch(`api/dentist/accounts/role${queryParams}`);
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch services");
+        }
+        
+        const data: User[] = await response.json();
+        setUsers(data);
+  
+        const totalPages = Math.max(Math.ceil(data.length / itemsPerPage), 1);
+        if (currentPage > totalPages) {
+          setCurrentPage(totalPages);
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+  
+    fetchAccounts();
+  }, [searchQuery, selectedFilters, currentPage]);
 
   //FOR USER TABLE
   useEffect(() => {
@@ -594,13 +628,138 @@ export default function Accounts() {
   }
 
   const renderContent = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageItems = searchedUser.slice(startIndex, endIndex);
+
+    let content;
+    if (searchedUser.length === 0) {
+      content = (
+        <>
+          <table className={styles.table}>
+            <tbody>
+              <td>No services were found.</td>
+            </tbody>
+          </table>
+          <div>{renderPagination()}</div>
+        </>
+      );
+    } else {
+      content = (
+        <>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Full Name</th>
+                <th>Contact Number</th>
+                <th> Email Address </th>
+                <th> Age </th>
+                <th> Sex </th>
+                <th> User Role </th>
+                <th> Appointment Record </th>
+                <th> Action </th>
+              </tr>
+            </thead>
+            <tbody>
+              {pageItems.map((user, index) => (
+                <tr key={user._id}>
+                  <td>{index + 1}</td>
+                    <td>{user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ''}</td>
+                    <td>{user.contactNumber}</td>
+                    <td>{user.email}</td>
+                    <td>{user.age}</td>
+                    <td>{user.sex === 'M' ? 'Male' : 'Female'}</td>
+                    {!isPrinting ? <td className={styles1.filters__sortDropdown}>
+                      <select
+                        // value={user.role}
+                        value={
+                          tempRoles[user._id] !== undefined
+                            ? tempRoles[user._id]
+                            : user.role
+                        }
+                        onChange={(e) => handleRoleChange(e.target.value, user._id, index)}
+                        onBlur={() => {
+                          setTempRoles((prevRoles) => {
+                            const updatedRoles = { ...prevRoles };
+                            delete updatedRoles[user._id];
+                            return updatedRoles;
+                          });
+                        }}
+                      >
+                        {roles.map((role) => (
+                          <option key={role} value={role}>
+                            {role}
+                          </option>
+                        ))}
+                      </select>
+                    </td> : <td>{tempRoles[user._id] !== undefined
+                            ? tempRoles[user._id]
+                            : user.role
+                          }</td>}
+                    {!isPrinting &&
+                      <>
+                        <td>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <CancelButton onClick={() => showPatientRecord(user)}> Show More </CancelButton>
+                          )}
+                        </td>
+                        <td className={styles1.tableAction}>
+                          <Button
+                            type='secondary'
+                            onClick={(e: any) => {
+                              const userId = user._id;
+                              const selectedRole = tempRoles[userId] || user.role;;
+                              console.log("userId: ", userId)
+                              console.log("selectedRole: ", selectedRole)
+                              console.log("Temp role: ", tempRoles[userId])
+
+                              if (selectedRole === 'dentist' || selectedRole === 'employee') {
+                                console.log('Showing modal for admin or employee users');
+                                setShowValiUser(true);
+                                onUpdateUser(user, 'updateRole');
+                              } else {
+                                setShowValiUserPatient(true);
+                                onUpdateUser(user, 'updateRolePatient');
+                              }
+                            }}
+                          >
+                            Update Role
+                          </Button>
+                          {(user.role !== 'dentist' || tempRoles[user._id] === 'dentist') && (
+                            <ArchiveButton onClick={(e: any) => {
+                              const selectedRole = e.target.value;
+                              onUpdateUser(user, 'archiveUser')
+                            }}>
+                              <FontAwesomeIcon
+                                icon={faFileArchive}
+                                width={24}
+                                height={24}
+                                color={'#ffffff'}
+                              />
+                            </ArchiveButton>
+                          )}
+
+                        </td>
+                      </>}
+                  
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div>{renderPagination()}</div>
+        </>
+      );
+    }
+
     return (
+      
       <>
         {isGenerateReport ?
           <Modal open={printableModal} setOpen={setPrintableModal} withCloseButton onClose={onClosePrintable} modalHeight={700} modalWidth={900} modalRadius={10} padding={'0'}>
             {renderPrintable(filteredBySelectedFilters.length > 0 ? filteredBySelectedFilters.filter((user) =>
               (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchQuery.toLowerCase())
-            ) : sortedUser.length > 0 ? sortedUser : users)}
+            ) : searchedUser.length > 0 ? searchedUser : users)}
           </Modal> : <>
             {/* MODAL FOR ARCHIVE */}
             <Modal open={showArchiveUser} setOpen={setShowArchiveUser} modalWidth={400} modalRadius={10}>
@@ -802,8 +961,8 @@ export default function Accounts() {
                             ))
                         ) :
                           // THIS IS FOR SEARCHING - just named it sort
-                          sortedUser.length > 0 ? (
-                            sortedUser.map((user, index) => (
+                          searchedUser.length > 0 ? (
+                            searchedUser.map((user, index) => (
                               <tr key={user._id}>
                                 <td>{index + 1}</td>
                                 <td>{`${user.firstName || ''} ${user.lastName || ''}`}</td>
@@ -980,6 +1139,53 @@ export default function Accounts() {
       </>
     )
   }
+
+  const renderPagination = () => {
+    const pageNumbers = Array.from(
+      { length: totalPages },
+      (_, index) => index + 1
+    );
+
+    const handlePageChange = (pageNumber: any) => {
+      setCurrentPage(pageNumber);
+    };
+
+    return (
+      <div className={styles1.pagination}>
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <FontAwesomeIcon
+            icon={faChevronLeft}
+            width={16}
+            height={16}
+            color={"#737373"}
+          />
+        </button>
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => handlePageChange(number)}
+            className={currentPage === number ? styles1.active : ""}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <FontAwesomeIcon
+            icon={faChevronRight}
+            width={16}
+            height={16}
+            color={"#737373"}
+          />
+        </button>
+      </div>
+    );
+  };
 
   return (
     <>
