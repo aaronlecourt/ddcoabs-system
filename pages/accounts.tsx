@@ -789,7 +789,7 @@ export default function Accounts() {
               <p> Are you sure you want this user to be a patient? </p>
               <input type='hidden' name="_id" value={updateUserFormData._id} />
               <div className={styles1.cancelActions}>
-                <Button type='secondary' onClick={() => setShowValiUserPatient(false)}>No</Button>
+                <CancelButton onClick={() => setShowValiUserPatient(false)}>No</CancelButton>
                 <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type="submit">Yes</Button>
               </div>
             </Modal>
@@ -852,9 +852,9 @@ export default function Accounts() {
                         width={250}
                         height={0}
                       />
-                      <div>Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City</div>
-                      <div>Contact No: +639123456789</div>
-                      <div>Email: dentalfix@dentalfix.com</div>
+                      <div>Address: 51 Ground Floor, Palangdao Bldg., Lower Gen. Luna Rd., Baguio City</div>
+                      <div>Contact No: Globe: 0977 4270371/0945 715 5288 | TNT: 0920 3921402</div>
+                      <div>Email: sheeladejesus@gmail.com</div>
                     </div>}
                     <table className={styles.table2}>
                       <thead>

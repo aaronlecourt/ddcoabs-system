@@ -2,6 +2,14 @@ export const isFirstNameValid = (firstName: string): boolean => {
   return firstName.length >= 2
 }
 
+export const isFirstNameValid50 = (firstName: string): boolean => {
+  return firstName.length < 50
+}
+
+export const isLastNameValid50 = (lastName: string): boolean => {
+  return lastName.length < 50
+}
+
 export const isLastNameValid = (lastName: string): boolean => {
   return lastName.length >= 2
 }

@@ -486,12 +486,12 @@ const renderContent = () => {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th> Full Name </th>
-                  <th> Email Address </th>
+                  <th colSpan={2}> Full Name </th>
+                  <th colSpan={2}> Email Address </th>
                   <th> Mobile Number </th>
                   <th> Sex </th>
                   <th> Date of Birth </th>
-                  <th> Address </th>
+                  <th colSpan={2}> Address </th>
                   <th> Action </th>
                 </tr>
               </thead>
@@ -500,12 +500,12 @@ const renderContent = () => {
                   accounts.map((account, index) => (
                     <tr key={account._id}>
                       <td>{index + 1}</td>
-                      <td> {account.firstName} {account.lastName}</td>
-                      <td> {account.email} </td>
+                      <td colSpan={2}> {account.firstName} {account.lastName}</td>
+                      <td colSpan={2}> {account.email} </td>
                       <td> {account.contactNumber} </td>
                       <td> {account.sex == 'M' ? 'Male' : 'Female'} </td>
                       <td> {renderDateOfBirth(account.dateOfBirth)} </td>
-                      <td> {account.address} </td>
+                      <td colSpan={2}> {account.address} </td>
                       <td className={styles1.cancelActions}> 
                         <RestoreButton onClick={() => onUpdateAccount(account, 'restore')} title="Restore Record">
                           <FontAwesomeIcon

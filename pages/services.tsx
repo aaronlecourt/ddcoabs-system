@@ -26,93 +26,94 @@ import {
   UpdateServicesFormData,
   ErrorFormData,
 } from "../types/services";
-import {
-  isServiceFormValid
-} from "../validations/add-service"
+import { isServiceFormValid } from "../validations/add-service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 
+interface Service {
+  _id: string;
+  name: string;
+  price: string;
+  description: string;
+  type: string;
+  createdAt: string;
+  updatedAt: string;
+  isArchived: boolean;
+}
 
+export default function Services() {
+  const { session, status } = useAuthGuard();
+  const [services, setServices] = useState<Service[]>([]);
+  const [sortedServices, setSortedServices] = useState<Service[]>([]);
+  const [showAddService, setShowAddService] = useState(false);
+  const [showUpdateService, setShowUpdateService] = useState(false);
+  const [showArchiveService, setShowArchiveService] = useState(false);
+  const types = ["Jacket Crowns", "Removable Partial Denture", "Others"];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
 
-  interface Service {
-    _id: string;
-    name: string;
-    price: string;
-    description: string;
-    type: string;
-    createdAt: string;
-    updatedAt: string;
-    isArchived: boolean;
-  }
+  const initialErrorState: ErrorFormData = {
+    name: { error: false, message: null },
+    price: { error: false, message: null },
+    description: { error: false, message: null },
+    type: { error: false, message: null },
+  };
 
-  export default function Services() {
-    const { session, status } = useAuthGuard();
-    const [services, setServices] = useState<Service[]>([]);
-    const [sortedServices, setSortedServices] = useState<Service[]>([]);
-    const [showAddService, setShowAddService] = useState(false);
-    const [showUpdateService, setShowUpdateService] = useState(false);
-    const [showArchiveService, setShowArchiveService] = useState(false);
-    const types = ["Jacket Crowns", "Removable Partial Denture", "Others"];
-    const [currentPage, setCurrentPage] = useState(1);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedFilter, setSelectedFilter] = useState("");
+  const [errorFormData, setErrorFormData] = useState<ErrorFormData>({
+    ...initialErrorState,
+  });
+  const [serviceFormData, setServiceFormData] = useState<AddServicesFormData>({
+    name: "",
+    price: "",
+    description: "",
+    type: "",
+    isArchived: false,
+  });
 
-    const initialErrorState: ErrorFormData = {
-      name: { error: false, message: null },
-      price: { error: false, message: null },
-      description: { error: false, message: null },
-    };
-
-    const [errorFormData, setErrorFormData] = useState<ErrorFormData>({ ...initialErrorState });
-    const [serviceFormData, setServiceFormData] = useState<AddServicesFormData>({
+  const [updateServiceFormData, setUpdateServiceFormData] =
+    useState<UpdateServicesFormData>({
+      _id: "",
       name: "",
       price: "",
       description: "",
       type: "",
+      createdAt: "",
+      updatedAt: "",
       isArchived: false,
     });
 
-    const [updateServiceFormData, setUpdateServiceFormData] =
-      useState<UpdateServicesFormData>({
-        _id: "",
-        name: "",
-        price: "",
-        description: "",
-        type: "",
-        createdAt: "",
-        updatedAt: "",
-        isArchived: false,
-      });
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchQuery(e.target.value);
-    };
+  const searchedServices = sortedServices.filter(
+    (service) =>
+      service.name &&
+      service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    const searchedServices = sortedServices.filter(
-      (service) =>
-        service.name &&
-        service.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const itemsPerPage = 5;
-    const totalPages = Math.max(
-      Math.ceil(searchedServices.length / itemsPerPage),
-      1
-    );
+  const itemsPerPage = 5;
+  const totalPages = Math.max(
+    Math.ceil(searchedServices.length / itemsPerPage),
+    1
+  );
 
   const handleFilterChange = async (filter: any) => {
     setSelectedFilter(filter);
-  
+
     try {
-      const response = await fetch(`api/dentist/dentist-service?filter=${filter}`);
-      
+      const response = await fetch(
+        `api/dentist/dentist-service?filter=${filter}`
+      );
+
       if (!response.ok) {
         throw new Error(`Failed to fetch services with filter: ${filter}`);
       }
-  
+
       const data: Service[] = await response.json();
-  
+
       setSortedServices(data);
     } catch (error) {
       console.error("Error fetching filtered services:", error);
@@ -123,16 +124,18 @@ import { useRouter } from "next/router";
     const fetchServices = async () => {
       try {
         const queryParams = `?search=${searchQuery}&filter=${selectedFilter}`; // Include search and filter parameters
-        const response = await fetch(`api/dentist/dentist-service${queryParams}`);
-        
+        const response = await fetch(
+          `api/dentist/dentist-service${queryParams}`
+        );
+
         if (!response.ok) {
           throw new Error("Failed to fetch services");
         }
-        
+
         const data: Service[] = await response.json();
         setServices(data);
         setSortedServices(data);
-  
+
         const totalPages = Math.max(Math.ceil(data.length / itemsPerPage), 1);
         if (currentPage > totalPages) {
           setCurrentPage(totalPages);
@@ -141,291 +144,198 @@ import { useRouter } from "next/router";
         console.error("Error fetching services:", error);
       }
     };
-  
+
     fetchServices();
   }, [searchQuery, selectedFilter, currentPage]);
-  
 
-    useEffect(() => {
-      const updateServices = () => {
-        let updatedServices = [...sortedServices];
-        
+  useEffect(() => {
+    const updateServices = () => {
+      let updatedServices = [...sortedServices];
 
-        switch (selectedFilter) {
-          case "Oldest to Latest":
-            updatedServices.sort(
-              (a, b) =>
-                new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-            );
-            break;
-          case "Latest to Oldest":
-            updatedServices.sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
-            break;
-          case "Alphabetical (A-Z)":
-            updatedServices.sort((a, b) => a.name.localeCompare(b.name));
-            break;
-          case "Alphabetical (Z-A)":
-            updatedServices.sort((a, b) => b.name.localeCompare(a.name));
-            break;
-          case "Price (Lowest to Highest)":
-            updatedServices.sort(
-              (a, b) => parseFloat(a.price) - parseFloat(b.price)
-            );
-            break;
-          case "Price (Highest to Lowest)":
-            updatedServices.sort(
-              (a, b) => parseFloat(b.price) - parseFloat(a.price)
-            );
-            break;
-          default:
-            break;
-        }
-
-        setSortedServices(updatedServices);
-      };
-
-      updateServices();
-    }, [selectedFilter, services]);
-
-    const onAddService = () => {
-      setShowAddService(true);
-    };
-
-    const onUpdateService = (service: Service, buttonName: string) => {
-      if (buttonName === "update") {
-        setUpdateServiceFormData({
-          _id: service._id,
-          name: service.name,
-          price: service.price,
-          description: service.description,
-          type: service.type,
-          createdAt: service.createdAt,
-          updatedAt: service.type,
-          isArchived: service.isArchived,
-        });
-        setShowUpdateService(true);
-      } else if (buttonName === "archive") {
-        setShowArchiveService(true);
-
-        setUpdateServiceFormData({
-          _id: service._id,
-          name: service.name,
-          price: service.price,
-          description: service.description,
-          type: service.type,
-          createdAt: service.createdAt,
-          updatedAt: service.type,
-          isArchived: true,
-        });
-      }
-    };
-
-    const clearModal = () => {
-      setServiceFormData({
-        name: "",
-        price: "",
-        description: "",
-        type: "",
-        isArchived: false,
-      });
-      setUpdateServiceFormData({
-        _id: "",
-        name: "",
-        price: "",
-        description: "",
-        type: "",
-        createdAt: "",
-        updatedAt: "",
-        isArchived: false,
-      });
-    };
-
-    const router = useRouter();
-
-    // FOR ADD SERVICE
-    const addService = async (e: any) => {
-      e.preventDefault();
-
-      // Use the validation function
-      const isValid = isServiceFormValid(serviceFormData, errorFormData, setErrorFormData);
-
-      console.log("Form validity:", isValid);
-
-      if (isValid) {
-        try {
-          const apiUrl = "/api/dentist/dentist-service";
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(serviceFormData),
-          });
-
-          if (!response.ok) {
-            throw new Error("Adding service failed");
-          }
-
-          // Store the response body in a variable
-          const responseBody = await response.text();
-
-          // Log the API response and response body
-          console.log("API Response:", response);
-          console.log("Response Body:", responseBody);
-
-          const responseData = JSON.parse(responseBody); // Assuming the response body is JSON
-
-          console.log("Service registered:", responseData);
-          setShowAddService(false);
-          toast.success('Service added successfully!');
-
-          router.push('/services');
-
-          setTimeout(() => {
-            window.location.href = '/services';
-          }, 1000);
-          // Check if the service is added to the services state
-          setServices((prevServices) => [...prevServices, responseData]);
-
-          // Calculate the total number of pages based on the updated services
-          const updatedTotalPages = Math.max(
-            Math.ceil((services.length + 1) / itemsPerPage),
-            1
+      switch (selectedFilter) {
+        case "Oldest to Latest":
+          updatedServices.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           );
-
-          setSortedServices((prevSortedServices) => [
-            ...prevSortedServices,
-            responseData,
-          ]);
-
-          setCurrentPage(updatedTotalPages);
-
-          console.log("Updated Services:", services);
-          console.log("Updated Sorted Services:", sortedServices);
-
-          clearModal();
-
-          setServices([...services, responseData]);
-        } catch (error) {
-          toast.error("Adding service failed");
-          console.error("Error adding service:", error);
-        }
-      } else {
-        console.log("Form is not valid. Service not added.");
-        toast.error('Form is invalid. Service not added.')
+          break;
+        case "Latest to Oldest":
+          updatedServices.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          break;
+        case "Alphabetical (A-Z)":
+          updatedServices.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case "Alphabetical (Z-A)":
+          updatedServices.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case "Price (Lowest to Highest)":
+          updatedServices.sort(
+            (a, b) => parseFloat(a.price) - parseFloat(b.price)
+          );
+          break;
+        case "Price (Highest to Lowest)":
+          updatedServices.sort(
+            (a, b) => parseFloat(b.price) - parseFloat(a.price)
+          );
+          break;
+        default:
+          break;
       }
+
+      setSortedServices(updatedServices);
     };
 
+    updateServices();
+  }, [selectedFilter, services]);
 
-    // FOR UPDATE SERVICE
-    const updateService = async (e: any) => {
-      e.preventDefault();
-      const isValid = isServiceFormValid(
-        updateServiceFormData,
-        errorFormData,
-        setErrorFormData
-      );
-      
-      console.log("Form validity:", isValid);
+  const onAddService = () => {
+    setShowAddService(true);
+  };
 
-      if (isValid) {
-        try {
-          const response = await fetch(`/api/dentist/dentist-service`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updateServiceFormData),
-          });
+  const onUpdateService = (service: Service, buttonName: string) => {
+    if (buttonName === "update") {
+      setUpdateServiceFormData({
+        _id: service._id,
+        name: service.name,
+        price: service.price,
+        description: service.description,
+        type: service.type,
+        createdAt: service.createdAt,
+        updatedAt: service.type,
+        isArchived: service.isArchived,
+      });
+      setShowUpdateService(true);
+    } else if (buttonName === "archive") {
+      setShowArchiveService(true);
 
-          if (!response.ok) {
-            const error = await response.json();
-            toast.error("Update failed: " + JSON.stringify(error));
-          } else {
-            const updatedService = await response.json();
-            console.log("Service updated: ", updatedService);
-            toast.success('Service updated successfully!');
-            setShowUpdateService(false);
+      setUpdateServiceFormData({
+        _id: service._id,
+        name: service.name,
+        price: service.price,
+        description: service.description,
+        type: service.type,
+        createdAt: service.createdAt,
+        updatedAt: service.type,
+        isArchived: true,
+      });
+    }
+  };
 
-            // Update the services array
-            setServices((prevServices) =>
-              prevServices.map((prevService) =>
-                prevService._id === updatedService._id
-                  ? updatedService
-                  : prevService
-              )
-            );
+  const clearModal = () => {
+    setServiceFormData({
+      name: "",
+      price: "",
+      description: "",
+      type: "",
+      isArchived: false,
+    });
+    setUpdateServiceFormData({
+      _id: "",
+      name: "",
+      price: "",
+      description: "",
+      type: "",
+      createdAt: "",
+      updatedAt: "",
+      isArchived: false,
+    });
+  };
 
-            // Update the sortedServices array and apply sorting
-            let updatedSortedServices = [...sortedServices];
-            updatedSortedServices = updatedSortedServices.map((prevService) =>
-              prevService._id === updatedService._id ? updatedService : prevService
-            );
+  const router = useRouter();
 
-            switch (selectedFilter) {
-              case "Oldest to Latest":
-                updatedSortedServices.sort(
-                  (a, b) =>
-                    new Date(a.createdAt).getTime() -
-                    new Date(b.createdAt).getTime()
-                );
-                break;
-              case "Latest to Oldest":
-                updatedSortedServices.sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                );
-                break;
-              case "Alphabetical (A-Z)":
-                updatedSortedServices.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-              case "Alphabetical (Z-A)":
-                updatedSortedServices.sort((a, b) => b.name.localeCompare(a.name));
-                break;
-              case "Price (Lowest to Highest)":
-                updatedSortedServices.sort(
-                  (a, b) => parseFloat(a.price) - parseFloat(b.price)
-                );
-                break;
-              case "Price (Highest to Lowest)":
-                updatedSortedServices.sort(
-                  (a, b) => parseFloat(b.price) - parseFloat(a.price)
-                );
-                break;
-              default:
-                break;
-            }
+  // FOR ADD SERVICE
+  const addService = async (e: any) => {
+    e.preventDefault();
 
-            setSortedServices(updatedSortedServices);
+    // Use the validation function
+    const isValid = isServiceFormValid(
+      serviceFormData,
+      errorFormData,
+      setErrorFormData
+    );
 
-            clearModal();
+    console.log("Form validity:", isValid);
 
-            toast.success("Service updated successfully!");
-            setTimeout(() => {
-              window.location.href = '/services';
-            }, 1000);
-          }
-        } catch (error) {
-          toast.error("Updating service failed");
-          console.error("Error updating service:", error);
+    if (isValid) {
+      try {
+        const apiUrl = "/api/dentist/dentist-service";
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(serviceFormData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Adding service failed");
         }
+
+        // Store the response body in a variable
+        const responseBody = await response.text();
+
+        // Log the API response and response body
+        console.log("API Response:", response);
+        console.log("Response Body:", responseBody);
+
+        const responseData = JSON.parse(responseBody); // Assuming the response body is JSON
+
+        console.log("Service registered:", responseData);
+        setShowAddService(false);
+        toast.success("Service added successfully!");
+
+        router.push("/services");
+
+        setTimeout(() => {
+          window.location.href = "/services";
+        }, 1000);
+        // Check if the service is added to the services state
+        setServices((prevServices) => [...prevServices, responseData]);
+
+        // Calculate the total number of pages based on the updated services
+        const updatedTotalPages = Math.max(
+          Math.ceil((services.length + 1) / itemsPerPage),
+          1
+        );
+
+        setSortedServices((prevSortedServices) => [
+          ...prevSortedServices,
+          responseData,
+        ]);
+
+        setCurrentPage(updatedTotalPages);
+
+        console.log("Updated Services:", services);
+        console.log("Updated Sorted Services:", sortedServices);
+
+        clearModal();
+
+        setServices([...services, responseData]);
+      } catch (error) {
+        toast.error("Adding service failed");
+        console.error("Error adding service:", error);
       }
-    };
+    } else {
+      console.log("Form is not valid. Service not added.");
+      toast.error("Form is invalid. Service not added.");
+    }
+  };
 
-        const filterBy = [
-          "Oldest to Latest",
-          "Latest to Oldest",
-          "Alphabetical (A-Z)",
-          "Alphabetical (Z-A)",
-          "Price (Lowest to Highest)",
-          "Price (Highest to Lowest)",
-        ];
+  // FOR UPDATE SERVICE
+  const updateService = async (e: any) => {
+    e.preventDefault();
+    const isValid = isServiceFormValid(
+      updateServiceFormData,
+      errorFormData,
+      setErrorFormData
+    );
 
-    const archiveService = async (e: any) => {
+    console.log("Form validity:", isValid);
+
+    if (isValid) {
       try {
         const response = await fetch(`/api/dentist/dentist-service`, {
           method: "PUT",
@@ -437,40 +347,140 @@ import { useRouter } from "next/router";
 
         if (!response.ok) {
           const error = await response.json();
-          toast.error("Archive service failed: " + JSON.stringify(error));
+          toast.error("Update failed: " + JSON.stringify(error));
         } else {
           const updatedService = await response.json();
           console.log("Service updated: ", updatedService);
+          toast.success("Service updated successfully!");
+          setShowUpdateService(false);
 
-          setShowArchiveService(false);
-          toast.success ('Service archived successfully!')
-          setTimeout(() => {
-            window.location.href = '/services';
-          }, 5000);
-          // Remove the archived service from services
+          // Update the services array
           setServices((prevServices) =>
-            prevServices.filter((service) => service._id !== updatedService._id)
-          );
-
-          // Remove the archived service from sortedServices
-          setSortedServices((prevSortedServices) =>
-            prevSortedServices.filter(
-              (service) => service._id !== updatedService._id
+            prevServices.map((prevService) =>
+              prevService._id === updatedService._id
+                ? updatedService
+                : prevService
             )
           );
 
+          // Update the sortedServices array and apply sorting
+          let updatedSortedServices = [...sortedServices];
+          updatedSortedServices = updatedSortedServices.map((prevService) =>
+            prevService._id === updatedService._id
+              ? updatedService
+              : prevService
+          );
+
+          switch (selectedFilter) {
+            case "Oldest to Latest":
+              updatedSortedServices.sort(
+                (a, b) =>
+                  new Date(a.createdAt).getTime() -
+                  new Date(b.createdAt).getTime()
+              );
+              break;
+            case "Latest to Oldest":
+              updatedSortedServices.sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              );
+              break;
+            case "Alphabetical (A-Z)":
+              updatedSortedServices.sort((a, b) =>
+                a.name.localeCompare(b.name)
+              );
+              break;
+            case "Alphabetical (Z-A)":
+              updatedSortedServices.sort((a, b) =>
+                b.name.localeCompare(a.name)
+              );
+              break;
+            case "Price (Lowest to Highest)":
+              updatedSortedServices.sort(
+                (a, b) => parseFloat(a.price) - parseFloat(b.price)
+              );
+              break;
+            case "Price (Highest to Lowest)":
+              updatedSortedServices.sort(
+                (a, b) => parseFloat(b.price) - parseFloat(a.price)
+              );
+              break;
+            default:
+              break;
+          }
+
+          setSortedServices(updatedSortedServices);
+
           clearModal();
+
+          toast.success("Service updated successfully!");
+          setTimeout(() => {
+            window.location.href = "/services";
+          }, 1000);
         }
       } catch (error) {
         toast.error("Updating service failed");
         console.error("Error updating service:", error);
       }
-    };
+    }
+  };
 
-    const renderContent = () => {
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const pageItems = searchedServices.slice(startIndex, endIndex);
+  const filterBy = [
+    "Oldest to Latest",
+    "Latest to Oldest",
+    "Alphabetical (A-Z)",
+    "Alphabetical (Z-A)",
+    "Price (Lowest to Highest)",
+    "Price (Highest to Lowest)",
+  ];
+
+  const archiveService = async (e: any) => {
+    try {
+      const response = await fetch(`/api/dentist/dentist-service`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateServiceFormData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        toast.error("Archive service failed: " + JSON.stringify(error));
+      } else {
+        const updatedService = await response.json();
+        console.log("Service updated: ", updatedService);
+
+        setShowArchiveService(false);
+        toast.success("Service archived successfully!");
+        setTimeout(() => {
+          window.location.href = "/services";
+        }, 5000);
+        // Remove the archived service from services
+        setServices((prevServices) =>
+          prevServices.filter((service) => service._id !== updatedService._id)
+        );
+
+        // Remove the archived service from sortedServices
+        setSortedServices((prevSortedServices) =>
+          prevSortedServices.filter(
+            (service) => service._id !== updatedService._id
+          )
+        );
+
+        clearModal();
+      }
+    } catch (error) {
+      toast.error("Updating service failed");
+      console.error("Error updating service:", error);
+    }
+  };
+
+  const renderContent = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageItems = searchedServices.slice(startIndex, endIndex);
 
     let content;
     if (searchedServices.length === 0) {
@@ -603,307 +613,318 @@ import { useRouter } from "next/router";
           </div>
         </section>
 
-      {/* ADD SERVICE */}
-      <Modal
-        open={showAddService}
-        setOpen={setShowAddService}
-        modalWidth={400}
-        modalRadius={10}
-        onClose={() => { setErrorFormData(initialErrorState); setShowAddService(false) }} // Clear errors on close
-      >
-        <h3 className={styles1.cancelTitle}> Add Service </h3>
+        {/* ADD SERVICE */}
+        <Modal
+          open={showAddService}
+          setOpen={setShowAddService}
+          modalWidth={400}
+          modalRadius={10}
+          onClose={() => {
+            setErrorFormData(initialErrorState);
+            setShowAddService(false);
+          }} // Clear errors on close
+        >
+          <h3 className={styles1.cancelTitle}> Add Service </h3>
 
-        <label> Service Name: </label>
-        {errorFormData.name.error && (
-              <span className="formLabel__errorMessage">
-                {errorFormData.name.message}
-              </span>
-        )}
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__search}>
-            <input
-              type="text"
-              name="name"
-              className={styles1.filters__searchInput}
-              value={serviceFormData.name}
-              onKeyDown={(e) => handleFormEnter(e, addService)}
-              onChange={(e) =>
-                handleFormDataChange(e, setServiceFormData, setErrorFormData)
-              }
-            />
-
-          </div>
-        </div>
-
-        <label> Base Price: </label>
-        {errorFormData.price.error && (
-        <span className="formLabel__errorMessage">
-          {errorFormData.price.message}
-        </span>
-        )}
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__search}>
-            <input
-              type="text"
-              name="price"
-              className={styles1.filters__searchInput}
-              value={serviceFormData.price}
-              onChange={(e) =>
-                handleFormDataChange(e, setServiceFormData, setErrorFormData)
-              }
-            />
-          </div>
-        </div>
-
-        <label> Type: </label>
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__sortDropdown}>
-            <select
-              onChange={(e: any) =>
-                setServiceFormData({
-                  ...serviceFormData,
-                  type: e.target.value,
-                })
-              }
-              value={serviceFormData.type}
-            >
-              <option disabled>Choose a type</option>
-              {types.map((type, index) => (
-                <option key={index} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <label> Short Description: </label>
-        {errorFormData.description.error && (
-        <span className="formLabel__errorMessage">
-          {errorFormData.description.message}
-        </span>
-        )}
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__search}>
-            <input
-              type="text"
-              name="description"
-              className={styles1.filters__searchInput}
-              value={serviceFormData.description}
-              onChange={(e) =>
-                handleFormDataChange(e, setServiceFormData, setErrorFormData)
-              }
-            />
-          </div>
-        </div>
-        <div className={styles1.cancelActions}>
-          <CancelButton onClick={() => setShowAddService(false)}>
-            Cancel
-          </CancelButton>
-          <Button onClick={addService} type="submit">
-            Submit
-          </Button>
-        </div>
-      </Modal>
-
-
-      {/* UPDATE SERVICE */}
-      <Modal
-        open={showUpdateService}
-        setOpen={setShowUpdateService}
-        onClose={() => { setErrorFormData(initialErrorState); setShowUpdateService(false) }} // Clear errors on close
-        modalWidth={400}
-        modalRadius={10}
-      >
-        <h3 className={styles1.cancelTitle}> Update Service </h3>
-        {/* ID IS HIDDEN */}
-        <input type="hidden" name="_id" value={updateServiceFormData._id} />
-
-        <label> Service Name: </label>
-        {errorFormData.name.error && (
-              <span className="formLabel__errorMessage">
-                {errorFormData.name.message}
-              </span>
-        )}
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__search}>
-            <input
-              type="text"
-              name="name"
-              className={styles1.filters__searchInput}
-              value={updateServiceFormData.name}
-              onKeyDown={(e) => handleFormEnter(e, updateService)}
-              onChange={(e) =>
-                handleFormDataChange(
-                  e,
-                  setUpdateServiceFormData,
-                  setErrorFormData
-                )
-              }
-            />
-          </div>
-        </div>
-
-        <label> Base Price: </label>
-        {errorFormData.price.error && (
-              <span className="formLabel__errorMessage">
-                {errorFormData.price.message}
-              </span>
-        )}
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__search}>
-            <input
-              type="text"
-              name="price"
-              className={styles1.filters__searchInput}
-              value={updateServiceFormData.price}
-              onChange={(e) =>
-                handleFormDataChange(
-                  e,
-                  setUpdateServiceFormData,
-                  setErrorFormData
-                )
-              }
-            />
-          </div>
-        </div>
-
-        <label> Type: </label>
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__sortDropdown}>
-            <select
-              onChange={(e: any) =>
-                setUpdateServiceFormData({
-                  ...updateServiceFormData,
-                  type: e.target.value,
-                })
-              }
-              value={updateServiceFormData.type}
-            >
-              <option selected disabled>
-                Choose a type
-              </option>
-              {types.map((type, index) => (
-                <option key={index} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <label> Short Description: </label>
-        {errorFormData.description.error && (
-              <span className="formLabel__errorMessage">
-                {errorFormData.description.message}
-              </span>
-        )}
-        <div className={styles1.cancelText}>
-          <div className={styles1.filters__search}>
-            <input
-              type="text"
-              name="description"
-              className={styles1.filters__searchInput}
-              value={updateServiceFormData.description}
-              onChange={(e) =>
-                handleFormDataChange(
-                  e,
-                  setUpdateServiceFormData,
-                  setErrorFormData
-                )
-              }
-            />
-          </div>
-        </div>
-        <div className={styles1.cancelActions}>
-          <CancelButton onClick={() => setShowUpdateService(false)}>
-            Cancel
-          </CancelButton>
-          <Button onClick={updateService} type="submit">
-            Update
-          </Button>
-        </div>
-      </Modal>
-
-          {/* ARCHIVE SERVICE */}
-          <Modal
-            open={showArchiveService}
-            setOpen={setShowArchiveService}
-            modalWidth={400}
-            modalRadius={10}
-          >
-            <h3 className={styles1.cancelTitle}> WARNING! </h3>
-            <p> Are you sure you want to archive this dental service?</p>
-            <input type="hidden" name="_id" value={updateServiceFormData._id} />
-            <div className={styles1.cancelActions}>
-              <CancelButton onClick={() => setShowArchiveService(false)}>
-                No
-              </CancelButton>
-              <Button onClick={archiveService} type="submit">
-                Yes
-              </Button>
+          <label> Service Name: </label>
+          {errorFormData.name.error && (
+            <span className={styles.errorMessage}>
+              {errorFormData.name.message}
+            </span>
+          )}
+          <div className={styles1.cancelText}>
+            <div className={styles1.filters__search}>
+              <input
+                type="text"
+                name="name"
+                className={styles1.filters__searchInput}
+                value={serviceFormData.name}
+                onKeyDown={(e) => handleFormEnter(e, addService)}
+                onChange={(e) =>
+                  handleFormDataChange(e, setServiceFormData, setErrorFormData)
+                }
+              />
             </div>
-          </Modal>
-        </>
-      );
-    };
+          </div>
 
-    const renderPagination = () => {
-      const pageNumbers = Array.from(
-        { length: totalPages },
-        (_, index) => index + 1
-      );
+          <label> Base Price: </label>
+          {errorFormData.price.error && (
+            <span className={styles.errorMessage}>
+              {errorFormData.price.message}
+            </span>
+          )}
+          <div className={styles1.cancelText}>
+            <div className={styles1.filters__search}>
+              <input
+                type="text"
+                name="price"
+                className={styles1.filters__searchInput}
+                value={serviceFormData.price}
+                onChange={(e) =>
+                  handleFormDataChange(e, setServiceFormData, setErrorFormData)
+                }
+              />
+            </div>
+          </div>
 
-      const handlePageChange = (pageNumber: any) => {
-        setCurrentPage(pageNumber);
-      };
+          <label> Type: </label>
+          {errorFormData.type.error && (
+            <span className={styles.errorMessage}>
+              {errorFormData.type.message}
+            </span>
+          )}
+          <div className={styles1.cancelText}>
+            <div className={styles1.filters__sortDropdown}>
+              <select
+                onChange={(e: any) =>
+                  setServiceFormData({
+                    ...serviceFormData,
+                    type: e.target.value,
+                  })
+                }
+                value={serviceFormData.type}
+              >
+                <option selected>Choose a type</option>
+                {types.map((type, index) => (
+                  <option key={index} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-      return (
-        <div className={styles1.pagination}>
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              width={16}
-              height={16}
-              color={"#737373"}
-            />
-          </button>
-          {pageNumbers.map((number) => (
-            <button
-              key={number}
-              onClick={() => handlePageChange(number)}
-              className={currentPage === number ? styles1.active : ""}
-            >
-              {number}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <FontAwesomeIcon
-              icon={faChevronRight}
-              width={16}
-              height={16}
-              color={"#737373"}
-            />
-          </button>
-        </div>
-      );
+          <label> Short Description: </label>
+          {errorFormData.description.error && (
+            <span className={styles.errorMessage}>
+              {errorFormData.description.message}
+            </span>
+          )}
+          <div className={styles1.cancelText}>
+            <div className={styles1.filters__search}>
+              <input
+                type="text"
+                name="description"
+                className={styles1.filters__searchInput}
+                value={serviceFormData.description}
+                onChange={(e) =>
+                  handleFormDataChange(e, setServiceFormData, setErrorFormData)
+                }
+              />
+            </div>
+          </div>
+          <div className={styles1.cancelActions}>
+            <CancelButton onClick={() => setShowAddService(false)}>
+              Cancel
+            </CancelButton>
+            <Button onClick={addService} type="submit">
+              Submit
+            </Button>
+          </div>
+        </Modal>
+
+        {/* UPDATE SERVICE */}
+        <Modal
+          open={showUpdateService}
+          setOpen={setShowUpdateService}
+          onClose={() => {
+            setErrorFormData(initialErrorState);
+            setShowUpdateService(false);
+          }} // Clear errors on close
+          modalWidth={400}
+          modalRadius={10}
+        >
+          <h3 className={styles1.cancelTitle}> Update Service </h3>
+          {/* ID IS HIDDEN */}
+          <input type="hidden" name="_id" value={updateServiceFormData._id} />
+
+          <label> Service Name: </label>
+{errorFormData.name.error && (
+  <span className={styles.errorMessage}>
+    {errorFormData.name.message}
+  </span>
+)}
+<div className={`${styles1.cancelText} ${errorFormData.name.error ? 'errorInput' : ''}`}>
+  <div className={styles1.filters__search}>
+    <input
+      type="text"
+      name="name"
+      className={`${styles1.filters__searchInput} ${errorFormData.name.error ? 'errorInput' : ''}`}
+      value={updateServiceFormData.name}
+      onKeyDown={(e) => handleFormEnter(e, updateService)}
+      onChange={(e) =>
+        handleFormDataChange(
+          e,
+          setUpdateServiceFormData,
+          setErrorFormData
+        )
+      }
+    />
+  </div>
+</div>
+
+<label> Base Price: </label>
+{errorFormData.price.error && (
+  <span className={styles.errorMessage}>
+    {errorFormData.price.message}
+  </span>
+)}
+<div className={`${styles1.cancelText} ${errorFormData.price.error ? 'errorInput' : ''}`}>
+  <div className={styles1.filters__search}>
+    <input
+      type="text"
+      name="price"
+      className={`${styles1.filters__searchInput} ${errorFormData.price.error ? 'errorInput' : ''}`}
+      value={updateServiceFormData.price}
+      onChange={(e) =>
+        handleFormDataChange(
+          e,
+          setUpdateServiceFormData,
+          setErrorFormData
+        )
+      }
+    />
+  </div>
+</div>
+
+<label> Type: </label>
+<div className={`${styles1.cancelText} ${errorFormData.type.error ? 'errorInput' : ''}`}>
+  <div className={styles1.filters__sortDropdown}>
+    <select
+      onChange={(e: any) =>
+        setUpdateServiceFormData({
+          ...updateServiceFormData,
+          type: e.target.value,
+        })
+      }
+      value={updateServiceFormData.type}
+      className={`${errorFormData.type.error ? 'errorOption' : ''}`}
+    >
+      <option selected disabled>
+        Choose a type
+      </option>
+      {types.map((type, index) => (
+        <option key={index} value={type}>
+          {type}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
+
+          <label> Short Description: </label>
+          {errorFormData.description.error && (
+            <span className={styles.errorMessage}>
+              {errorFormData.description.message}
+            </span>
+          )}
+          <div className={styles1.cancelText}>
+            <div className={styles1.filters__search}>
+              <input
+                type="text"
+                name="description"
+                className={styles1.filters__searchInput}
+                value={updateServiceFormData.description}
+                onChange={(e) =>
+                  handleFormDataChange(
+                    e,
+                    setUpdateServiceFormData,
+                    setErrorFormData
+                  )
+                }
+              />
+            </div>
+          </div>
+          <div className={styles1.cancelActions}>
+            <CancelButton onClick={() => setShowUpdateService(false)}>
+              Cancel
+            </CancelButton>
+            <Button onClick={updateService} type="submit">
+              Update
+            </Button>
+          </div>
+        </Modal>
+
+        {/* ARCHIVE SERVICE */}
+        <Modal
+          open={showArchiveService}
+          setOpen={setShowArchiveService}
+          modalWidth={400}
+          modalRadius={10}
+        >
+          <h3 className={styles1.cancelTitle}> WARNING! </h3>
+          <p> Are you sure you want to archive this dental service?</p>
+          <input type="hidden" name="_id" value={updateServiceFormData._id} />
+          <div className={styles1.cancelActions}>
+            <CancelButton onClick={() => setShowArchiveService(false)}>
+              No
+            </CancelButton>
+            <Button onClick={archiveService} type="submit">
+              Yes
+            </Button>
+          </div>
+        </Modal>
+      </>
+    );
+  };
+
+  const renderPagination = () => {
+    const pageNumbers = Array.from(
+      { length: totalPages },
+      (_, index) => index + 1
+    );
+
+    const handlePageChange = (pageNumber: any) => {
+      setCurrentPage(pageNumber);
     };
 
     return (
-      <>
-        <ToastContainer />
-        {status !== "loading" && session && (
-          <DentistLayout>
-            {renderContent()}
-            {/* {renderPagination()} */}
-          </DentistLayout>
-        )}
-      </>
+      <div className={styles1.pagination}>
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <FontAwesomeIcon
+            icon={faChevronLeft}
+            width={16}
+            height={16}
+            color={"#737373"}
+          />
+        </button>
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => handlePageChange(number)}
+            className={currentPage === number ? styles1.active : ""}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <FontAwesomeIcon
+            icon={faChevronRight}
+            width={16}
+            height={16}
+            color={"#737373"}
+          />
+        </button>
+      </div>
     );
-  }
+  };
+
+  return (
+    <>
+      <ToastContainer />
+      {status !== "loading" && session && (
+        <DentistLayout>
+          {renderContent()}
+          {/* {renderPagination()} */}
+        </DentistLayout>
+      )}
+    </>
+  );
+}

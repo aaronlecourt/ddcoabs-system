@@ -54,7 +54,7 @@ const Landing = () => {
           <br />
           <h2>Operating Hours</h2>
           <div className={styles.mainOperating}>
-            <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
+            <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
             <p>Saturday - Sunday: Closed</p>
           </div>
           {/* services */}

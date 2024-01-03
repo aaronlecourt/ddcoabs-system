@@ -1,6 +1,8 @@
 import {
   isFirstNameValid,
+  isFirstNameValid50,
   isLastNameValid,
+  isLastNameValid50,
   isEmailValid,
   isMobileNumberValid,
   isDateOfBirthValid,
@@ -51,8 +53,34 @@ export const isRegistrationFormValid = (formData: FormData, errorFormData: Error
     result = false;
   }
 
+  // First Name Validation
+  if (formData.firstName && !isFirstNameValid50(formData.firstName)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['firstName']: {
+        error: true,
+        message: 'Must be maximum of 50 characters.'
+      }
+    }))
+
+    result = false;
+  }
+
   // Last Name Validation
-  if (formData.lastName && !isFirstNameValid(formData.lastName)) {
+  if (formData.lastName && !isLastNameValid50(formData.lastName)) {
+    setErrorFormData(prevErrorFormData => ({
+      ...prevErrorFormData,
+      ['lastName']: {
+        error: true,
+        message: 'Must be maximum of 50 characters.'
+      }
+    }))
+
+    result = false;
+  }
+
+  // Last Name Validation
+  if (formData.lastName && !isLastNameValid(formData.lastName)) {
     setErrorFormData(prevErrorFormData => ({
       ...prevErrorFormData,
       ['lastName']: {
