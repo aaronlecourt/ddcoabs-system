@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import printableStyles from '../styles/pages/accounts.module.scss'
 import connectMongo from "../utils/connectMongo";
 import { getSession } from "next-auth/react";
 import styles from "../styles/pages/home.module.scss";
@@ -16,10 +16,10 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../components/Button";
-import { IAppointment } from "./interfaces/IAppointment";
-import { IUser } from "./interfaces/IUser";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Image from "next/image";
+import RecordInfo from "../components/RecordInfo";
 
   interface Appointments {
     _id: string;
@@ -92,25 +92,55 @@ import 'react-toastify/dist/ReactToastify.css';
     }; 
       
     //FILTER
-    const filterBy= ['Select All', 'Today', 'Pending', 'Confirmed', 'Rescheduled', 'Done', 'Walk In', 'Start Date End Date']
+    const filterBy= ['Select All', 'Today', 'Pending', 'Confirmed', 'Rescheduled', 'Done', 'Walk In', 
+    { label: 'Start Date', type: 'date', key: 'startDate' },
+    { label: 'End Date', type: 'date', key: 'endDate' },]
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
 
-    const handleFilterSelection = (filter: string) => {
-        if (filter === 'Select All'){
-          if (selectedFilters.length === filterBy.length - 1) {
-            setSelectedFilters([]); // Uncheck all if 'All' was previously checked
+    const initialSelectedFilters: string[] = filterBy
+      .filter((item) => typeof item === 'string' && item !== 'Select All')
+      .map((item) => item as string);
+
+    const startDateDisabled = !selectedFilters.includes('Start Date');
+    const endDateDisabled = !selectedFilters.includes('End Date');
+
+    const [startDateVisible, setStartDateVisible] = useState(false);
+    const [endDateVisible, setEndDateVisible] = useState(false);
+    
+    const handleFilterSelection = (filter: string | { label: string; type: string; key: string }) => {
+      if (typeof filter === 'string') {
+        if (filter === 'Select All') {
+          if (selectedFilters.length === filterBy.filter(item => typeof item === 'string').length) {
+            setSelectedFilters([]); // Uncheck all if 'Select All' was previously checked
           } else {
-            setSelectedFilters(filterBy.filter((item) => item !== 'Select All'));
+            setSelectedFilters(filterBy.filter(item => typeof item === 'string') as string[]);
+          }
+        } else if (filter === 'Start Date' || filter === 'End Date') {
+          if (selectedFilters.includes(filter)) {
+            setSelectedFilters(selectedFilters.filter(selectedFilter => selectedFilter !== filter));
+          } else {
+            setSelectedFilters([...selectedFilters, filter]);
+          }
+        } else {
+          if (selectedFilters.includes(filter)) {
+            setSelectedFilters(selectedFilters.filter(selectedFilter => selectedFilter !== filter));
+          } else {
+            setSelectedFilters([...selectedFilters, filter]);
           }
         }
-         else if (selectedFilters.includes(filter)) {
-          setSelectedFilters(selectedFilters.filter((selectedFilter) => selectedFilter !== filter));
-        } else {
-          setSelectedFilters([...selectedFilters, filter]);
+      } else {
+        const dateFilter = filter as { label: string; type: string; key: string };
+        if (dateFilter.key === 'startDate') {
+          setStartDateVisible(!startDateVisible);
+          setEndDateVisible(false);
+        } else if (dateFilter.key === 'endDate') {
+          setEndDateVisible(!endDateVisible);
+          setStartDateVisible(false);
         }
-      };
+      }
+    };
 
       const filteredBySelectedFilters = appointments.filter((appointment) => {
         if (selectedFilters.length === 0) {
@@ -138,7 +168,7 @@ import 'react-toastify/dist/ReactToastify.css';
         return false;
       });
       
-
+      // FOR SORTING
       const [selectedSort, setSelectedSort] = useState('');
       const handleSortChange = (sort: any) => {
 
@@ -187,12 +217,162 @@ import 'react-toastify/dist/ReactToastify.css';
     
         fetchUsers();
     }, []); 
+
+    // FOR SHOW MORE
+    const showAppointmentRecord = (appointment: any) => {
+      setRecordInfo(appointment)
+      setShowRecordInfo(true)
+    }
+
+    // FOR SHOW RECORD AND GENERATE REPORT
+    const [showRecordInfo, setShowRecordInfo] = useState(false)
+    const [recordInfo, setRecordInfo] = useState(null)
+    const [isGenerateReport, setIsGenerateReport] = useState(false)
+
+    const convertToTitleCase = (str: string) => {
+      let words = str.match(/[A-Z]?[a-z]+/g) || [];
+      let titleCaseString = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      return titleCaseString;
+    }
+
+    const formatDate = (date: any) => {
+      const d = new Date(date)
+      const options: any = {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      };
+      return d.toLocaleDateString('en', options);
+    }
+  
+    const renderPrintable = (data: any) => {
+      return (
+        <div className={printableStyles.printable__container}>
+          <div id='printable' className={printableStyles.printable}>
+            <div className={printableStyles.printable__header}>
+              <Image
+                className={printableStyles.printable__logo}
+                src='/logo.png'
+                alt='logo'
+                width={250}
+                height={0}
+              />
+              <div>Address: 123 Blk 1 Lot 1 Street Name, Baranggay Name, Baguio City</div>
+              <div>Contact No: +639123456789</div>
+              <div>Email: dentalfix@dentalfix.com</div>
+            </div>
+            {data.map((recordInfo: any) => <div key={recordInfo._id}>
+              <div className={printableStyles.record}>
+                <h3 className={printableStyles.title}>Appointment Information Record</h3>
+                <div className={printableStyles.information__content}>
+                  <div className={printableStyles.information__contentRow}>
+                    <div className={printableStyles.information__data}>
+                      <label>Patient Name: </label>
+                      <span>{recordInfo.lastName}, {recordInfo.firstName}</span>
+                    </div>
+                    <div className={printableStyles.information__data}>
+                      <label>Service: </label>
+                      <span>{recordInfo.contactNumber}</span>
+                    </div>
+                    <div className={printableStyles.information__data}>
+                      <label>Status: </label>
+                      <span>{recordInfo.contactNumber}</span>
+                    </div>
+                  </div>
+                  <div className={printableStyles.information__contentRow}>
+                    <div className={printableStyles.information__data}>
+                      <label>Date of Birth: </label>
+                      <span>{formatDate(recordInfo.dateOfBirth)}</span>
+                    </div>
+                    <div className={printableStyles.information__data}>
+                        <label>Time: </label>
+                        {/* <span>{appointment.startTime}:00 {appointment.timeUnit} - {appointment.endTime}:00 {appointment.timeUnit}</span> */}
+                      </div>
+                  </div>
+                  <div className={printableStyles.information__contentRow}>
+                    <div className={printableStyles.information__data}>
+                      <label>Form of Payment: </label>
+                      <span>{recordInfo.age}</span>
+                    </div>
+                    <div className={printableStyles.information__data}>
+                      <label>Amount to be Paid: </label>
+                      <span>{recordInfo.guardianContactNumber}</span>
+                    </div>
+                  </div>
+                  <div className={printableStyles.information__contentRow}>
+                    <div className={printableStyles.information__data}>
+                      <label>Religion: </label>
+                      <span>{recordInfo.religion}</span>
+                    </div>
+                  </div>
+                  <div className={printableStyles.information__contentRow}>
+                    <div className={printableStyles.information__data}>
+                      <label>Nationality: </label>
+                      <span>{recordInfo.nationality}</span>
+                    </div>
+                  </div>
+                  <div className={printableStyles.information__contentRow}>
+                    <div className={printableStyles.information__data}>
+                      <label>Home Address: </label>
+                      <span>{recordInfo.address}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>)}
+          </div>
+          <div className={printableStyles.printable__print}>
+            <Button type='secondary' onClick={print}>Print</Button>
+          </div>
+        </div>
+      )
+    }
+  
+    const print = () => {
+      // const contentToPrint = document.getElementById('printable');
+      const contentToPrint = document.getElementById('printable-table');
+  
+      if (contentToPrint) {
+        const printContents = contentToPrint.innerHTML;
+        const originalContents = document.body.innerHTML;
+  
+        document.body.innerHTML = printContents;
+        window.print();
+        location.reload();
+      }
+  
+    }
+  
+    const [printableModal, setPrintableModal] = useState(true)
+    const [isPrinting, setIsPrinting] = useState(false)
+    const onClosePrintable = () => {
+      setIsGenerateReport(false)
+      setPrintableModal(false)
+    }
+  
+    useEffect(() => {
+      if (isPrinting) print()
+  
+    }, [isPrinting])
+  
+    const openPrintableModal = () => {
+      // setIsGenerateReport(true)
+      // setPrintableModal(true)
+      setIsPrinting(true)
+    }
+
   
     const renderContent = () => {
       console.log("Appointments:", appointments);
+      const minDate = new Date('2023-01-01').toISOString().split('T')[0];
+      const currentDate = new Date().toISOString().split('T')[0]; 
       
       return (
         <>
+
+        {/* MODAL FOR RECORD INFO */}
+        <RecordInfo open={showRecordInfo} setOpen={setShowRecordInfo} recordInfo={recordInfo} />
+        
           {session && (
             <main className={styles.main2}>
               <h1 className={styles.title}>Appointments</h1>
@@ -230,7 +410,7 @@ import 'react-toastify/dist/ReactToastify.css';
                     <div className={styles.filters__sort}>
                         <span className={styles.filters__sortTitle}>Filter:</span>
                         <div className={styles.filters__sortDetails}>
-                            {filterBy.map((filter) => (
+                            {/* {filterBy.map((filter) => (
                                 <label key={filter}>
                                      {filter === 'Start Date' || filter === 'End Date' ? (
                                         <input
@@ -260,7 +440,117 @@ import 'react-toastify/dist/ReactToastify.css';
                                     )}
                                     {filter}
                                 </label>
-                            ))}
+                            ))} */}
+                          {/* {filterBy.map((filter, index) => (
+                            <label key={index}>
+                              {typeof filter === 'string' ? (
+                                <input
+                                    type="checkbox"
+                                    value={filter}
+                                    onChange={() => handleFilterSelection(filter)}
+                                    checked={
+                                        selectedFilters.includes(filter) ||
+                                        (filter === 'All' && selectedFilters.length === filterBy.length - 1)
+                                    }
+                                />
+                              ) : (
+                                <div>
+                                  {filter.label === 'Start Date' && startDateVisible && (
+                                    <input
+                                      type="date"
+                                      value={startDate ?? ''}
+                                      onChange={(e) => setStartDate(e.target.value)}
+                                      min={minDate}
+                                      max={currentDate}
+                                      disabled={startDateDisabled}
+                                      // Add any other attributes you need here
+                                    />
+                                  )}
+                                  {filter.label === 'End Date' && endDateVisible && (
+                                    <input
+                                      type="date"
+                                      value={endDate ?? ''}
+                                      onChange={(e) => setEndDate(e.target.value)}
+                                      min={minDate}
+                                      max={currentDate}
+                                      disabled={endDateDisabled}
+                                      // Add any other attributes you need here
+                                    />
+                                  )}
+                                </div>
+                              )}
+                              {typeof filter === 'string' ? filter : filter.label}
+                            </label>
+                          ))} */}
+
+{filterBy.map((filter, index) => (
+  <div key={index}>
+    {typeof filter === 'string' ? (
+      <label>
+        <input
+          type="checkbox"
+          value={filter}
+          onChange={() => handleFilterSelection(filter)}
+          checked={
+            selectedFilters.includes(filter) ||
+            (filter === 'Select All' && selectedFilters.length === filterBy.filter(item => typeof item === 'string').length)
+          }
+        />
+        {filter}
+      </label>
+    ) : (
+      <div>
+        {filter.label === 'Start Date' && (
+          <>
+            <label>
+              <input
+                type="checkbox"
+                id="startDateFilter"
+                checked={selectedFilters.includes(filter.label)}
+                onChange={() => handleFilterSelection(filter)}
+              />
+              Start Date
+            </label>
+            {startDateVisible && (
+              <input
+                type="date" 
+                value={startDate ?? ''}
+                onChange={(e) => setStartDate(e.target.value)}
+                min={minDate}
+                max={currentDate}
+                disabled={startDateDisabled}
+              />
+            )}
+          </>
+        )}
+        {filter.label === 'End Date' && (
+          <>
+            <label>
+              <input
+                type="checkbox"
+                id="endDateFilter"
+                checked={selectedFilters.includes(filter.label)}
+                onChange={() => handleFilterSelection(filter)}
+              />
+              End Date
+            </label>
+            {endDateVisible && (
+              <input
+                type="date"
+                value={endDate ?? ''}
+                onChange={(e) => setEndDate(e.target.value)}
+                min={minDate}
+                max={currentDate}
+                disabled={endDateDisabled}
+              />
+            )}
+          </>
+        )}
+      </div>
+    )}
+  </div>
+))}
+
                         </div>
                     </div>
                   </div>
@@ -314,7 +604,7 @@ import 'react-toastify/dist/ReactToastify.css';
                                 <td>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)} {appointment.timeUnit}</td>
                                 <td>{appointment.dentistService}</td>
                                 <td>{appointment.contactNumber}</td>
-                                <td><Button> Show More </Button></td>
+                                <td><Button onClick={() => showAppointmentRecord(appointment)}> Show More </Button></td>
                               </tr>
                             ))
                           : filteredBySelectedFilters.map((appointment: any, index: any) => (
@@ -332,6 +622,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
                 </table>
               </section>
+
+              <div className={styles.filters__sortGenrep}>
+                  <Button type='secondary' onClick={openPrintableModal}> Generate Report </Button>
+                </div>
             </main> 
           )}
         </>
