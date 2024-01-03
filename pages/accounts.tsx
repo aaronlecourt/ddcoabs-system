@@ -693,7 +693,7 @@ export default function Accounts() {
                       <div>Contact No: +639123456789</div>
                       <div>Email: dentalfix@dentalfix.com</div>
                     </div>}
-                    <table className={styles.table}>
+                    <table className={styles.table2}>
                       <thead>
                         <tr>
                           <th>#</th>

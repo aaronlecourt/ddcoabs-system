@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Modal from '../Modal'
 import styles from './style.module.scss'
 import Button from '../Button'
@@ -148,13 +148,15 @@ export default function RecordInfo({ recordInfo, open, setOpen }: any) {
     }
   };
 
-  let timeout: any;
+  let timeoutRef = useRef<any>(null);
   const handleFilter = (e: any) => {
     const { name, value } = e.target;
     setLoading(true)
-    clearTimeout(timeout);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current); // Clear the previous timeout if it exists
+    }
 
-    timeout = setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setFilterData((prev: any) => ({
         ...prev,
         [name]: value
