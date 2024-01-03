@@ -120,7 +120,7 @@ export default function Accounts() {
       if (selectedFilters.includes('Female') && user.sex === 'F') {
         return true;
       }
-      if (selectedFilters.includes('Minor') && user.age < 18) {
+      if (selectedFilters.includes('Minor') && (user.age > 1 && user.age < 18)) {
         return true;
       }
       if (selectedFilters.includes('Adult') && user.age >= 18) {

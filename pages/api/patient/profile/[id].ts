@@ -69,7 +69,7 @@ export default async function userHandler (
         // validation of required fields for minors
         if (body.age && body.age < 18) {
           if (!body.guardianName) errorMessages.push('guardianName is required.');
-          if (!body.guardianMobile) errorMessages.push('guardianMobile is required.');
+          if (!body.guardianContactNumber) errorMessages.push('guardianMobile is required.');
         }
 
         // validation of duplicate email
