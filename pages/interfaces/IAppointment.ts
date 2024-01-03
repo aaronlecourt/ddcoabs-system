@@ -17,5 +17,6 @@ export interface IAppointment {
     details?: object, // patient form
     isArchived: boolean,
     isWalkIn: boolean,
-    cancelReason: string
+    cancelReason: string,
+    contactNumber: string,
 }

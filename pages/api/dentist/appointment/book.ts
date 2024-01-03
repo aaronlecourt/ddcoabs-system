@@ -33,6 +33,7 @@ export default async function userHandler (
           'patientName',
           'startTime', // Added start time
           'endTime',   // Added end time
+          'contactNumber',
         ];
 
         validBookingFields.map(v => {
@@ -94,6 +95,7 @@ export default async function userHandler (
         const appointmentData = new Appointment({
           ...body,
           patientName: patientName,
+          contactNumber: body.contactNumber,
           startTime: body.startTime,
           endTime: body.endTime,
         });

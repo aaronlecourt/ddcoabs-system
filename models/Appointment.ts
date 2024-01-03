@@ -68,6 +68,9 @@ const schema = new Schema<IAppointment>({
         type: Boolean,
         default: false,
     },
+    contactNumber: {
+        type: String,
+    },
     
 }, {
     timestamps: true

@@ -29,7 +29,8 @@ interface Service {
 
 interface Accounts {
   _id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   contactNumber: number;
   sex: string;
@@ -128,7 +129,8 @@ export default function ServiceRecords() {
 
   const [updateAccountFormData, setUpdateAccountFormData] = useState<ArchiveProfileFormData>({
     _id: '',
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     contactNumber: 0,
     sex: '',
@@ -176,7 +178,8 @@ export default function ServiceRecords() {
       setShowDeleteAccount(true);
       setUpdateAccountFormData({
         _id: account._id,
-        name: account.name,
+        firstName: account.firstName,
+        lastName: account.lastName,
         email: account.email,
         contactNumber: account.contactNumber,
         sex: account.sex,
@@ -190,7 +193,8 @@ export default function ServiceRecords() {
       setShowRestoreAccount(true);
       setUpdateAccountFormData({
         _id: account._id,
-        name: account.name,
+        firstName: account.firstName,
+        lastName: account.lastName,
         email: account.email,
         contactNumber: account.contactNumber,
         sex: account.sex,
@@ -246,12 +250,21 @@ const handleFilterChange = (filter: any) => {
           return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
         });
         break;
-      case 'Alphabetical (A-Z)':
-        updatedAccount.sort((a, b) => a.name.localeCompare(b.name));
+        case 'Alphabetical (A-Z)':
+          updatedAccount.sort((a, b) => {
+            const nameA = a.firstName.toLowerCase() + a.lastName.toLowerCase();
+            const nameB = b.firstName.toLowerCase() + b.lastName.toLowerCase();
+            return nameA.localeCompare(nameB);
+          });
         break;
-      case 'Alphabetical (Z-A)':
-        updatedAccount.sort((a, b) => b.name.localeCompare(a.name));
+        case 'Alphabetical (Z-A)':
+          updatedAccount.sort((a, b) => {
+            const nameA = a.firstName.toLowerCase() + a.lastName.toLowerCase();
+            const nameB = b.firstName.toLowerCase() + b.lastName.toLowerCase();
+            return nameB.localeCompare(nameA);
+          });
         break;
+        
       default:
         break;
     }
@@ -487,7 +500,7 @@ const renderContent = () => {
                   accounts.map((account, index) => (
                     <tr key={account._id}>
                       <td>{index + 1}</td>
-                      <td> {account.name} </td>
+                      <td> {account.firstName} {account.lastName}</td>
                       <td> {account.email} </td>
                       <td> {account.contactNumber} </td>
                       <td> {account.sex == 'M' ? 'Male' : 'Female'} </td>

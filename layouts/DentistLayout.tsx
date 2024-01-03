@@ -13,7 +13,7 @@ export default function DentistLayout({ children }: { children: ReactNode }) {
     },
     {
       text: 'Appointments',
-      link: '/appointments'
+      link: '/appointments-dentist'
     },
     {
       text: 'Services',
