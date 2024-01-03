@@ -205,7 +205,7 @@ export default function Home() {
             {/* separate into 2 services scroll 1 side */}
             <div className={styles.Home}>
               <div className={styles.sub}>
-                <h1 className={styles.title}>Hello {session.user?.name}!</h1>
+                <h1 className={styles.title}>Hello {session.user?.firstName} {session.user?.lastName}!</h1>
                 <div className={styles.appointmentCounts}>
                   <h3>You have</h3>
                   <div className={styles.countContainer}>
