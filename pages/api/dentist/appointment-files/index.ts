@@ -24,7 +24,7 @@ export default async function userHandler(
             const populatedAppointments = await Promise.all(
               dentistAppointments.map(async (appointment) => {
                 try {
-                  let resolvedContactNumber = "No saved number";
+                  let resolvedContactNumber = "-";
   
                   // Get contact number from User model based on patientId
                   const user = await User.findById(appointment.patientId);
