@@ -19,10 +19,10 @@ function sendPasswordResetEmail(email: string, token: string) {
   const transporter = nodemailer.createTransport({
     // Setup your email service configuration
     // Example using SMTP:
-    service: 'yahoo',
+    service: 'gmail',
     auth: {
-      user: process.env.YAHOO_EMAIL,
-      pass: process.env.YAHOO_EMAIL_APP_PW,
+      user: process.env.GOOGLE_EMAIL,
+      pass: process.env.GOOGLE_EMAIL_APP_PW,
     },
     debug: true
   });
@@ -30,7 +30,7 @@ function sendPasswordResetEmail(email: string, token: string) {
   const resetLink = `${process.env.NEXTAUTH_URL}/resetpassword?token=${token}`;
 
   const mailOptions = {
-    from: process.env.YAHOO_EMAIL,
+    from: process.env.GOOGLE_EMAIL,
     to: email,
     subject: 'Password Reset',
     html: `Click <a href="${encodeURI(resetLink)}">here</a> to reset your password.`,
