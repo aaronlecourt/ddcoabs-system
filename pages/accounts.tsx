@@ -103,32 +103,36 @@ export default function Accounts() {
 
   const filteredBySelectedFilters = users.filter((user) => {
     if (selectedFilters.length === 0) {
-      return true;
+      return true; // If no filters selected, show all records
     } else {
-      if (selectedFilters.includes('Dentist') && user.role === 'dentist') {
-        return true;
-      }
-      if (selectedFilters.includes('Employee') && user.role === 'employee') {
-        return true;
-      }
-      if (selectedFilters.includes('Patient') && user.role === 'patient') {
-        return true;
-      }
-      if (selectedFilters.includes('Male') && user.sex === 'M') {
-        return true;
-      }
-      if (selectedFilters.includes('Female') && user.sex === 'F') {
-        return true;
-      }
-      if (selectedFilters.includes('Minor') && (user.age > 1 && user.age < 18)) {
-        return true;
-      }
-      if (selectedFilters.includes('Adult') && user.age >= 18) {
-        return true;
-      }
+      // Check if the user matches all selected filters
+      return selectedFilters.every((filter) => {
+        if (filter === 'Dentist' && user.role === 'dentist') {
+          return true;
+        }
+        if (filter === 'Employee' && user.role === 'employee') {
+          return true;
+        }
+        if (filter === 'Patient' && user.role === 'patient') {
+          return true;
+        }
+        if (filter === 'Male' && user.sex === 'M') {
+          return true;
+        }
+        if (filter === 'Female' && user.sex === 'F') {
+          return true;
+        }
+        if (filter === 'Minor' && (user.age > 1 && user.age < 18)) {
+          return true;
+        }
+        if (filter === 'Adult' && user.age >= 18) {
+          return true;
+        }
+        return false; // Return false if the user doesn't match a filter
+      });
     }
-    return false;
   });
+  
 
 
   //FOR USER TABLE
@@ -604,7 +608,7 @@ export default function Accounts() {
               <p> Are you sure you want to archive this user?</p>
               <input type='hidden' name="_id" value={updateUserFormData._id} />
               <div className={styles1.cancelActions}>
-                <Button type='secondary' onClick={() => setShowArchiveUser(false)}>No</Button>
+                <CancelButton onClick={() => setShowArchiveUser(false)}>No</CancelButton>
                 <Button onClick={archiveUser} type="submit">Yes</Button>
               </div>
             </Modal>
@@ -615,7 +619,7 @@ export default function Accounts() {
               <p> Are you sure you want this user to be an admin or employee?</p>
               <input type='hidden' name="_id" value={updateUserFormData._id} />
               <div className={styles1.cancelActions}>
-                <Button type='secondary' onClick={() => setShowValiUser(false)}>No</Button>
+                <CancelButton onClick={() => setShowValiUser(false)}>No</CancelButton>
                 <Button onClick={(e: any) => updateUserRole(e, updateUserFormData._id)} type="submit">Yes</Button>
               </div>
             </Modal>
