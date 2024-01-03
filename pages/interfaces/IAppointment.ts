@@ -4,6 +4,7 @@ export interface IAppointment {
     dentistId?: ObjectId,
     patientId?: ObjectId,
     patientName: string,
+    contactNumber: string,
     dentistService: string,
     concern?: string,
     status: string,

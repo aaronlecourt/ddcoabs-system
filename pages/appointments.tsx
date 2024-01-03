@@ -607,28 +607,13 @@ export default function Home({
     );
   };
 
-  const renderDentistContent = () => {
-    return (
-      <>
-        {session && (
-          <main className={styles.main}>
-            <div className={styles.container}>HOLD THE APPOINTMENTS</div>
-          </main>
-        )}
-      </>
-    );
-  };
-
   return (
     <>
     <ToastContainer />
       {status !== "loading" &&
         session &&
-        (session.user?.role === "patient" ? (
           <PatientLayout>{renderContent()}</PatientLayout>
-        ) : (
-          <DentistLayout>{renderDentistContent()}</DentistLayout>
-        ))}
+        }
     </>
   );
 }

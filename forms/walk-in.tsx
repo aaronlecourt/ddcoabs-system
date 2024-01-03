@@ -17,6 +17,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const PatientWalkIn = {
   patientName: "",
+  firstName: "",
+  lastName: "",
   age: 0,
   sex: "",
   contactNumber: "",

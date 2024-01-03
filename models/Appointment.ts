@@ -18,6 +18,9 @@ const schema = new Schema<IAppointment>({
     dentistService: {
         type: String,
     },
+    contactNumber: {
+        type: String,
+    },
     concern: {
         type: String
     },

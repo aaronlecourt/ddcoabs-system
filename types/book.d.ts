@@ -107,6 +107,8 @@ export interface ServicesErrorFormData {
 
 export interface PatientFormDataDentist {
   patientName: string;
+  firstName: string;
+  lastName: string;
   age: number;
   sex: string;
   contactNumber: string;

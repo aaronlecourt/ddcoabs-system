@@ -26,7 +26,7 @@ export default function useAuthGuard() {
     '/services',
     '/accounts',
     '/archives',
-    '/appointments',
+    '/appointments-dentist',
     '/walk-in'
   ]
 
